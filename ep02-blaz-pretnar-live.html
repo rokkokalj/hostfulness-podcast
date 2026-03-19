@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EP02 — Blaž Pretnar</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    line-height: 1.6;
+    padding-bottom: 200px;
+  }
+
+  /* ---- TIMER ---- */
+  .timer-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #222;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 32px;
+  }
+
+  .timer-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+    color: #aaa;
+    font-weight: 400;
+  }
+
+  .timer-left span {
+    color: #ddd;
+    font-weight: 500;
+  }
+
+  .timer-center {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .timer-display {
+    font-size: 36px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 2px;
+    color: #fff;
+  }
+
+  .timer-display.running { color: #4ade80; }
+  .timer-display.paused { color: #F6A900; }
+
+  .timer-btn {
+    background: none;
+    border: 1px solid #333;
+    color: #999;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+
+  .timer-btn:hover { border-color: #555; color: #fff; }
+  .timer-btn.start { border-color: #4ade80; color: #4ade80; }
+  .timer-btn.start:hover { background: rgba(74, 222, 128, 0.1); }
+
+  .clock-display {
+    font-size: 14px;
+    color: #bbb;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- HEADER ---- */
+  .header {
+    padding: 100px 32px 40px;
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .header .ep-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: #aaa;
+    margin-bottom: 12px;
+  }
+
+  .header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .header .subtitle {
+    font-size: 14px;
+    color: #bbb;
+  }
+
+  .red-thread {
+    max-width: 720px;
+    margin: 0 auto 48px;
+    padding: 20px 28px;
+    background: rgba(74, 222, 128, 0.04);
+    border: 1px solid rgba(74, 222, 128, 0.15);
+    border-radius: 10px;
+    font-size: 14px;
+    color: #ccc;
+    text-align: center;
+  }
+
+  .red-thread strong { color: #4ade80; font-weight: 500; }
+
+  /* ---- TIMELINE ---- */
+  .timeline {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 52px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, rgba(27,146,255,0.15), rgba(27,146,255,0.3), rgba(27,146,255,0.15));
+  }
+
+  /* ---- SECTION ---- */
+  .section {
+    position: relative;
+    margin-bottom: 40px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px 0;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .section-header:hover .section-title { color: #fff; }
+
+  .section-dot {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 50%;
+    background: rgba(27, 146, 255, 0.06);
+    border: 2px solid rgba(27, 146, 255, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #73C7FF;
+    z-index: 2;
+    transition: all 0.3s;
+  }
+
+  .section-header:hover .section-dot,
+  .section.active .section-dot {
+    border-color: #4ade80;
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.08);
+  }
+
+  .section.done .section-dot {
+    border-color: rgba(27, 146, 255, 0.12);
+    color: rgba(27, 146, 255, 0.2);
+    background: #1a1a1a;
+  }
+
+  .section-info { flex: 1; }
+
+  .section-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: #ccc;
+    transition: color 0.2s;
+  }
+
+  .section.active .section-title { color: #fff; }
+
+  .section.done .section-title {
+    color: #555;
+    text-decoration: line-through;
+    text-decoration-color: #333;
+  }
+
+  .section-meta {
+    font-size: 14px;
+    color: #bbb;
+    margin-top: 4px;
+  }
+
+  .section-time {
+    font-size: 12px;
+    color: #73C7FF;
+    font-weight: 500;
+    min-width: 50px;
+    text-align: right;
+  }
+
+  .section.active .section-time { color: #4ade80; }
+
+  .section-chevron {
+    color: rgba(27, 146, 255, 0.4);
+    font-size: 18px;
+    transition: transform 0.3s;
+    min-width: 20px;
+    text-align: center;
+  }
+
+  .section.open .section-chevron { transform: rotate(90deg); }
+
+  /* ---- QUESTIONS ---- */
+  .section-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .section.open .section-body { max-height: 2000px; }
+
+  .questions {
+    margin-left: 62px;
+    padding: 4px 0 24px;
+  }
+
+  .question {
+    padding: 14px 20px;
+    margin-bottom: 6px;
+    background: #111;
+    border-radius: 8px;
+    border-left: 3px solid #222;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .question:hover { background: #161616; border-left-color: #333; }
+
+  .question.asked {
+    opacity: 0.35;
+    border-left-color: #1a1a1a;
+  }
+
+  .question-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: #ddd;
+    margin-bottom: 4px;
+  }
+
+  .question.asked .question-text {
+    text-decoration: line-through;
+    text-decoration-color: #444;
+  }
+
+  .question-hint {
+    font-size: 13px;
+    color: #aaa;
+    font-style: italic;
+  }
+
+  .question-tag {
+    display: inline-block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.08);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+
+  /* ---- DIVIDER ---- */
+  .section-divider {
+    margin-left: 62px;
+    border: none;
+    border-top: 1px solid rgba(27, 146, 255, 0.12);
+    margin-bottom: 0;
+  }
+
+  /* ---- NOTE BLOCK ---- */
+  .note-block {
+    margin-left: 62px;
+    padding: 16px 20px;
+    background: rgba(246, 169, 0, 0.04);
+    border: 1px solid rgba(246, 169, 0, 0.12);
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: #bbb;
+  }
+
+  .note-block strong { color: #F6A900; font-weight: 500; }
+
+  /* ---- ICE-BREAKER ---- */
+  .ice-breaker {
+    padding: 10px 20px;
+    margin-bottom: 4px;
+    background: rgba(56, 189, 248, 0.04);
+    border-radius: 8px;
+    border-left: 3px solid rgba(56, 189, 248, 0.2);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    color: #bbb;
+  }
+
+  .ice-breaker:hover { background: rgba(56, 189, 248, 0.08); border-left-color: #38bdf8; }
+  .ice-breaker.asked { opacity: 0.25; border-left-color: #1a1a1a; }
+  .ice-breaker.asked .ib-text { text-decoration: line-through; text-decoration-color: #444; }
+
+  .ib-text { font-weight: 400; }
+
+  .ib-category {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #38bdf8;
+    margin-bottom: 12px;
+    margin-top: 8px;
+  }
+
+  /* ---- OPCIJSKA TEMA ---- */
+  .optional-tag {
+    display: inline-block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #F6A900;
+    background: rgba(246, 169, 0, 0.08);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+  }
+
+  /* ---- TEMA TAG ---- */
+  .tema-tag {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #aaa;
+    margin-bottom: 8px;
+    margin-top: 12px;
+  }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 700px) {
+    .timer-bar {
+      padding: 8px 12px;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .timer-left {
+      font-size: 11px;
+      order: 1;
+    }
+
+    .clock-display {
+      font-size: 12px;
+      order: 2;
+    }
+
+    .timer-center {
+      order: 3;
+      width: 100%;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .timer-display { font-size: 32px; }
+
+    .timer-btn {
+      padding: 8px 18px;
+      font-size: 13px;
+      min-height: 40px;
+    }
+
+    .header {
+      padding: 110px 16px 24px;
+    }
+
+    .header h1 { font-size: 24px; }
+    .header .subtitle { font-size: 13px; }
+    .header .ep-label { font-size: 10px; letter-spacing: 3px; }
+
+    .red-thread {
+      margin: 0 16px 32px;
+      padding: 16px 18px;
+      font-size: 13px;
+    }
+
+    .timeline {
+      padding: 0 12px;
+    }
+
+    .timeline::before {
+      left: 28px;
+    }
+
+    .section-header {
+      gap: 12px;
+      padding: 14px 0;
+    }
+
+    .section-dot {
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      font-size: 12px;
+    }
+
+    .section-title { font-size: 15px; }
+    .section-meta { font-size: 12px; }
+    .section-time { font-size: 11px; min-width: 40px; }
+
+    .questions {
+      margin-left: 46px;
+      padding: 4px 0 20px;
+    }
+
+    .question {
+      padding: 12px 14px;
+      margin-bottom: 5px;
+    }
+
+    .question-text { font-size: 13px; }
+    .question-hint { font-size: 12px; }
+
+    .note-block {
+      margin-left: 46px;
+      padding: 12px 14px;
+      font-size: 12px;
+    }
+
+    .section-divider { margin-left: 46px; }
+
+    .ice-breaker {
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+
+    .ib-category { font-size: 9px; }
+
+    body { padding-bottom: 120px; }
+  }
+
+  /* Extra small phones */
+  @media (max-width: 380px) {
+    .timer-display { font-size: 28px; }
+    .header { padding: 110px 12px 20px; }
+    .header h1 { font-size: 22px; }
+    .timeline { padding: 0 8px; }
+    .timeline::before { left: 24px; }
+    .questions { margin-left: 40px; }
+    .note-block { margin-left: 40px; }
+    .section-divider { margin-left: 40px; }
+    .section-dot { width: 30px; height: 30px; min-width: 30px; font-size: 11px; }
+    .section-header { gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TIMER BAR -->
+<div class="timer-bar">
+  <div class="timer-left">EP02 <span>Blaž Pretnar</span></div>
+  <div class="timer-center">
+    <button class="timer-btn start" onclick="toggleTimer()" id="timerBtn">START</button>
+    <div class="timer-display" id="timerDisplay">00:00</div>
+    <button class="timer-btn" onclick="resetTimer()">RESET</button>
+  </div>
+  <div class="clock-display" id="clockDisplay">--:--</div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="ep-label">Hostfulness Podcast — Epizoda 02</div>
+  <h1>Blaž Pretnar</h1>
+  <div class="subtitle">Hotel Julian Alps &middot; IGB d.o.o. &middot; 10+ let v hotelirstvu</div>
+</div>
+
+<div class="red-thread">
+  <strong>Iz velike verige v staro kmetijo</strong> &rarr; od standardov do mikro trenutkov &rarr; <strong>gostoljubje kot osebni odnos v majhnem prostoru</strong>
+</div>
+
+<!-- TIMELINE -->
+<div class="timeline">
+
+  <!-- ICE-BREAKERJI -->
+  <div class="section open" data-section="ice">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot" style="border-color: #38bdf8; color: #38bdf8; font-size: 11px;">ICE</div>
+      <div class="section-info">
+        <div class="section-title">Ice-breakerji</div>
+        <div class="section-meta">Sproščen klepet pred "uradnim" začetkom &mdash; odrežemo v montaži</div>
+      </div>
+      <div class="section-time"></div>
+      <div class="section-chevron">&rsaquo;</div>
+    </div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="ib-category">Vezani na Blaža</div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">Koliko časa rabiš od doma do hotela? Ena od prednosti Gorij — hotelir dejansko živi tam, kjer dela.</div>
+        </div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">A si tip, ki zjutraj pride v hotel kot prvi, ali te ekipa že čaka?</div>
+        </div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">Kdaj si bil nazadnje sam gost nekje — čisto brez da bi gledal, kako oni to delajo?</div>
+        </div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">A ti je že kdaj kdo rekel "jaz bi pa tud hotel odprl, kako težko pa je to"?</div>
+        </div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">Kaj ti ponavadi rečeš ljudem, ki te vprašajo kaj delaš — hotelir, manager, gasilec, vse po malem?</div>
+        </div>
+
+        <div class="ib-category">Malo bolj humorne</div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">15 sob — a poznaš že vse goste po imenu, preden pridejo? Tip booking.com detektiv?</div>
+        </div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">A imaš najljubšo sobo v hotelu? Tisto, za katero v glavi rečeš "ta je pa moja"?</div>
+        </div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">Kaj je najčudnejša prošnja, ki si jo kdaj dobil od gosta? Brez imen seveda.</div>
+        </div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">9+ na Bookingu — a ti tista ena negativna ocena pokvari cel dan ali si že imun?</div>
+        </div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">A si kdaj skušal sam pri sebi prespat — da vidiš, kakšna je izkušnja?</div>
+        </div>
+
+        <div class="ib-category">Lokacija / narava</div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">A greš kdaj sam v Vintgar ali ti je po toliko letih že "meh"?</div>
+        </div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">Kakšna je bila zima letos v Gorjah? A je hotel pozimi drugačen — bolj tih, bolj intimen?</div>
+        </div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">A imaš kakšno pot, hrib, ki ga narediš, ko rabiš reset?</div>
+        </div>
+
+        <div class="ib-category">Backstage hotelirstva</div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">Kaj je prva stvar, ki jo narediš, ko prideš zjutraj v hotel?</div>
+        </div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">A obstaja kakšna rutina pred sezono — tisti občutek "zdaj se pa začne"?</div>
+        </div>
+        <div class="ice-breaker" onclick="toggleAsked(this)">
+          <div class="ib-text">A imaš WhatsApp grupo z ekipo? A je kaos ali organiziran kaos?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- 0. UVOD -->
+  <div class="section" data-section="0">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">0</div>
+      <div class="section-info">
+        <div class="section-title">Uvod</div>
+        <div class="section-meta">Špica + predstavitev + "Kaj bi še dodal?"</div>
+      </div>
+      <div class="section-time">2-3 min</div>
+      <div class="section-chevron">&rsaquo;</div>
+    </div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="note-block">
+          <strong>Špica (naknadno):</strong> "Hostfulness — podcast o gostoljubju kot odnosu med ljudmi. V tej epizodi je z mano Blaž Pretnar."
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">"Blaž, hvala da si tukaj. Ti si nekdo, ki je šel skozi vse — od front office-a in kongresne prodaje v Sava hotelih na Bledu, do tega, da si danes eden ključnih ljudi za butičnim hotelom Julian Alps v Gorjah. Prenovljena stara kmetija, 15 sob, na robu Triglavskega narodnega parka — in ocene, ki bi jih marsikdo z 200 sobami zavidal. Dobrodošel."</div>
+          <div class="question-hint">Potem mu daš besedo: "Kaj bi še dodal, kako bi se sam predstavil?"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- 1. GOSTOLJUBJE KOT ODPIRAČ -->
+  <div class="section" data-section="1">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">1</div>
+      <div class="section-info">
+        <div class="section-title">Gostoljubje kot odpirač</div>
+        <div class="section-meta">Leča — gostoljubje iz velikega v majhen prostor</div>
+      </div>
+      <div class="section-time">5-7 min</div>
+      <div class="section-chevron">&rsaquo;</div>
+    </div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Ti si bil dolgo v velikem sistemu — Sava Hotels, šest hotelov, več kot tisoč ležišč. Zdaj imaš 15 sob. Kaj se s pojmom "gostoljubje" zgodi, ko se številke tako dramatično zmanjšajo?</div>
+          <div class="question-hint">Odpre razliko med masovnim in intimnim gostoljubjem.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Kdaj si nazadnje začutil, da nisi bil samo vodja hotela, ampak gostitelj? Kaj je bil ta trenutek?</div>
+          <div class="question-hint">Osebni moment. Iščemo presežek nad transakcijo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- 2. BLAŽEVA POT -->
+  <div class="section" data-section="2">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">2</div>
+      <div class="section-info">
+        <div class="section-title">Blaževa pot — od korporacije do kmetije</div>
+        <div class="section-meta">Zgodba, pot, motivacija, preskok v butični hotel</div>
+      </div>
+      <div class="section-time">10-12 min</div>
+      <div class="section-chevron">&rsaquo;</div>
+    </div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Kako bi opisal svojo pot — od prvih korakov v hotelirstvu do tega, kar si danes?</div>
+          <div class="question-hint">Osnovna zgodba. Pusti, da sam izbere poudarke.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-tag">ključno</div>
+          <div class="question-text">Sava Hotels je velik sistem — standardi, procesi, hierarhija. Kaj si od tam odnesel, kar danes uporabljaš vsak dan? In kaj si zavestno pustil za sabo?</div>
+          <div class="question-hint">Kaj od korporativne discipline vzameš v majhen hotel — in kaj ne deluje.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Potem pa si prišel v IGB, v družinsko podjetje, v zagon novega hotela. Kakšen je bil ta preskok — iz strukture v "multi-hat" okolje, kjer si hkrati operativec, strateg in gasilec?</div>
+          <div class="question-hint">Pre-opening zgodba. Potencial za iskrene zgodbe o kaosu, failih, učenju.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- 3. NAMESTITEV IN PONUDBA -->
+  <div class="section" data-section="3">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">3</div>
+      <div class="section-info">
+        <div class="section-title">Namestitev in ponudba — kaj gosta čaka</div>
+        <div class="section-meta">Prostor za predstavitev hotela. Poslušalec mora začutiti, kaj ga čaka.</div>
+      </div>
+      <div class="section-time">7-10 min</div>
+      <div class="section-chevron">&rsaquo;</div>
+    </div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Predstavi nam Hotel Julian Alps — ne kot prodajno brošuro, ampak kot nekdo, ki ga je pomagal ustvariti. Kaj je ta hotel v jedru?</div>
+          <div class="question-hint">Osnovna zgodba prostora. Stara kmetija, prenova, 15 sob, lokacija.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-tag">kraljica ponudbe</div>
+          <div class="question-text">Kaj je "kraljica" vaše ponudbe — tista stvar, na katero ste najbolj ponosni, ki vas loči od vsega drugega v okolici?</div>
+          <div class="question-hint">Lahko je soba, zajtrk, wellness, osebni stik — pusti, da sam pove. Poglobi.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-tag">doživetje</div>
+          <div class="question-text">Recimo, da nas nekdo posluša in še nikoli ni bil pri vas. Popelji ga skozi — kaj bo doživel? Od trenutka, ko zavije proti Gorjam, do trenutka, ko zjutraj sede k zajtrku. Kaj bo videl, začutil, vonjal?</div>
+          <div class="question-hint">Cilj: da poslušalec ZAČUTI, kaj ga čaka. Pusti, da slika teče. Ne prekinjaj.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Koga gostite? Kakšen je vaš tipičen gost — in ali obstaja gost, ki ga še posebej radi vidite?</div>
+          <div class="question-hint">Segmentacija skozi človeško lečo — ne demografija, ampak kdo so ljudje.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- 4. GOSTOLJUBJE V PRAKSI -->
+  <div class="section" data-section="4">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">4</div>
+      <div class="section-info">
+        <div class="section-title">Gostoljubje v praksi — mikro trenutki</div>
+        <div class="section-meta">Konkretni trenutki, ne teorija. Kaj se gost zapomni, ko odide.</div>
+      </div>
+      <div class="section-time">10-15 min</div>
+      <div class="section-chevron">&rsaquo;</div>
+    </div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="tema-tag">Zavestna prisotnost</div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">V velikem resortu je gost pogosto številka — kljub vsem standardom. V hotelu s 15 sobami si te luxusa ne moreš privoščiti. Kako zagotoviš, da vsak gost začuti, da je viden?</div>
+          <div class="question-hint">Hostfulness v praksi — zavestna prisotnost do gosta v majhnem okolju.</div>
+        </div>
+
+        <div class="tema-tag">Namen gostovanja</div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Zakaj gostiš? Kaj je tvoj globlji namen, onkraj zaslužka in zasedenosti?</div>
+          <div class="question-hint">Intentional hospitality. Kaj želi, da gost odnese s sabo.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Kaj mislite, da gostje v resnici iščejo, ko rezervirajo namestitev v Gorjah namesto na Bledu — ali je to res samo postelja in mir?</div>
+          <div class="question-hint">Globlji namen gostovanja — kaj gost išče, četudi se tega ne zaveda.</div>
+        </div>
+
+        <div class="tema-tag">Trenutki resnice</div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-tag">ključno</div>
+          <div class="question-text">Če bi moral izbrati tri trenutke v izkušnji gosta pri vas, ki po tvojem mnenju odločijo, ali se bo vrnil ali ne — kateri bi bili?</div>
+          <div class="question-hint">Pričakuj: check-in, zajtrk, wellness/večer po izletu. Poglobi vsakega.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Imaš 9+ na Bookingu. Ko bereš ocene — kaj gostje najpogosteje izpostavijo? In ali te kaj od tega preseneti?</div>
+          <div class="question-hint">Kaj GOST vidi kot gostoljubje — se ujema z Blaževim namenom?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- 5. EKIPA -->
+  <div class="section" data-section="5">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">5</div>
+      <div class="section-info">
+        <div class="section-title">Ekipa — vsak šteje</div>
+        <div class="section-meta">Majhna ekipa, vodenje, gostoljubnost kot lastnost</div>
+      </div>
+      <div class="section-time">5-7 min</div>
+      <div class="section-chevron">&rsaquo;</div>
+    </div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Povej mi kaj o svoji ekipi. V hotelu s 15 sobami — koliko ljudi soustvarja to izkušnjo?</div>
+          <div class="question-hint">Majhna ekipa = vsak zaposleni je viden.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">V Savi si vodil 30 receptorjev v šestih hotelih. Zdaj imaš bistveno manj ljudi, ampak vsak šteje trojno. Kako drugače vodiš ljudi v majhnem hotelu?</div>
+          <div class="question-hint">Od korporativnega managementa do osebnega empowermenta.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Ali se da gostoljubnost naučiti? Ali iščeš ljudi, ki to že imajo v sebi?</div>
+          <div class="question-hint">SOP vs. osebnost.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- 6. TEHNOLOGIJA -->
+  <div class="section" data-section="6">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">6</div>
+      <div class="section-info">
+        <div class="section-title">Tehnologija in digitalno v gostoljubju</div>
+        <div class="section-meta">Splošni pogled &rarr; v turizmu &rarr; konkretno pri vas &rarr; naprej</div>
+      </div>
+      <div class="section-time">7-10 min</div>
+      <div class="section-chevron">&rsaquo;</div>
+    </div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="tema-tag">Splošni pogled</div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Kakšen je tvoj odnos do tehnologije nasploh? Si nekdo, ki rad proba nove stvari, ali si bolj "dela naj, samo da dela"?</div>
+          <div class="question-hint">Osebni mindset. Mlajša generacija — verjetno pragmatičen, ne hype-driven.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Kako gledaš na vlogo digitalnih tehnologij v gostinstvu in turizmu danes? Kje je industrija, kje bi morala biti?</div>
+          <div class="question-hint">Širši pogled. AI, avtomatizacija, personalizacija, self-service...</div>
+        </div>
+
+        <div class="tema-tag">V hotelu Julian Alps</div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Kaj konkretno uporabljate vi? Katera tehnologija je hrbtenica vašega delovanja?</div>
+          <div class="question-hint">PMS, channel manager, OTA integracije — kaj stoji za 15 sobami?</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Kako komunicirate z gostom pred prihodom in po odhodu? Koliko je digitalnega, koliko osebnega?</div>
+          <div class="question-hint">Guest communication journey — email, SMS, WhatsApp, app?</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Ali tehnologija tvojim ljudem pomaga biti bolj prisotni z gosti — ali jim jemlje čas za to?</div>
+          <div class="question-hint">DNA vprašanje — tehnologija kot podpora ali ovira gostoljubju.</div>
+        </div>
+
+        <div class="tema-tag">Pogled naprej</div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Ali razmišljate o kakšni novi digitalni rešitvi — nekaj, kar bi si želeli uvesti, pa še niste?</div>
+          <div class="question-hint">Mobilni ključ, CRM, personalizacija, AI?</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Kako vidiš prihodnost — ali bo tehnologija v hotelirstvu omogočila več prostora za pristen človeški stik, ali ga bo izrinila?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- 7. IZZIVI IN VIZIJA -->
+  <div class="section" data-section="7">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">7</div>
+      <div class="section-info">
+        <div class="section-title">Izzivi in vizija</div>
+        <div class="section-meta">Kratkoročni izzivi, projekti, kje se vidi čez nekaj let</div>
+      </div>
+      <div class="section-time">8-10 min</div>
+      <div class="section-chevron">&rsaquo;</div>
+    </div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="tema-tag">Izzivi</div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Gorje niso Bled. Niste ob jezeru, nimate blejskega glamurja. Kako to, kar je na prvi pogled slabost, spremenite v prednost?</div>
+          <div class="question-hint">"Hidden gem" strategija. Zaledni mir kot prednost.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Sezonalnost na Bledu je brutalna — polno poleti, tiho pozimi. Kako razmišljaš o polnjenju hotela skozi celo leto?</div>
+          <div class="question-hint">Iščemo kreativne odgovore — ne samo "nižamo cene".</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Čarobna palčka — kaj bi spremenil jutri, če bi imel neomejene resurse?</div>
+          <div class="question-hint">Kaj ga omejuje. Kadri? Sezona? Kanali?</div>
+        </div>
+
+        <div class="tema-tag">Vizija</div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Hotel Julian Alps ima dve leti. Kje ga vidiš čez pet let?</div>
+          <div class="question-hint">Rast v kapacitetah ali v globini izkušnje?</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Kaj si želiš še doseči v hotelirstvu — osebno, ne poslovno?</div>
+          <div class="question-hint">Osebna ambicija. Kaj ga žene naprej.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- 8. ŠIRŠA SLIKA -->
+  <div class="section" data-section="8">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">8</div>
+      <div class="section-info">
+        <div class="section-title">Širša slika — gostoljubje onkraj hotela</div>
+        <div class="section-meta">Generacijski pogled, izobraževanje, retail, vloga države in uprave</div>
+      </div>
+      <div class="section-time">5-7 min</div>
+      <div class="section-chevron">&rsaquo;</div>
+    </div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Ti si mlajša generacija hotelirjev. Kako vidiš prihodnost gostoljubja — ne samo industrije, ampak odnosa med gostiteljem in gostom?</div>
+          <div class="question-hint">Kaj se spreminja, kaj ostaja.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Nastopaš v šolah, razlagaš dijakom, kako poteka vodenje hotela. Kaj mladim manjka — in kaj te pri njih preseneti?</div>
+          <div class="question-hint">Izobraževanje, prenos znanja.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Ali vidiš gostoljubje tudi izven hotelirstva? Imaš izkušnje v retailu — ali so načela gostoljubja univerzalna?</div>
+          <div class="question-hint">Most hospitality × retail. Uporabi samo če se naravno odpre.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Kako vidiš vlogo države in lokalne uprave v turizmu? Pomagata ali ovirata?</div>
+          <div class="question-hint">Regulacija, podpora, infrastruktura — pogled hotelirja na sistem.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- 9. ZAKLJUČEK -->
+  <div class="section" data-section="9">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">9</div>
+      <div class="section-info">
+        <div class="section-title">Zaključek</div>
+        <div class="section-meta">Izberi 1-2 vprašanja + refleksija + zahvala</div>
+      </div>
+      <div class="section-time">3-5 min</div>
+      <div class="section-chevron">&rsaquo;</div>
+    </div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Če bi moral v enem stavku povedati, kaj je za tebe gostoljubje — kaj bi rekel?</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Kakšen nasvet bi dal nekomu, ki danes vstopa v hotelirstvo — ne iz učbenika, ampak iz izkušnje?</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Koga v panogi resnično spoštuješ? Kdo te inspirira?</div>
+          <div class="question-hint">Potencialni naslednji gost.</div>
+        </div>
+        <div class="note-block">
+          <strong>Zaključek voditelja:</strong> Kratka refleksija (kaj te je najbolj zadelo) &rarr; zahvala &rarr; povabilo poslušalcem
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- OPCIJSKE TEME -->
+  <div class="section" data-section="opt">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot" style="border-color: #F6A900; color: #F6A900; font-size: 11px;">OPT</div>
+      <div class="section-info">
+        <div class="section-title">Opcijske teme <span class="optional-tag">za vplesti kadarkoli</span></div>
+        <div class="section-meta">Pre-opening faili, revenue vs. gostoljubje, OTA, outdoor, trajnost, humor</div>
+      </div>
+      <div class="section-time"></div>
+      <div class="section-chevron">&rsaquo;</div>
+    </div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Pre-opening zgodba — od prve ideje o prenovi stare kmetije do prvih gostov. "Povej mi o trenutku, ko ste pomislili — to ne bo šlo."</div>
+          <div class="question-hint">Če se odpre, pusti da teče. Tam so najboljše anekdote.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Revenue vs. gostoljubje — ali se kdaj zgodi, da moraš izbirati med številkami in odnosom? Kako to rešuješ?</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">OTA vs. direktni kanal — kako gradiš lojalnost v svetu, kjer gost najprej odpre Booking?</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Retail in hospitality — kaj si prenesel iz izkušenj v Lidlu v hotel in obratno?</div>
+          <div class="question-hint">Uporabi samo če se naravno odpre. Ne vsiljuj.</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Outdoor in narava — imaš kakšne osebne rituale? Najljubše poti? Kako to prenašaš v izkušnjo hotela?</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Humor — "Povej zgodbo iz prvih mesecev hotela, ki te vedno nasmeje."</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Trajnost — stara kmetija, TNP, lokalni dobavitelji. Ali je to zavestna strategija ali naravna posledica lokacije?</div>
+        </div>
+        <div class="question" onclick="toggleAsked(this)">
+          <div class="question-text">Človeški odnos in meje — v majhnem hotelu je blizu. Kdaj je preveč blizu? Kako postaviš meje?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ---- TIMER ----
+  let timerInterval = null;
+  let timerSeconds = 0;
+  let timerRunning = false;
+
+  function updateTimerDisplay() {
+    const m = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+    const s = (timerSeconds % 60).toString().padStart(2, '0');
+    const el = document.getElementById('timerDisplay');
+    el.textContent = m + ':' + s;
+    el.className = 'timer-display' + (timerRunning ? ' running' : (timerSeconds > 0 ? ' paused' : ''));
+  }
+
+  function toggleTimer() {
+    const btn = document.getElementById('timerBtn');
+    if (timerRunning) {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      btn.textContent = 'RESUME';
+      btn.classList.remove('start');
+    } else {
+      timerRunning = true;
+      timerInterval = setInterval(() => { timerSeconds++; updateTimerDisplay(); }, 1000);
+      btn.textContent = 'PAUSE';
+      btn.classList.add('start');
+    }
+    updateTimerDisplay();
+  }
+
+  function resetTimer() {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    timerSeconds = 0;
+    updateTimerDisplay();
+    document.getElementById('timerBtn').textContent = 'START';
+    document.getElementById('timerBtn').classList.add('start');
+  }
+
+  // ---- CLOCK ----
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clockDisplay').textContent =
+      now.getHours().toString().padStart(2, '0') + ':' +
+      now.getMinutes().toString().padStart(2, '0');
+  }
+  setInterval(updateClock, 10000);
+  updateClock();
+
+  // ---- SECTIONS ----
+  function toggleSection(header) {
+    const section = header.parentElement;
+    section.classList.toggle('open');
+  }
+
+  // ---- QUESTIONS ----
+  function toggleAsked(el) {
+    el.classList.toggle('asked');
+  }
+</script>
+
+</body>
+</html>
