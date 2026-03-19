@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interviewing Skills — Hostfulness Podcast</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/primeicons/primeicons.css">
+    <style>
+        :root {
+            /* Nevron Colors */
+            --m1: #000126;
+            --m2: #002391;
+            --m3: #1B92FF;
+            --m4: #73C7FF;
+            --m5: #C3E9FF;
+            --m6: #E1F4FF;
+            --s1: #080C13;
+            --s2: #353941;
+            --s3: #707379;
+            --s4: #B4B6B9;
+            --s5: #E0E1E2;
+            --s6: #EFF0F0;
+            --green: #36A058;
+            --red: #DA2025;
+            --orange: #E56600;
+            --yellow: #F6A900;
+            --white: #FFFFFF;
+
+            /* Semantic */
+            --bg: var(--m1);
+            --bg-card: rgba(27, 146, 255, 0.06);
+            --bg-card-border: rgba(27, 146, 255, 0.12);
+            --bg-highlight: rgba(27, 146, 255, 0.1);
+            --text: rgba(255, 255, 255, 0.88);
+            --text-dim: rgba(255, 255, 255, 0.5);
+            --text-bright: var(--white);
+            --accent: var(--m3);
+            --accent-light: var(--m4);
+            --border: rgba(27, 146, 255, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+            line-height: 1.6;
+            padding-bottom: 5rem;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ---- HEADER ---- */
+        .header {
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 1.25rem 1.25rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header__top {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .header__icon {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 0.5rem;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .header__icon i {
+            color: var(--white);
+            font-size: 1.1rem;
+        }
+        .header h1 {
+            font-size: 1.375rem;
+            color: var(--text-bright);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        .header p {
+            font-size: 0.875rem;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
+            padding-left: 3rem;
+        }
+
+        /* ---- NAV ---- */
+        .nav {
+            display: flex;
+            gap: 0.375rem;
+            overflow-x: auto;
+            padding: 0.75rem 1.25rem;
+            background: var(--bg);
+            position: sticky;
+            top: 4.5rem;
+            z-index: 99;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            border-bottom: 1px solid var(--border);
+        }
+        .nav::-webkit-scrollbar { display: none; }
+        .nav a {
+            flex-shrink: 0;
+            padding: 0.375rem 0.875rem;
+            border-radius: 9999px;
+            background: transparent;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+        .nav a:hover, .nav a.active {
+            background: var(--accent);
+            color: var(--white);
+            border-color: var(--accent);
+        }
+
+        /* ---- CONTENT ---- */
+        .content {
+            padding: 0 1.25rem;
+            max-width: 48rem;
+            margin: 0 auto;
+        }
+
+        /* ---- SECTIONS ---- */
+        .section {
+            margin-top: 2rem;
+            scroll-margin-top: 10rem;
+        }
+        .section__header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+        .section__number {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.5rem;
+            background: var(--accent);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+        .section__title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            letter-spacing: -0.01em;
+        }
+        .section__subtitle {
+            font-size: 0.875rem;
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+            padding-left: 2.75rem;
+        }
+
+        /* ---- CARDS ---- */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--bg-card-border);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        .card__label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--accent);
+            margin-bottom: 0.625rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card__label i {
+            font-size: 0.875rem;
+        }
+        .card h3 {
+            font-size: 1.0625rem;
+            color: var(--text-bright);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        .card p, .card li {
+            font-size: 0.9375rem;
+            color: var(--text);
+            line-height: 1.6;
+        }
+        .card ul {
+            padding-left: 1.125rem;
+            margin-top: 0.375rem;
+        }
+        .card li {
+            margin-bottom: 0.375rem;
+            padding-left: 0.25rem;
+        }
+        .card li::marker { color: var(--accent); }
+        .card li strong { color: var(--text-bright); }
+
+        /* ---- HIGHLIGHT ---- */
+        .highlight {
+            background: var(--bg-highlight);
+            border-left: 3px solid var(--accent);
+            border-radius: 0 0.5rem 0.5rem 0;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        .highlight p {
+            font-size: 0.9375rem;
+            color: var(--text);
+            line-height: 1.6;
+        }
+        .highlight strong { color: var(--accent-light); }
+
+        /* ---- PHRASE TABLE ---- */
+        .phrase-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 0.5rem;
+        }
+        .phrase-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9375rem;
+            vertical-align: top;
+        }
+        .phrase-table tr:last-child td { border-bottom: none; }
+        .phrase-table__text {
+            color: var(--text-bright);
+            font-weight: 600;
+            font-style: italic;
+        }
+        .phrase-table__when {
+            color: var(--text-dim);
+            font-size: 0.875rem;
+        }
+
+        /* ---- ENERGY FLOW ---- */
+        .energy-flow { margin-top: 0.5rem; }
+        .energy-step {
+            display: flex;
+            align-items: stretch;
+            gap: 0.875rem;
+        }
+        .energy-line {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 1.5rem;
+            flex-shrink: 0;
+        }
+        .energy-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .energy-connector {
+            width: 2px;
+            flex: 1;
+            min-height: 1.25rem;
+        }
+        .energy-content { padding: 0.25rem 0 1rem; }
+        .energy-label {
+            font-size: 0.8125rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .energy-desc {
+            font-size: 0.875rem;
+            color: var(--text-dim);
+            margin-top: 0.125rem;
+        }
+        .e-calm { background: var(--m4); }
+        .e-warm { background: var(--green); }
+        .e-peak { background: var(--orange); }
+        .e-accent { background: var(--accent); }
+
+        /* ---- CHECKLIST ---- */
+        .checklist { list-style: none; padding: 0; }
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9375rem;
+            transition: opacity 0.2s;
+        }
+        .checklist li:last-child { border-bottom: none; }
+        .check-box {
+            width: 1.5rem;
+            height: 1.5rem;
+            border: 2px solid rgba(27, 146, 255, 0.4);
+            border-radius: 0.375rem;
+            flex-shrink: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            margin-top: 0.125rem;
+        }
+        .check-box:hover { border-color: var(--accent); }
+        .check-box.checked {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .check-box.checked::after {
+            content: '\2713';
+            color: var(--white);
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+        .checklist li.done span { opacity: 0.4; text-decoration: line-through; }
+
+        /* ---- BADGE ---- */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .badge--key { background: rgba(27, 146, 255, 0.2); color: var(--accent-light); }
+        .badge--tip { background: rgba(54, 160, 88, 0.15); color: var(--green); }
+        .badge--warn { background: rgba(218, 32, 37, 0.15); color: #f87171; }
+
+        /* ---- COLLAPSIBLE ---- */
+        .collapsible__toggle {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--bg-card-border);
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-bright);
+            font-size: 0.9375rem;
+            font-weight: 600;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+        .collapsible__toggle:hover { background: rgba(27, 146, 255, 0.1); }
+        .collapsible__toggle i {
+            color: var(--accent);
+            font-size: 0.75rem;
+            transition: transform 0.25s ease;
+        }
+        .collapsible__toggle.open i { transform: rotate(180deg); }
+        .collapsible__content {
+            display: none;
+            padding: 0 0 0.5rem;
+        }
+        .collapsible__content.open { display: block; }
+
+        /* ---- QUICK REF BAR ---- */
+        .quick-ref {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 1, 38, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border);
+            padding: 0.625rem 1.25rem;
+            display: flex;
+            justify-content: space-around;
+            z-index: 100;
+        }
+        .quick-ref__item {
+            text-align: center;
+            font-size: 0.6875rem;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+        .quick-ref__number {
+            font-size: 1.375rem;
+            color: var(--accent);
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        /* ---- DIVIDER ---- */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 2rem 0;
+        }
+
+        /* ---- FOOTER ---- */
+        .footer {
+            text-align: center;
+            padding: 2rem 0 1rem;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            line-height: 1.6;
+        }
+
+        /* ---- RESPONSIVE ---- */
+        @media (min-width: 768px) {
+            .content { padding: 0 2rem; }
+            .header { padding: 1.5rem 2rem 1.25rem; }
+            .nav { padding: 0.75rem 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <div class="header__top">
+        <div class="header__icon">
+            <i class="pi pi-microphone"></i>
+        </div>
+        <h1>Interviewing Skills</h1>
+    </div>
+    <p>Hostfulness Podcast &mdash; Kako vodiš pogovor</p>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+    <a href="#safe-space">Safe Space</a>
+    <a href="#follow">Follow</a>
+    <a href="#tisina">Tišina</a>
+    <a href="#vprasanja">Vprašanja</a>
+    <a href="#followup">Follow-up</a>
+    <a href="#perspektiva">Perspektiva</a>
+    <a href="#energija">Energija</a>
+    <a href="#ratio">Ratio</a>
+    <a href="#checklist">Checklist</a>
+</nav>
+
+<div class="content">
+
+    <!-- ====== 1. SAFE SPACE ====== -->
+    <div class="section" id="safe-space">
+        <div class="section__header">
+            <div class="section__number">1</div>
+            <div class="section__title">Safe Space</div>
+        </div>
+        <div class="section__subtitle">Ustvari varnost pred globino</div>
+
+        <div class="highlight">
+            <p><strong>Princip:</strong> Sogovornik se ne bo odprl, če se ne počuti varno. Ti si gostitelj &mdash; podcast živi gostoljubje, ki ga raziskuje.</p>
+        </div>
+
+        <div class="card">
+            <div class="card__label"><i class="pi pi-clock"></i> Pred snemanjem</div>
+            <ul>
+                <li>Kratko sporočilo: "Veselim se, brez stresa, ni pravih ali napačnih odgovorov"</li>
+                <li>Pošlji brief &mdash; okvirne teme, <strong>NE</strong> konkretna vprašanja</li>
+                <li>Pojasni format: sproščen pogovor, ne intervju</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card__label"><i class="pi pi-play"></i> Prvih 5 minut</div>
+            <ul>
+                <li>Topla, <strong>konkretna</strong> pohvala (ne generična)</li>
+                <li>Lahkoten icebreaker &mdash; humor zniža tenzijo</li>
+                <li>Sproščen ton, tikanje, počasen tempo</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card__label"><i class="pi pi-sync"></i> Skozi celoten pogovor</div>
+            <ul>
+                <li>Reagiraj neverbalno: kimanje, nasmehi, očesni kontakt</li>
+                <li>Ko pove nekaj ranljivega &rarr; "Hvala, da si to delil."</li>
+                <li>Nikoli ne popravljaj ali ocenjuj odgovorov</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ====== 2. FOLLOW THE ANSWER ====== -->
+    <div class="section" id="follow">
+        <div class="section__header">
+            <div class="section__number">2</div>
+            <div class="section__title">Follow the Answer</div>
+        </div>
+        <div class="section__subtitle">Sledi odgovoru, ne seznamu</div>
+
+        <div class="highlight">
+            <p><strong>Razlika #1</strong> med povprečnim in odličnim intervjujem. Večina hostov med odgovorom že oblikuje naslednje vprašanje. Rezultat: sogovornik čuti, da ga ne poslušaš.</p>
+        </div>
+
+        <div class="card">
+            <div class="card__label"><i class="pi pi-list"></i> Postopek</div>
+            <ul>
+                <li><strong>Poslušaj do konca</strong> &mdash; ne formuliraj, dokler ne konča</li>
+                <li><strong>Preštej do 3</strong> po koncu odgovora</li>
+                <li><strong>Naslednje vprašanje iz odgovora</strong> &mdash; ne iz seznama</li>
+                <li>Strukturo uporabi kot <strong>kompas</strong>, ne kot script</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card__label"><span class="badge badge--tip">TIP</span> Listek pred sabo</div>
+            <p>Ne vprašanj &mdash; samo 3 kategorije:</p>
+            <ul>
+                <li><strong>Teme, ki jih moram pokriti</strong> (tehnologija, ponudba)</li>
+                <li><strong>Follow-up fraze</strong> (glej sekcijo 5)</li>
+                <li><strong>1-2 specifični vprašanji</strong> za tega sogovornika</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ====== 3. TIŠINA ====== -->
+    <div class="section" id="tisina">
+        <div class="section__header">
+            <div class="section__number">3</div>
+            <div class="section__title">Tišina</div>
+        </div>
+        <div class="section__subtitle">Najmoćnejše orodje ki ga imaš</div>
+
+        <div class="highlight">
+            <p>Po odgovoru sogovornik pogosto čuti, da "ni povedal vsega". <strong>2-3 sekunde tišine</strong> &mdash; in pogosto nadaljuje z najboljšim materialom.</p>
+        </div>
+
+        <div class="card">
+            <div class="card__label"><i class="pi pi-volume-off"></i> Kako</div>
+            <ul>
+                <li>Po vsakem odgovoru: <strong>2-3 sekunde</strong>. Ne reagiraj takoj</li>
+                <li>Neudobna tišina = znak, da deluje. Počakaj</li>
+                <li>Sogovornik bo nadaljeval ALI pogledal vate (takrat vprašaj naprej)</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card__label"><span class="badge badge--warn">Izjema</span></div>
+            <ul>
+                <li>Po humornih odgovorih &rarr; reagiraj hitro (smeh)</li>
+                <li>Ko sogovornik jasno zaključi in pričakuje odziv</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ====== 4. TIPI VPRAŠANJ ====== -->
+    <div class="section" id="vprasanja">
+        <div class="section__header">
+            <div class="section__number">4</div>
+            <div class="section__title">Tipi vprašanj</div>
+        </div>
+        <div class="section__subtitle">Orodjarna za globino</div>
+
+        <button class="collapsible__toggle" onclick="toggleCollapse(this)">
+            <span><i class="pi pi-book" style="color: var(--accent); margin-right: 0.5rem;"></i>Story-eliciting &mdash; zgodbe &gt; dejstva</span>
+            <i class="pi pi-chevron-down"></i>
+        </button>
+        <div class="collapsible__content">
+            <div class="card">
+                <ul>
+                    <li>"Povej mi, kako je bilo, ko si prvič..."</li>
+                    <li>"Popelji me skozi ta trenutek &mdash; kaj se je dogajalo?"</li>
+                    <li>"Kako bi to opisal nekomu, ki tega nikoli ni izkusil?"</li>
+                </ul>
+            </div>
+        </div>
+
+        <button class="collapsible__toggle" onclick="toggleCollapse(this)">
+            <span><i class="pi pi-arrows-h" style="color: var(--accent); margin-right: 0.5rem;"></i>Contrast &mdash; razlike razkrijejo vrednote</span>
+            <i class="pi pi-chevron-down"></i>
+        </button>
+        <div class="collapsible__content">
+            <div class="card">
+                <ul>
+                    <li>"Kaj je bilo drugače, ko si prešel iz X v Y?"</li>
+                    <li>"Kako se to primerja s tem, kar si pričakoval?"</li>
+                    <li>"Kaj si pustil za sabo, kaj si vzel s sabo?"</li>
+                </ul>
+            </div>
+        </div>
+
+        <button class="collapsible__toggle" onclick="toggleCollapse(this)">
+            <span><i class="pi pi-question-circle" style="color: var(--accent); margin-right: 0.5rem;"></i>Hypothetical &mdash; razkrivajo razmišljanje</span>
+            <i class="pi pi-chevron-down"></i>
+        </button>
+        <div class="collapsible__content">
+            <div class="card">
+                <ul>
+                    <li>"Če bi danes začel znova &mdash; bi šel isto pot?"</li>
+                    <li>"Kaj bi spremenil, če bi imel čarobno palčko?"</li>
+                    <li>"Kako bi to izgledalo v idealnem svetu?"</li>
+                </ul>
+            </div>
+        </div>
+
+        <button class="collapsible__toggle" onclick="toggleCollapse(this)">
+            <span><i class="pi pi-heart" style="color: var(--accent); margin-right: 0.5rem;"></i>Personal reflection &mdash; čustvena globina</span>
+            <i class="pi pi-chevron-down"></i>
+        </button>
+        <div class="collapsible__content">
+            <div class="card">
+                <ul>
+                    <li>"Kaj si se o sebi naučil skozi to izkušnjo?"</li>
+                    <li>"Kaj te pri tem osebno napolni?"</li>
+                    <li>"Kaj te je pri tem presenetilo?"</li>
+                </ul>
+            </div>
+        </div>
+
+        <button class="collapsible__toggle" onclick="toggleCollapse(this)">
+            <span><i class="pi pi-eye" style="color: var(--accent); margin-right: 0.5rem;"></i>Terapevtski probe &mdash; nežno, a globoko</span>
+            <i class="pi pi-chevron-down"></i>
+        </button>
+        <div class="collapsible__content">
+            <div class="card">
+                <ul>
+                    <li>"Kaj ti je bilo pri tem najtežje?"</li>
+                    <li>"Kaj misliš, zakaj je tako?"</li>
+                    <li>"Kako si se takrat počutil?"</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== 5. FOLLOW-UP FRAZE ====== -->
+    <div class="section" id="followup">
+        <div class="section__header">
+            <div class="section__number">5</div>
+            <div class="section__title">Follow-up fraze</div>
+        </div>
+        <div class="section__subtitle">Ko zaslediš zlato &mdash; ne preskoči</div>
+
+        <div class="highlight">
+            <p><strong>Pravilo:</strong> Vsaj 3x na pogovor uporabi follow-up namesto naslednjega vprašanja.</p>
+        </div>
+
+        <div class="card">
+            <table class="phrase-table">
+                <tr>
+                    <td class="phrase-table__text">"Počakaj &mdash; to me zanima. Povej mi več."</td>
+                    <td class="phrase-table__when">Ko omenijo nekaj mimogrede, kar je v resnici globoko</td>
+                </tr>
+                <tr>
+                    <td class="phrase-table__text">"Kaj misliš, zakaj je tako?"</td>
+                    <td class="phrase-table__when">Ko podajo mnenje brez razlage</td>
+                </tr>
+                <tr>
+                    <td class="phrase-table__text">"Kako to izgleda v praksi?"</td>
+                    <td class="phrase-table__when">Ko govorijo abstraktno</td>
+                </tr>
+                <tr>
+                    <td class="phrase-table__text">"To me preseneti. Zakaj?"</td>
+                    <td class="phrase-table__when">Ko rečejo nekaj nepričakovanega</td>
+                </tr>
+                <tr>
+                    <td class="phrase-table__text">"Kaj pa tvoja izkušnja s tem?"</td>
+                    <td class="phrase-table__when">Ko govorijo o panogi generično</td>
+                </tr>
+                <tr>
+                    <td class="phrase-table__text">"Kakšen občutek ti da, ko to rečeš?"</td>
+                    <td class="phrase-table__when">Ko začutiš čustvo za besedami</td>
+                </tr>
+                <tr>
+                    <td class="phrase-table__text">"Reci mi en primer."</td>
+                    <td class="phrase-table__when">Ko ostanejo na ravni posploševanja</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- ====== 6. TVOJA PERSPEKTIVA ====== -->
+    <div class="section" id="perspektiva">
+        <div class="section__header">
+            <div class="section__number">6</div>
+            <div class="section__title">Tvoja perspektiva</div>
+        </div>
+        <div class="section__subtitle">Obogati, ne prevzemi</div>
+
+        <div class="card">
+            <div class="card__label"><span class="badge badge--key"><i class="pi pi-exclamation-circle"></i> Pravilo</span> MAX 2 stavka</div>
+            <p style="margin-top: 0.5rem;">Format: <em>"To me spomni na [tvoja izkušnja]... Kako je to pri tebi?"</em></p>
+            <p style="margin-top: 0.5rem;">Deli opažanja, ne predavanj. Nato takoj predaj nazaj.</p>
+        </div>
+
+        <div class="card">
+            <div class="card__label"><i class="pi pi-check-circle"></i> Kdaj DA</div>
+            <ul>
+                <li>Ko resonira s tvojo izkušnjo</li>
+                <li>Ko želiš pokazati, da razumeš</li>
+                <li>Ko želiš pogovor dvigniti na novo raven</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card__label"><span class="badge badge--warn"><i class="pi pi-times-circle"></i> Kdaj NE</span></div>
+            <ul>
+                <li>Ko sogovornik govori o svoji zgodbi</li>
+                <li>Ko bi prekinil čustveni tok</li>
+                <li>Ko bi tvoja perspektiva zasenčila sogovornikovo</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ====== 7. ENERGY MANAGEMENT ====== -->
+    <div class="section" id="energija">
+        <div class="section__header">
+            <div class="section__number">7</div>
+            <div class="section__title">Energy Management</div>
+        </div>
+        <div class="section__subtitle">Lok pogovora</div>
+
+        <div class="card">
+            <div class="energy-flow">
+                <div class="energy-step">
+                    <div class="energy-line">
+                        <div class="energy-dot e-calm"></div>
+                        <div class="energy-connector e-calm"></div>
+                    </div>
+                    <div class="energy-content">
+                        <div class="energy-label" style="color: var(--m4);">Odpiranje</div>
+                        <div class="energy-desc">Toplo, lahkotno, humor &rarr; vzpostavi zaupanje</div>
+                    </div>
+                </div>
+                <div class="energy-step">
+                    <div class="energy-line">
+                        <div class="energy-dot e-warm"></div>
+                        <div class="energy-connector e-warm"></div>
+                    </div>
+                    <div class="energy-content">
+                        <div class="energy-label" style="color: var(--green);">Osebna zgodba</div>
+                        <div class="energy-desc">Čustvena povezava, spoznavanje človeka</div>
+                    </div>
+                </div>
+                <div class="energy-step">
+                    <div class="energy-line">
+                        <div class="energy-dot e-peak"></div>
+                        <div class="energy-connector e-peak"></div>
+                    </div>
+                    <div class="energy-content">
+                        <div class="energy-label" style="color: var(--orange);">Globina</div>
+                        <div class="energy-desc">"Zakaj" vprašanja &rarr; srce epizode</div>
+                    </div>
+                </div>
+                <div class="energy-step">
+                    <div class="energy-line">
+                        <div class="energy-dot e-warm"></div>
+                        <div class="energy-connector e-warm"></div>
+                    </div>
+                    <div class="energy-content">
+                        <div class="energy-label" style="color: var(--green);">Konkretno</div>
+                        <div class="energy-desc">Izzivi, tehnologija, realnost</div>
+                    </div>
+                </div>
+                <div class="energy-step">
+                    <div class="energy-line">
+                        <div class="energy-dot e-accent"></div>
+                        <div class="energy-connector" style="background: transparent;"></div>
+                    </div>
+                    <div class="energy-content">
+                        <div class="energy-label" style="color: var(--accent);">Zaključek</div>
+                        <div class="energy-desc">Vizija, inspiracija &rarr; "mic drop" moment</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card__label"><i class="pi pi-sliders-h"></i> Orodja za korekcijo</div>
+            <ul>
+                <li><strong>Preveč reportažno</strong> &rarr; "Kaj te pri tem OSEBNO napolni?"</li>
+                <li><strong>Preveč abstraktno</strong> &rarr; "Reci mi en konkreten primer"</li>
+                <li><strong>Zmanjka toka</strong> &rarr; Guest journey: "Kako je, ko gost pride skozi vrata?"</li>
+                <li><strong>Tangenta</strong> &rarr; "Zanimivo. Kako to povezuješ s...?"</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ====== 8. RATIO ====== -->
+    <div class="section" id="ratio">
+        <div class="section__header">
+            <div class="section__number">8</div>
+            <div class="section__title">Ratio & Tempo</div>
+        </div>
+
+        <div class="highlight" style="text-align: center; padding: 1.25rem;">
+            <p style="font-size: 1.5rem; font-weight: 700; color: var(--text-bright);">
+                20% <span style="color: var(--text-dim); font-weight: 400; font-size: 1rem;">ti</span>
+                &nbsp;&nbsp;<span style="color: var(--accent);">/</span>&nbsp;&nbsp;
+                80% <span style="color: var(--text-dim); font-weight: 400; font-size: 1rem;">sogovornik</span>
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="card__label"><i class="pi pi-user"></i> Tvoja vloga</div>
+            <ul>
+                <li>Postavljaš vprašanja</li>
+                <li>Daješ kratke refleksije (1-2 stavka)</li>
+                <li>Usmerijaš tok</li>
+                <li><strong>NE</strong> predavaš, <strong>NE</strong> razlagaš, <strong>NE</strong> popravljaš</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card__label"><i class="pi pi-gauge"></i> Tempo</div>
+            <ul>
+                <li>Počasnejši tempo = globlje misli</li>
+                <li>Daj sogovorniku čas za razmislek</li>
+                <li>Bolje manj vprašanj z globino kot več površinsko</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ====== 9. CHECKLIST ====== -->
+    <div class="section" id="checklist">
+        <div class="section__header">
+            <div class="section__number">9</div>
+            <div class="section__title">Pred-snemanje checklist</div>
+        </div>
+
+        <div class="card">
+            <ul class="checklist">
+                <li>
+                    <div class="check-box" onclick="toggleCheck(this)"></div>
+                    <span>Preberi <strong>dna-podcasta.md</strong></span>
+                </li>
+                <li>
+                    <div class="check-box" onclick="toggleCheck(this)"></div>
+                    <span>Preberi <strong>brief sogovornika</strong></span>
+                </li>
+                <li>
+                    <div class="check-box" onclick="toggleCheck(this)"></div>
+                    <span>Pripravi <strong>1 icebreaker</strong> (humor, konkretna pohvala)</span>
+                </li>
+                <li>
+                    <div class="check-box" onclick="toggleCheck(this)"></div>
+                    <span>Pripravi <strong>MAX 8-10 okvirnih vprašanj</strong></span>
+                </li>
+                <li>
+                    <div class="check-box" onclick="toggleCheck(this)"></div>
+                    <span>Zapiši <strong>3 follow-up fraze</strong> na listek</span>
+                </li>
+                <li>
+                    <div class="check-box" onclick="toggleCheck(this)"></div>
+                    <span>Pripravi <strong>1 specifično pohvalo</strong> (rating, dosežek)</span>
+                </li>
+                <li>
+                    <div class="check-box" onclick="toggleCheck(this)"></div>
+                    <span>Struktura pogovora odprta kot <strong>kompas</strong></span>
+                </li>
+                <li>
+                    <div class="check-box" onclick="toggleCheck(this)"></div>
+                    <span>Preveri <strong>tehniko</strong>: mikrofon, zvok, snemanje</span>
+                </li>
+                <li>
+                    <div class="check-box" onclick="toggleCheck(this)"></div>
+                    <span><strong>5 min pred snemanjem:</strong> umiri se, globok vdih, radovednost</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ====== 10. POST-SNEMANJE ====== -->
+    <div class="section" id="refleksija">
+        <div class="section__header">
+            <div class="section__number">10</div>
+            <div class="section__title">Post-snemanje refleksija</div>
+        </div>
+
+        <div class="card">
+            <div class="card__label"><i class="pi pi-pencil"></i> Po vsakem pogovoru zapiši</div>
+            <ul>
+                <li><strong>Kaj je šlo dobro?</strong> &mdash; kateri trenutek je bil najboljši?</li>
+                <li><strong>Kje sem zamudil priložnost?</strong> &mdash; kje bi moral follow-upat?</li>
+                <li><strong>Koliko sem govoril?</strong> &mdash; oceni ratio (cilj: 20/80)</li>
+                <li><strong>Koliko sem sledil odgovorom vs. seznamu?</strong> &mdash; oceni 1-10</li>
+                <li><strong>Kaj bom naslednjič naredil drugače?</strong></li>
+            </ul>
+        </div>
+
+        <div class="highlight">
+            <p>Ta refleksija je <strong>bistvena za rast</strong>. Brez nje se ne boš izboljšal.</p>
+        </div>
+    </div>
+
+    <div class="footer">
+        Hostfulness Podcast &mdash; Interviewing Skills<br>
+        Vir: Lauren Selfridge, Podcast Marketing Academy, Castmagic<br>
+        Ustvarjeno: marec 2026
+    </div>
+
+</div>
+
+<!-- QUICK REFERENCE BAR -->
+<div class="quick-ref">
+    <div class="quick-ref__item">
+        <div class="quick-ref__number">20/80</div>
+        ratio
+    </div>
+    <div class="quick-ref__item">
+        <div class="quick-ref__number">3s</div>
+        tišina
+    </div>
+    <div class="quick-ref__item">
+        <div class="quick-ref__number">3x</div>
+        follow-up
+    </div>
+    <div class="quick-ref__item">
+        <div class="quick-ref__number">2</div>
+        stavka max
+    </div>
+</div>
+
+<script>
+    function toggleCheck(el) {
+        el.classList.toggle('checked');
+        el.parentElement.classList.toggle('done');
+    }
+
+    function toggleCollapse(el) {
+        el.classList.toggle('open');
+        el.nextElementSibling.classList.toggle('open');
+    }
+
+    // Fix sticky nav position based on actual header height
+    function fixStickyPositions() {
+        const header = document.querySelector('.header');
+        const nav = document.querySelector('.nav');
+        const headerH = header.offsetHeight;
+        const navH = nav.offsetHeight;
+        nav.style.top = headerH + 'px';
+        // Update scroll-margin-top on all sections
+        document.querySelectorAll('.section').forEach(s => {
+            s.style.scrollMarginTop = (headerH + navH + 16) + 'px';
+        });
+    }
+    fixStickyPositions();
+    window.addEventListener('resize', fixStickyPositions);
+
+    // Active nav on scroll
+    const sections = document.querySelectorAll('.section');
+    const navLinks = document.querySelectorAll('.nav a');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => {
+            if (pageYOffset >= s.offsetTop - 160) current = s.id;
+        });
+        navLinks.forEach(l => {
+            l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+        });
+    });
+</script>
+
+</body>
+</html>
