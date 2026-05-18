@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Izvori gostoljubja — citatna knjižnica | Nevron</title>
+<meta name="description" content="Lingvistika, mitologija, religije, filozofija in antropologija gostoljubja. Primarni viri za podcast, članke, predavanja in manifeste Nevrona.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black: #000000;
+  --bg-0: #000000;
+  --bg-1: #080C13;
+  --bg-2: #0D1320;
+  --bg-3: #000126;
+  --ink-1: #FFFFFF;
+  --ink-2: #E0E1E2;
+  --ink-3: #B4B6B9;
+  --ink-4: #707379;
+  --ink-5: #353941;
+  --rule: rgba(255,255,255,0.08);
+  --rule-strong: rgba(255,255,255,0.16);
+  --gold: #D4A056;
+  --gold-soft: #E5C589;
+  --gold-deep: #B07F36;
+  --teal: #3FB8A0;
+  --blue: #1B92FF;
+  --glass-bg: rgba(255,255,255,0.03);
+  --glass-border: rgba(255,255,255,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  background:
+    radial-gradient(1200px 800px at 20% 0%, rgba(212,160,86,0.06), transparent 60%),
+    radial-gradient(1000px 700px at 100% 100%, rgba(27,146,255,0.05), transparent 60%),
+    linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 50%, var(--bg-3) 100%);
+  background-attachment: fixed;
+  color: var(--ink-2);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.65;
+  min-height: 100vh;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 64px;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 80px 48px 120px;
+}
+
+/* Sidebar / TOC */
+.toc {
+  position: sticky;
+  top: 48px;
+  align-self: start;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+  padding-right: 12px;
+}
+.toc::-webkit-scrollbar { width: 6px; }
+.toc::-webkit-scrollbar-thumb { background: var(--rule-strong); border-radius: 3px; }
+.toc-brand {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+.toc-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--ink-1);
+  margin-bottom: 28px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--rule);
+}
+.toc nav { display: flex; flex-direction: column; gap: 2px; }
+.toc a {
+  display: block;
+  font-size: 13px;
+  color: var(--ink-4);
+  text-decoration: none;
+  padding: 7px 0;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  border-left: 1px solid transparent;
+  padding-left: 12px;
+  margin-left: -12px;
+  transition: color 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+.toc a:hover { color: var(--gold-soft); }
+.toc a.active {
+  color: var(--gold);
+  border-left-color: var(--gold);
+  background: linear-gradient(90deg, rgba(212,160,86,0.05), transparent);
+}
+
+/* Main column */
+main { max-width: 760px; }
+
+.kicker {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(40px, 6vw, 64px);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--ink-1);
+  margin-bottom: 28px;
+}
+h1 em {
+  font-style: italic;
+  color: var(--gold-soft);
+}
+
+.lede {
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--ink-3);
+  max-width: 660px;
+  border-left: 2px solid var(--gold);
+  padding: 6px 0 6px 22px;
+  margin-bottom: 56px;
+  font-weight: 300;
+}
+.lede em { color: var(--gold-soft); }
+
+h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 1.15;
+  color: var(--ink-1);
+  letter-spacing: -0.01em;
+  margin: 72px 0 8px;
+  padding-top: 12px;
+}
+h2 + .h2-rule {
+  width: 56px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  margin-bottom: 32px;
+}
+
+h3 {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--gold-soft);
+  margin: 36px 0 14px;
+}
+
+p {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--ink-2);
+  margin-bottom: 18px;
+  font-weight: 400;
+}
+
+p strong, li strong {
+  color: var(--ink-1);
+  font-weight: 600;
+}
+
+em { color: var(--ink-2); }
+
+ul {
+  margin: 0 0 20px 0;
+  padding-left: 0;
+  list-style: none;
+}
+li {
+  position: relative;
+  padding-left: 22px;
+  margin-bottom: 10px;
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 13px;
+  width: 8px;
+  height: 1px;
+  background: var(--gold);
+}
+
+blockquote {
+  margin: 28px 0;
+  padding: 22px 28px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-left: 3px solid var(--gold);
+  border-radius: 4px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 21px;
+  font-style: italic;
+  line-height: 1.45;
+  color: var(--ink-1);
+  font-weight: 400;
+}
+blockquote em { font-style: italic; color: var(--gold-soft); }
+blockquote p { font: inherit; color: inherit; margin-bottom: 8px; }
+blockquote p:last-child { margin-bottom: 0; color: var(--ink-3); font-size: 18px; }
+
+.greek {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 24px;
+  color: var(--gold-soft);
+  font-style: italic;
+}
+
+.latin, .sanskrit {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  color: var(--gold-soft);
+}
+
+.footer-card {
+  margin-top: 88px;
+  padding: 36px 36px;
+  background: linear-gradient(135deg, rgba(212,160,86,0.07), rgba(212,160,86,0.02));
+  border: 1px solid rgba(212,160,86,0.20);
+  border-radius: 6px;
+}
+.footer-card .kicker { color: var(--gold); margin-bottom: 14px; }
+.footer-card p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--ink-1);
+  font-style: italic;
+}
+.footer-card p strong {
+  font-weight: 500;
+  color: var(--gold-soft);
+  font-style: normal;
+  font-family: 'Inter', sans-serif;
+  font-size: 19px;
+}
+.footer-card .closing {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-size: 15px;
+  color: var(--ink-3);
+  line-height: 1.7;
+  margin-top: 18px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 28px;
+  margin-top: 64px;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+}
+.meta span { display: flex; align-items: center; gap: 8px; }
+.meta span::before {
+  content: '';
+  width: 4px; height: 4px;
+  background: var(--gold);
+  border-radius: 50%;
+}
+
+/* Section reveal */
+section { scroll-margin-top: 32px; }
+
+/* Mobile */
+@media (max-width: 960px) {
+  .shell {
+    grid-template-columns: 1fr;
+    padding: 48px 24px 80px;
+    gap: 24px;
+  }
+  .toc {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 16px;
+  }
+  .toc nav {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 16px;
+  }
+  main { max-width: 100%; }
+  h1 { font-size: 38px; }
+  h2 { font-size: 28px; margin-top: 56px; }
+  blockquote { font-size: 19px; padding: 18px 20px; }
+  p, li { font-size: 16px; }
+}
+
+@media (max-width: 480px) {
+  .shell { padding: 36px 18px 64px; }
+  .toc nav { grid-template-columns: 1fr; }
+  h1 { font-size: 32px; }
+  .lede { font-size: 16px; padding-left: 16px; }
+}
+
+/* Print */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  .shell {
+    display: block;
+    padding: 0;
+    max-width: 100%;
+  }
+  .toc { display: none; }
+  main { max-width: 100%; }
+  h1, h2, h3, p, li, blockquote { color: black !important; }
+  .kicker, h3 { color: #8B6914 !important; }
+  blockquote {
+    background: #faf6ed;
+    border-left-color: #B07F36;
+    color: #1a1a1a;
+  }
+  blockquote em { color: #8B6914; }
+  .footer-card { background: #faf6ed; border-color: #B07F36; }
+  .footer-card p { color: black !important; }
+  li::before { background: #B07F36; }
+  .lede { border-left-color: #B07F36; color: #333; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <aside class="toc" aria-label="Kazalo">
+    <div class="toc-brand">Nevron · Knowledge</div>
+    <div class="toc-title">Izvori gostoljubja</div>
+    <nav>
+      <a href="#lingvistika">Lingvistika in etimologija</a>
+      <a href="#grcija">Antična Grčija</a>
+      <a href="#rim">Rimska antika</a>
+      <a href="#stara-zaveza">Stara zaveza</a>
+      <a href="#jezus">Jezus o gostoljubju</a>
+      <a href="#krscanstvo">Zgodnje krščanstvo</a>
+      <a href="#islam">Islam</a>
+      <a href="#hinduizem">Hinduizem</a>
+      <a href="#filozofija">Filozofija</a>
+      <a href="#antropologija">Antropologija</a>
+      <a href="#slovenija">Slovenska tradicija</a>
+      <a href="#sinteza">Sinteza za marketing</a>
+    </nav>
+  </aside>
+
+  <main>
+
+    <div class="kicker">Citatna knjižnica</div>
+    <h1>Izvori <em>gostoljubja</em></h1>
+
+    <p class="lede">
+      Marketinška in vsebinska surovina. Trditev <em>"Hospitality is one of the oldest human relationships"</em> je dobro podprta v lingvistiki, mitologiji, vseh velikih religijah, filozofiji in antropologiji. Tukaj zbrani primarni viri za podcast, članke, predavanja in manifeste.
+    </p>
+
+    <section id="lingvistika">
+      <h2>Lingvistika in etimologija</h2>
+      <div class="h2-rule"></div>
+
+      <p><strong>Indo-evropski koren *ghos-ti</strong>. Pomeni "tujec". Iz iste korenine izhajajo:</p>
+      <ul>
+        <li>Angleško: <strong>host</strong>, <strong>guest</strong>, <strong>hostile</strong> (ista beseda za prijatelja in sovražnika)</li>
+        <li>Latinsko: <strong>hospes</strong> (gostitelj/gost), <strong>hostis</strong> (sovražnik, prvotno tujec)</li>
+        <li>Slovansko: <strong>gost</strong>, <strong>gostitelj</strong>, <strong>gostilna</strong>, <strong>gospodar</strong> (*ghos-ti + *pot-i = "master")</li>
+        <li>Germansko: <strong>Gast</strong></li>
+      </ul>
+
+      <p><strong>Émile Benveniste</strong>, <em>Indo-European Language and Society</em> (1969). Ključno delo, ki razčlenjuje to dvojnost. Tujec lahko postane gost ali sovražnik, in to je etična izbira.</p>
+
+      <p><strong>Hospitalitas → hospital, hostel, hotel, hospice.</strong> Vse iste latinske korenine. Bolnišnica, hostel, hotel, vsi izvirajo iz krščanskih <em>hospitia</em> / <em>xenodochia</em> (4. st. naprej), ki so sprejemali potnike, romarje, bolnike, revne. Beseda <strong>hotel</strong> dobesedno pomeni "hiša gostoljubja".</p>
+    </section>
+
+    <section id="grcija">
+      <h2>Mitologija — antična Grčija</h2>
+      <div class="h2-rule"></div>
+
+      <p><strong>Homer</strong>, <em>Odiseja</em> (8. st. pr. n. št.). <strong>Xenia</strong>, gostoljubje kot osrednji etični kod čez celo pripoved.</p>
+      <ul>
+        <li><strong>Zevs Xenios</strong>, vzdevek najvišjega boga, zaščitnik gostov in tujcev. Kdor krši xenia, ga kaznuje sam Zevs.</li>
+        <li><strong>Polifem</strong> (kiklop) je v Odiseji označen kot "barbar" <em>prav zato</em>, ker krši xenia, namesto da bi sprejel goste, jih požira.</li>
+        <li><strong>Phaeacians</strong> (kralj Alkinoos) so idealna podoba, sprejmejo neznanega Odiseja brez vprašanj, ga okopajo, pogostijo, šele nato sprašujejo, kdo je.</li>
+        <li><strong>Telemah pri Menelaju, Penelopa s snubci</strong>, ves prvi del Odiseje je preizkus pravilnega/napačnega gostoljubja.</li>
+      </ul>
+
+      <blockquote>
+        <p class="greek">Ξεῖνος ἱκέτης τε πρὸς Διός εἰσιν ἅπαντες</p>
+        <p><em>"Tujci in prosilci so vsi pod Zevsom."</em> (Odiseja 6.207-208, govori Nausicaa)</p>
+      </blockquote>
+    </section>
+
+    <section id="rim">
+      <h2>Rimska antika — institucija hospitium</h2>
+      <div class="h2-rule"></div>
+
+      <p>V Rimu se gostoljubje iz mitološke prakse spremeni v <strong>pravno institucijo</strong>. Latinsko <strong>hospitium</strong>, iz <strong>hospes</strong> (ista beseda za gostitelja in gosta), je v rimskem pravu in običaju formalna oblika vzajemne zaveze, ne osebna usluga.</p>
+
+      <h3>Hospitium privatum</h3>
+      <p>Pogodba med posameznikoma ali družinama, sklenjena z enim od treh aktov:</p>
+      <ul>
+        <li><strong>Stisk rok</strong> (<em>dextrarum iunctio</em>) plus ustna obljuba</li>
+        <li><strong>Tabula hospitalis</strong>, pisni dogovor na bronasti ali kamniti ploščici</li>
+        <li><strong>Tessera hospitalis</strong>, žeton, fizično razdeljen na dva dela. Vsaka stran obdrži polovico. Generacije kasneje potomec pokaže polovico, in če se obe ploščici ujemata, je gostoljubje podedovano, brez vprašanj.</li>
+      </ul>
+
+      <p>Pogodba je sklenjena pod zaščito <strong>Iuppiter Hospitalis</strong> (grški Zevs Xenios) in razveljaviti jo je mogoče samo s formalnim aktom razveze. Kršitev je <em>nefas</em>, verski prestop, ne pravni.</p>
+
+      <p>Pravica gosta: prenočišče, hrana, obramba (gostitelj kot pravni zastopnik gosta na tujem ozemlju).</p>
+
+      <h3>Hospitium publicum</h3>
+      <p>Mednarodna oblika. Mesto sklene formalno gostoljubno razmerje z drugim mestom (Livij navaja Rim in Caere kot primer; Caere je v času galskega vdora 390 pr. n. št. zatočišče za rimske vestalke in svete predmete). Tuji <em>hospes publicus</em> dobi pravico do prenočišča na javne stroške, vstop v svetišča in igre, pravico trgovanja brez patrona, pravico pravde brez rimskega zastopnika. Grški ekvivalent je <strong>proxenia</strong>, državljan enega mesta uradno predstavlja interese drugega mesta, predhodnik današnjega konzula.</p>
+
+      <h3>Razlika do komercialnih oblik</h3>
+      <p>Rimska antika je gostoljubje strogo ločila od komercialne nastanitve:</p>
+      <ul>
+        <li><em>Hospitium</em>, vzajemno, sveto, brezplačno, dolžnost</li>
+        <li><em>Caupona, taberna, deversorium</em>, komercialne gostilne, plačljive, pogosto na slabem glasu</li>
+        <li><em>Mansio, statio</em>, državna pošta in vojaška postojanka <em>cursus publicus</em>, birokratsko in vojaško, ne ritualno</li>
+      </ul>
+
+      <p>Sodobna "hospitality industry" je tako po obliki bližja <em>cauponi</em> kot <em>hospitiumu</em>. Hospitium kot okvir za sodobnega hotelirja pomeni vrnitev k vzajemnosti, ne transakciji.</p>
+
+      <h3>Pravna sled do hotela</h3>
+      <p>Iz <em>hospitium</em> izhaja srednjeveška <em>hospitia</em> (samostanska sprejemališča za romarje), iz teh <strong>hospital</strong>, <strong>hospice</strong>, <strong>hostel</strong>, <strong>hôtel</strong>. Beseda <strong>hotel</strong> dobesedno pomeni "hiša gostoljubja". Vsak sodoben hotelski podpis je tiha latinska sled.</p>
+
+      <h3>Viri</h3>
+      <p><em>Encyclopædia Britannica</em>, 11. izdaja (1911), geslo "Hospitium"; <strong>William Smith</strong>, <em>A Dictionary of Greek and Roman Antiquities</em> (1875), geslo "Hospitium"; <strong>Livij</strong>, <em>Ab Urbe Condita</em> (o Rim–Caere razmerju).</p>
+    </section>
+
+    <section id="stara-zaveza">
+      <h2>Stara zaveza</h2>
+      <div class="h2-rule"></div>
+
+      <p><strong>Geneza 18 — Abraham pri Mamre.</strong> Trije tujci pristopijo k Abrahamovemu šotoru. Ne čaka, da povedo, kdo so, teče jim naproti, jih pripelje pod hrast, opere noge, daruje teleta in moko. Šele kasneje se izkaže, da so glasniki Boga, ki napovedujejo Izakovo rojstvo.</p>
+
+      <p><strong>Geneza 19 — Lot v Sodomi.</strong> Lot ščiti svoje goste pred mestnim nasiljem. Sodom in Gomora sta uničeni <em>ravno zaradi kršitve gostoljubja</em>, to je v judovski tradiciji glavni greh, ne to, kar se sodobno bere v besedilo.</p>
+
+      <p><strong>2 Kralji 4 — Šunamka in Elizej.</strong> Premožna ženska iz Šunema sezida prerokom Elizeju ločeno sobo na strehi:</p>
+      <blockquote><p><em>"Naredimo mu majhno gornjo sobo z zidovi in mu tja postavimo posteljo, mizo, stol in svetilko."</em></p></blockquote>
+      <p>Ena prvih biblijskih opisov gostiteljskega prostora po meri.</p>
+
+      <p><strong>Job 31:32</strong>, <em>"Tujec ni nikoli prenočil zunaj na ulici; svoja vrata sem odprl popotniku."</em></p>
+
+      <p><strong>Hebrejci 13:2</strong> (Nova zaveza, ampak govori o stari), <em>"Ne pozabite gostoljubja; saj so po tem nekateri nevedoma sprejeli angele."</em></p>
+    </section>
+
+    <section id="jezus">
+      <h2>Jezus o gostoljubju</h2>
+      <div class="h2-rule"></div>
+
+      <p>Jezus o gostoljubju govori veliko, in pogosto je on tisti, ki je gost, ne vedno gostitelj.</p>
+
+      <h3>Mt 25:35-40 — zadnja sodba</h3>
+      <p>Najbolj direktna izjava o gostoljubju v evangelijih:</p>
+      <blockquote><p><em>"Bil sem lačen in dali ste mi jesti, bil sem žejen in dali ste mi piti, bil sem tujec in ste me sprejeli (...) Resnično povem vam: kar koli ste storili enemu izmed teh mojih najmanjših bratov, ste meni storili."</em></p></blockquote>
+      <p>Identifikacija med tujcem in Kristusom. Vsak gost = Kristus.</p>
+
+      <h3>Lk 14:12-14 — banket revnih</h3>
+      <p>Jezus pravi gostitelju: <em>"Ko prirejaš obed ali večerjo, ne vabi svojih prijateljev ne svojih bratov ne sorodnikov ne bogatih sosedov... Marveč ko prirejaš gostijo, povabi ubogo, pohabljeno, hromo, slepo."</em> Gostoljubje brez pričakovanja vračila.</p>
+
+      <h3>Lk 7:36-50 — Jezus pri farizeju Simonu</h3>
+      <p>Žena izlije nardo na Jezusove noge. Jezus kritizira Simona za pomanjkanje gostiteljskih obredov: <em>"Nisi mi dal vode za noge... nisi me poljubil... nisi mi mazilil glave."</em> Gostoljubje je merjeno v drobnih obredih sprejema.</p>
+
+      <h3>Lk 19:1-10 — Jezus pri Zaheju</h3>
+      <p>Davkar Zahej (zaničevani) odpre vrata Jezusu. <em>"Danes je v to hišo prišlo zveličanje."</em> Sprejem tujca = sprejem milosti.</p>
+
+      <h3>Lk 24 — Emavs</h3>
+      <p>Po vstajenju se Jezus prikaže dvema učencema na poti. Hodi z njima, ne prepoznajo ga. Šele ko ga povabita v hišo in on prelomi kruh, <em>"njune oči so se odprle."</em> Gostoljubje je epifanija.</p>
+
+      <h3>Jn 13 — pranje nog</h3>
+      <p>Jezus opere noge svojim učencem. Gostitelj kot strežnik. Inverzija statusa. Najvišji = najbolj ponižno gosti.</p>
+
+      <h3>Mt 10:40-42 — pošiljanje učencev</h3>
+      <p><em>"Kdor sprejme vas, sprejme mene; kdor pa sprejme mene, sprejme tistega, ki me je poslal... Kdor da piti enemu izmed teh malih le kozarec mrzle vode, ker je učenec, resnično povem vam: ne bo izgubil svojega plačila."</em></p>
+
+      <h3>Lk 15:11-32 — izgubljeni sin</h3>
+      <p>Oče sprejme nazaj sina, ki je zapravil dediščino, z gostijo. Bog kot gostitelj, ki ne sprašuje. Naroči debelo telo, prstan, oblačilo. <em>"Ta moj sin je bil mrtev in je oživel, izgubljen je bil in je najden."</em></p>
+
+      <h3>Lk 10:38-42 — Marta in Marija</h3>
+      <p>Marta je obremenjena s strežbo, Marija sedi pri Jezusovih nogah. Jezus brani Marijo: <em>"Marija si je izvolila boljši del."</em> Gostoljubje ni samo oskrba, je tudi pozornost, prisotnost.</p>
+    </section>
+
+    <section id="krscanstvo">
+      <h2>Zgodnje krščanstvo</h2>
+      <div class="h2-rule"></div>
+
+      <p><strong>Sv. Bazilij Veliki</strong> (4. st., Cezareja). Ustanovi <strong>Basileias</strong>, prvo znano krščansko bolnišnico/zavetišče, "mesto v mestu" za bolne, sirote, popotnike. Iz tega izhaja zahodnoevropska tradicija špitalov in končno modernih bolnišnic.</p>
+
+      <p><strong>Sv. Janez Krizostom</strong> (4. st.) o gostoljubju revežu pri vratih: <em>"Če odvrneš revnega od vrat, si zaprl vrata Kristusu."</em></p>
+
+      <p><strong>Sv. Benedikt iz Nursije</strong>, <em>Regula Sancti Benedicti</em> (~530), poglavje 53:</p>
+
+      <blockquote>
+        <p class="latin">Omnes supervenientes hospites tamquam Christus suscipiantur, quia ipse dicturus est: 'Hospes fui et suscepistis me.'</p>
+        <p><em>"Vsak gost, ki pride, naj bo sprejet kot Kristus, ker bo on rekel: 'Tujec sem bil in sprejeli ste me.'"</em></p>
+      </blockquote>
+
+      <p>To je kanonična formulacija krščanskega gostoljubja in operativno temeljna direktiva benediktinskih samostanov, ki so 1500 let gostili popotnike po Evropi.</p>
+
+      <p><strong>Hospitia / xenodochia</strong>, krščanska sprejemališča za potnike, romarje, bolnike, revne (4. st. naprej). Iz njih izhaja vsa zahodna gostiteljska infrastruktura.</p>
+    </section>
+
+    <section id="islam">
+      <h2>Islam</h2>
+      <div class="h2-rule"></div>
+
+      <p><strong>Hadith</strong> (Buhari, Muslim):</p>
+      <blockquote><p><em>"Kdorkoli veruje v Allaha in Sodni dan, naj časti svojega gosta. Pravica gostov je tri dni; kar je čez to, je sadaqa (miloščina)."</em></p></blockquote>
+
+      <p><strong>Diyāfa</strong>, verska dolžnost gostiteljstva. Tradicionalno: tri dni gostiti tujca brez vprašanj, kdo je in zakaj je prišel.</p>
+
+      <p><strong>Beduinski kod</strong>, če se kdo zateče v šotor, je avtomatsko zaščiten, tudi če je sovražnik. Krvno maščevanje se ustavi pred gostoljubjem.</p>
+    </section>
+
+    <section id="hinduizem">
+      <h2>Hinduizem</h2>
+      <div class="h2-rule"></div>
+
+      <p><strong>Taittirīya Upanišada</strong> (1. tisočletje pr. n. št.):</p>
+
+      <blockquote>
+        <p class="sanskrit">Atithi devo bhava.</p>
+        <p><em>"Gost je bog."</em></p>
+      </blockquote>
+
+      <p><strong>Atithi</strong> dobesedno = "tisti brez datuma", kdor pride neavajen. Ne tisti, ki ga čakaš, ampak tisti, ki te preseneti. Sveto.</p>
+    </section>
+
+    <section id="filozofija">
+      <h2>Filozofija</h2>
+      <div class="h2-rule"></div>
+
+      <p><strong>Emmanuel Levinas</strong>, <em>Totaliteta in neskončnost</em> (1961). Etika je prva filozofija. Soočenje z <strong>obrazom Drugega</strong> (le visage d'Autrui) je etična pradelovenje, ki gre prej kot ontologija. <em>"Sprejem Drugega je conditio sine qua non subjektivnosti."</em></p>
+
+      <p><strong>Jacques Derrida</strong>, <em>De l'hospitalité</em> (1997, z Anne Dufourmantelle). Razlikuje:</p>
+      <ul>
+        <li><strong>Absolutno gostoljubje</strong>, sprejem brez pogojev, brez imena, brez papirjev. Gostoljubje, ki ne sprašuje, kdo si.</li>
+        <li><strong>Pogojno gostoljubje</strong>, z imeni, papirji, vizami, pravili. Pravno gostoljubje.</li>
+      </ul>
+
+      <p>Trdi, da je gostoljubje sama struktura etike in da je vedno v napetosti med tema dvema poloma. <em>"Ni etike brez gostoljubja."</em></p>
+    </section>
+
+    <section id="antropologija">
+      <h2>Antropologija</h2>
+      <div class="h2-rule"></div>
+
+      <p><strong>Marcel Mauss</strong>, <em>Esej o daru</em> (1925). Darilna ekonomija, gostoljubje kot dar (sprejem, hrana, zaščita) z impliciranim povratkom, je predhodnik tržne ekonomije. Družba se je gradila na gostoljubju, preden se je gradila na transakciji.</p>
+
+      <p><strong>Julian Pitt-Rivers</strong>, <em>The Stranger, the Guest and the Hostile Host</em> (1968). Antropološka študija ritualov gostoljubja v mediteranskih kulturah. Razčlenjuje, kaj se zgodi, ko se "tujec" formalno spremeni v "gosta".</p>
+    </section>
+
+    <section id="slovenija">
+      <h2>Slovenska in slovanska tradicija</h2>
+      <div class="h2-rule"></div>
+
+      <p><strong>Reklo:</strong> <em>"Gost v hišo, Bog v hišo."</em> Slovenski pregovor, ki prevaja krščanski princip iz Geneze 18 v ljudsko zavest.</p>
+
+      <p><strong>Etimologija:</strong> slovenska beseda <strong>gospodar</strong> izhaja iz *ghos-ti + *pot-i ("master"), torej dobesedno "tisti, ki gostuje". Že v jeziku je pomen, da je biti gospodar = biti gostitelj.</p>
+    </section>
+
+    <section id="sinteza">
+      <h2>Sinteza za marketing</h2>
+      <div class="h2-rule"></div>
+
+      <div class="footer-card">
+        <div class="kicker">Trditev</div>
+        <p>"Hospitality is one of the oldest formalized human relationships — <strong>encoded in language itself, central to every major religion, foundation of modern ethical philosophy.</strong>"</p>
+        <p class="closing">Tega ne more replicirati noben hospitality tech vendor. To je civilizacijski okvir, ne marketinški.</p>
+      </div>
+    </section>
+
+    <div class="meta">
+      <span>Nevron Knowledge Base</span>
+      <span>Citatna knjižnica</span>
+      <span>v 1.0</span>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// Active TOC highlighting on scroll
+const links = document.querySelectorAll('.toc a');
+const sections = Array.from(links).map(l => document.querySelector(l.getAttribute('href')));
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+    }
+  });
+}, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+
+sections.forEach(s => s && io.observe(s));
+</script>
+
+</body>
+</html>
