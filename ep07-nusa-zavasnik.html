@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EP07 — Nuša Zavašnik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold-dark: #825A3A;
+    --gold-mid: #B08960;
+    --gold-light: #DEBA92;
+    --gold-muted: #D8B98C;
+    --bg-navy: #06101F;
+    --bg-black: #000000;
+    --text-primary: #FFFFFF;
+    --text-secondary: #C6A67F;
+    --font-family: "Montserrat", sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font-family); font-optical-sizing: auto; background: linear-gradient(180deg, var(--bg-navy), var(--bg-black)) no-repeat; background-color: var(--bg-black); min-height: 100vh; color: var(--text-primary); line-height: 1.6; padding-bottom: 200px; }
+
+  .timer-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(10,15,30,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(130,90,58,0.3); display: flex; align-items: center; justify-content: space-between; padding: 12px 32px; }
+  .timer-left { display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--gold-muted); }
+  .timer-left span { color: var(--gold-light); font-weight: 500; }
+  .timer-center { display: flex; align-items: center; gap: 16px; }
+  .timer-display { font-size: 36px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 2px; color: #fff; }
+  .timer-display.running { color: var(--gold-light); }
+  .timer-display.paused { color: #fbbf24; }
+  .timer-btn { background: none; border: 1px solid var(--gold-muted); color: var(--gold-muted); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: inherit; transition: all 0.2s; }
+  .timer-btn:hover { border-color: var(--gold-light); color: var(--gold-light); }
+  .timer-btn.start { border-color: var(--gold-mid); color: var(--gold-mid); }
+  .timer-btn.start:hover { background: rgba(176,137,96,0.1); }
+  .clock-display { font-size: 14px; color: var(--gold-muted); font-variant-numeric: tabular-nums; }
+
+  .header { padding: 100px 32px 40px; max-width: 720px; margin: 0 auto; text-align: center; }
+  .header .ep-label { font-size: 11px; text-transform: uppercase; letter-spacing: 4px; color: var(--gold-muted); margin-bottom: 12px; }
+  .header h1 {
+    font-size: 32px; font-weight: 700; margin-bottom: 8px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-mid), var(--gold-light));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; display: inline-block; line-height: 1.4;
+  }
+  .header .subtitle { font-size: 14px; color: var(--text-secondary); }
+
+  .red-thread { max-width: 720px; margin: 0 auto 32px; padding: 20px 28px; background: rgba(130,90,58,0.06); border: 1px solid rgba(176,137,96,0.2); border-radius: 10px; font-size: 14px; color: rgba(255,255,255,0.95); text-align: center; }
+  .red-thread strong { color: var(--gold-light); font-weight: 500; }
+
+  .constraint-box { max-width: 720px; margin: 0 auto 32px; padding: 16px 24px; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.25); border-radius: 10px; font-size: 13px; color: rgba(255,255,255,0.95); }
+  .constraint-box h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #fca5a5; margin-bottom: 10px; }
+  .constraint-box ul { margin: 0 0 0 18px; list-style: disc; }
+  .constraint-box li { margin-bottom: 5px; }
+  .constraint-box strong { color: #fca5a5; font-weight: 600; }
+
+  .ice-breaker-box { max-width: 720px; margin: 0 auto 48px; padding: 24px 28px; background: rgba(130,90,58,0.06); border: 1px solid rgba(176,137,96,0.2); border-radius: 10px; }
+  .ice-breaker-box h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-light); margin-bottom: 16px; }
+  .ice-breaker-box .ice-item { padding: 8px 14px; margin-bottom: 4px; font-size: 14px; color: #fff; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
+  .ice-breaker-box .ice-item:hover { background: rgba(176,137,96,0.08); }
+  .ice-breaker-box .ice-item.used { opacity: 0.3; text-decoration: line-through; text-decoration-color: var(--gold-muted); }
+
+  .timeline { max-width: 720px; margin: 0 auto; padding: 0 32px; position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 52px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, rgba(176,137,96,0.15), rgba(176,137,96,0.3), rgba(176,137,96,0.15)); }
+
+  .section { position: relative; margin-bottom: 40px; }
+  .section-header { display: flex; align-items: center; gap: 16px; padding: 16px 0; cursor: pointer; user-select: none; }
+  .section-dot { width: 42px; height: 42px; min-width: 42px; border-radius: 50%; background: rgba(6,16,31,0.92); border: 2px solid rgba(176,137,96,0.3); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--gold-muted); z-index: 2; transition: all 0.3s; }
+  .section-header:hover .section-dot, .section.active .section-dot { border-color: var(--gold-mid); color: var(--gold-light); background: rgba(176,137,96,0.1); }
+  .section-info { flex: 1; }
+  .section-title { font-size: 17px; font-weight: 600; color: var(--gold-muted); transition: color 0.2s; }
+  .section-header:hover .section-title { color: var(--gold-light); }
+
+  .section-countdown {
+    width: 38px; height: 38px; min-width: 38px; border-radius: 50%;
+    background: rgba(6,16,31,0.92); border: 2px solid rgba(176,137,96,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--gold-muted);
+    cursor: pointer; transition: all 0.3s; user-select: none; font-variant-numeric: tabular-nums;
+  }
+  .section-countdown:hover { border-color: var(--gold-mid); color: var(--gold-light); }
+  .section-countdown.counting { border-color: var(--gold-mid); color: var(--gold-light); background: rgba(176,137,96,0.12); animation: pulse 2s infinite; }
+  .section-countdown.overtime { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,0.08); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+  .section-chevron { color: var(--gold-muted); font-size: 18px; transition: transform 0.3s; min-width: 20px; text-align: center; }
+  .section.open .section-chevron { transform: rotate(90deg); color: var(--gold-light); }
+
+  .section-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .section.open .section-body { max-height: 4000px; }
+  .questions { margin-left: 62px; padding: 4px 0 24px; }
+  .question { padding: 14px 20px; margin-bottom: 6px; background: rgba(6,16,31,0.75); border-radius: 8px; border-left: 3px solid rgba(176,137,96,0.2); cursor: pointer; transition: all 0.2s; }
+  .question:hover { background: rgba(6,16,31,0.9); border-left-color: var(--gold-mid); }
+  .question.asked { opacity: 0.35; border-left-color: transparent; }
+  .question-text { font-size: 15px; font-weight: 500; color: #fff; }
+  .question.asked .question-text { text-decoration: line-through; text-decoration-color: var(--gold-muted); }
+  .question-text .q-hint { display: block; margin-top: 5px; font-size: 13px; font-style: italic; color: var(--gold-muted); text-decoration: none; }
+
+  .section-preview {
+    margin-left: 62px;
+    padding: 6px 20px 12px;
+    font-size: 15px;
+    color: #fff;
+    white-space: normal;
+  }
+  .section.open .section-preview { display: none; }
+
+  .section-divider { margin-left: 62px; border: none; border-top: 1px solid rgba(176,137,96,0.12); margin-bottom: 0; }
+
+  .note-block { margin-left: 62px; padding: 16px 20px; background: rgba(176,137,96,0.06); border: 1px solid rgba(176,137,96,0.15); border-radius: 8px; margin-bottom: 24px; font-size: 13px; color: rgba(255,255,255,0.95); }
+  .note-block strong { color: var(--gold-light); font-weight: 500; }
+
+  /* Fiksni panel za zapiske ob robu */
+  .notes-panel {
+    position: fixed; top: 61px; right: 0; bottom: 0; width: 320px; z-index: 90;
+    background: rgba(6,16,31,0.94); backdrop-filter: blur(10px);
+    border-left: 1px solid rgba(176,137,96,0.25);
+    display: flex; flex-direction: column; padding: 16px 16px 20px;
+  }
+  .notes-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .notes-head .notes-title { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-light); }
+  .notes-clear { background: none; border: 1px solid var(--gold-muted); color: var(--gold-muted); font-size: 10px; padding: 3px 9px; border-radius: 5px; cursor: pointer; font-family: inherit; letter-spacing: 1px; transition: all 0.2s; }
+  .notes-clear:hover { border-color: var(--gold-light); color: var(--gold-light); }
+  .notes-panel textarea {
+    flex: 1; width: 100%; resize: none;
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(176,137,96,0.2); border-radius: 8px;
+    color: #fff; font-family: inherit; font-size: 14px; line-height: 1.6; padding: 12px;
+  }
+  .notes-panel textarea:focus { outline: none; border-color: var(--gold-mid); }
+  .notes-saved { font-size: 10px; color: var(--gold-muted); text-align: right; margin-top: 6px; height: 12px; opacity: 0; transition: opacity 0.3s; }
+  .notes-saved.show { opacity: 1; }
+  .notes-actions { display: flex; gap: 8px; align-items: center; }
+  .notes-toggle { display: none; background: none; border: 1px solid var(--gold-muted); color: var(--gold-muted); font-size: 12px; padding: 3px 10px; border-radius: 5px; cursor: pointer; font-family: inherit; line-height: 1; }
+  .notes-toggle:hover { border-color: var(--gold-light); color: var(--gold-light); }
+
+  /* Na velikih zaslonih vsebino odmaknemo od panela */
+  @media (min-width: 1024px) {
+    body { padding-right: 320px; }
+  }
+
+  /* Na mobilcu je panel zložljiv (privzeto zaprt, da ostane prostor za branje) */
+  @media (max-width: 1023px) {
+    .notes-panel { top: auto; left: 0; right: 0; bottom: 0; width: auto; height: 46vh; border-left: none; border-top: 1px solid rgba(176,137,96,0.3); box-shadow: 0 -8px 24px rgba(0,0,0,0.45); transition: height 0.25s ease; }
+    .notes-panel.collapsed { height: 50px; }
+    .notes-panel.collapsed textarea, .notes-panel.collapsed .notes-saved { display: none; }
+    .notes-toggle { display: inline-block; }
+    body { padding-bottom: 64px; }
+  }
+
+  @media (max-width: 600px) {
+    .timer-bar { padding: 10px 16px; } .timer-display { font-size: 28px; }
+    .header { padding: 90px 20px 30px; } .timeline { padding: 0 20px; }
+    .timeline::before { left: 40px; } .questions { margin-left: 50px; }
+    .note-block { margin-left: 50px; } .section-divider { margin-left: 50px; }
+    .section-preview { margin-left: 50px; }
+    .ice-breaker-box, .red-thread, .constraint-box { margin-left: 20px; margin-right: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="timer-bar">
+  <div class="timer-left">EP07 <span>Nuša Zavašnik</span></div>
+  <div class="timer-center">
+    <button class="timer-btn start" onclick="toggleTimer()" id="timerBtn">START</button>
+    <div class="timer-display" id="timerDisplay">00:00</div>
+    <button class="timer-btn" onclick="resetTimer()">RESET</button>
+  </div>
+  <div class="clock-display" id="clockDisplay">--:--</div>
+</div>
+
+<div class="header">
+  <div class="ep-label">Hostfulness Podcast — Epizoda 07</div>
+  <h1>Nuša Zavašnik</h1>
+  <div class="subtitle">Strokovna delavka, Dnevni center za brezdomce &middot; Društvo prostovoljcev Vincencijeve zveze dobrote</div>
+</div>
+
+<div class="red-thread">
+  <strong>Gostoljubje v najčistejši obliki:</strong> ko ni cene, rezervacije in ocen, ostane odločitev, da človeka vidiš in sprejmeš. Začela je kot prostovoljka in ostala. Skozi njen svet iščemo bistvo gostoljubja: sprejetost, dostojanstvo, biti viden.
+</div>
+
+<div class="constraint-box">
+  <h3>Pravila pred snemanjem</h3>
+  <ul>
+    <li><strong>Prostorska kriza:</strong> odpiraj z empatijo, govori o človeški posledici, ne o pravnih podrobnostih, razen če Nuša temo sama odpre.</li>
+    <li><strong>Vera in duhovnost:</strong> pristno, brez ironije ali distance. Zanjo je integralni del oskrbe.</li>
+    <li><strong>Vonj (2016):</strong> omeni kot povabilo, ne kot dejstvo.</li>
+    
+    
+    
+  </ul>
+</div>
+
+<div class="ice-breaker-box">
+  <h3>Ice-breaker (pred uradnim začetkom)</h3>
+  <div class="ice-item" onclick="this.classList.toggle('used')">Rekla si, da bi na večerjo povabila papeža Frančiška. Zakaj prav njega?</div>
+</div>
+
+<div class="timeline">
+
+  <!-- 0. UVOD -->
+  <div class="section" data-section="0">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">0</div>
+      <div class="section-info"><div class="section-title">Uvod</div></div>
+      <div class="section-countdown" data-minutes="3" onclick="event.stopPropagation(); toggleCountdown(this)">3'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Pozdrav in dobrodošlica, nato napoved s hookom o "najbolj človeškem zavetišču".</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Pozdrav in dobrodošlica: toplo, osebno. Hvala, da si si vzela čas in prišla.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Napoved + hook: predstavi Nušo, strokovna delavka v Dnevnem centru za brezdomce pri VZD. Teza: tvoji gostje nimajo denarja, rezervacij, ocen na TripAdvisorju, pa vseeno pravijo, da je to "najbolj človeško zavetišče v Sloveniji". Kaj po tvojem mnenju ustvarja takšen občutek? Začela je kot prostovoljka in ostala, ker je ta svet ni spustil. Danes o gostoljubju v najčistejši obliki.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Daj ji besedo: kako bi se sama predstavila, kaj bi dodala.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ice-breaker: rekla si, da bi na večerjo povabila papeža Frančiška. Zakaj prav njega?</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 1. TVOJA POT -->
+  <div class="section" data-section="1">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">1</div>
+      <div class="section-info"><div class="section-title">Tvoja pot</div></div>
+      <div class="section-countdown" data-minutes="10" onclick="event.stopPropagation(); toggleCountdown(this)">10'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Začela si kot prostovoljka. Kdaj si vedela, da to ni več prostočasna dejavnost, ampak poklic in klic?</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Začela si kot prostovoljka. Kdaj si vedela, da to ni več prostočasna dejavnost, ampak poklic in klic?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Je bil prelom en konkreten trenutek ali dolgotrajen proces? Kdaj si morda hotela oditi in kaj te je zadržalo?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kako te je ta svet spremenil, kaj si na sebi odkrila skozi delo z najtežjimi zgodbami.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 2. KAJ JE DOM -->
+  <div class="section" data-section="2">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">2</div>
+      <div class="section-info"><div class="section-title">Kaj je dom?</div></div>
+      <div class="section-countdown" data-minutes="10" onclick="event.stopPropagation(); toggleCountdown(this)">10'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Brezdomstvo se začne, ko človek izgubi dom, kjer bi se počutil sprejetega. Torej dom ni streha. Kaj je potem dom?</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Praviš, da se brezdomstvo začne, ko človek izgubi dom, v katerem bi se počutil sprejetega in varnega. Torej dom ni streha, ne soba ne postelja. Kaj je potem dom?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kdaj človek izgubi dom v tem globljem pomenu, še preden izgubi streho.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kako se da nekomu "dom" vrniti, ko nima ničesar.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 3. KORENI OSAMLJENOSTI -->
+  <div class="section" data-section="3">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">3</div>
+      <div class="section-info"><div class="section-title">Koreni osamljenosti</div></div>
+      <div class="section-countdown" data-minutes="13" onclick="event.stopPropagation(); toggleCountdown(this)">13'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Kaj pripelje človeka na ulico, kje se začne ta pot. Kaj nas iztrga od drugih, kaj pretrga vez.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj pripelje človeka na ulico, kje se začne ta pot. Kaj nas iztrga od drugih, kaj pretrga vez.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kje se začne osamljenost, občutek nesprejetja: že kot otrok v družini, kasneje med vrstniki, sošolci, v družbi.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Tu se odpre tvoja terapevtska leča: kot specialistka zakonske in družinske terapije, kako gledaš na to, kje se rana začne.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Osamljenost, sprejetje, sočutje kot trije stebri pristnega odnosa. Kako sprejetje in sočutje odgovorita na osamljenost.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 4. DOSTOJANSTVO, MEJE IN NEGOTOVOST -->
+  <div class="section" data-section="4">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">4</div>
+      <div class="section-info"><div class="section-title">Dostojanstvo, meje in negotovost</div></div>
+      <div class="section-countdown" data-minutes="10" onclick="event.stopPropagation(); toggleCountdown(this)">10'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Kaj pomeni "dostojanstvo" za človeka, ki ga nima.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj pomeni "dostojanstvo" za človeka, ki ga nima.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Gostoljubje ni brezpogojnost brez pravil. Kje so pri vas meje, kaj je odgovornost na strani gosta.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kako postaviš mejo, ne da bi človeka ponižal ali izgubil.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Negotovost prostora: kaj pomeni za človeka, ki mu je dnevni center morda edina stalnica v kaotičnem življenju, ko se ta stalnica zamaje.<span class="q-hint">empatično, brez pravne kronologije</span></div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 5. GOSTOLJUBJE BREZ TRANSAKCIJE -->
+  <div class="section" data-section="5">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">5</div>
+      <div class="section-info"><div class="section-title">Gostoljubje brez transakcije</div></div>
+      <div class="section-countdown" data-minutes="10" onclick="event.stopPropagation(); toggleCountdown(this)">10'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Most iz hotelskega sveta: v hotelirstvu vrtimo "vrhunsko izkušnjo gosta". Kako pa ti definiraš dobro izkušnjo za nekoga, ki pride brez vsega?</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Most iz hotelskega sveta: v hotelirstvu vrtimo "vrhunsko izkušnjo gosta". Kako pa ti definiraš dobro izkušnjo za nekoga, ki pride brez denarja, brez rezervacije, brez ocene?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj je sploh "guest experience" v dnevnem centru.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Tvoji "gostje" pravijo, da je to najbolj človeško zavetišče. Kaj po tvojem ustvarja tak občutek.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 6. IZKUŠNJA GOSTA V DNEVNEM CENTRU -->
+  <div class="section" data-section="6">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">6</div>
+      <div class="section-info"><div class="section-title">Izkušnja gosta v dnevnem centru</div></div>
+      <div class="section-countdown" data-minutes="12" onclick="event.stopPropagation(); toggleCountdown(this)">12'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Kako pri vas izgleda jutro, dan, ritem.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kako pri vas izgleda jutro, dan, ritem.<span class="q-hint">pusti njej, naj opiše po svoje</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Rituali: kaj se ponavlja vsak dan, kaj postavi ton.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Soustvarjanje: brezdomci kuhajo, čistijo, pomagajo. Kako to spremeni odnos delavec-uporabnik.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Mikro-trenutki, ko nekdo postane viden: ko ga pokličeš po imenu, ko prvič sam opravi nekaj zase.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Tehnologija (lahek dotik): kaj se v vašem delu nikoli ne sme avtomatizirati. Milanov "najtežje je, da si neviden", videti človeka kot tisto, česar sistem ali algoritem ne zmore. Most k temu, kar gradimo v Nevronu.<span class="q-hint">po želji izpustiš, globlje obdelano v poglavju 10</span></div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 7. PROSTOVOLJSTVO IN SKRB ZASE -->
+  <div class="section" data-section="7">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">7</div>
+      <div class="section-info"><div class="section-title">Prostovoljstvo in skrb zase</div></div>
+      <div class="section-countdown" data-minutes="12" onclick="event.stopPropagation(); toggleCountdown(this)">12'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Kaj prostovoljec dobi nazaj. Prostovoljstvo preobrazi tudi prostovoljca, ne le tistega, ki mu pomaga.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj prostovoljec dobi nazaj. Praviš, da prostovoljstvo preobrazi tudi prostovoljca, ne le tistega, ki mu pomaga.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Zakaj ljudje ostanejo, kaj jih drži.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kako se ob tako intenzivnem delu ne izgoriš, kje so tvoje meje, kako se napolniš.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Skupnost Betlehem in duhovnost kot vir, ki te drži pokonci.<span class="q-hint">pristno, brez ironije</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kako ti terapevtsko znanje pomaga pri delu z ljudmi in pri odnosu s sabo.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 8. PREDSTAVITEV VZD -->
+  <div class="section" data-section="8">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">8</div>
+      <div class="section-info"><div class="section-title">Predstavitev VZD</div></div>
+      <div class="section-countdown" data-minutes="8" onclick="event.stopPropagation(); toggleCountdown(this)">8'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Predstavi društvo in programe po imenu: Dnevni center za brezdomce, Društvo prostovoljcev VZD.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Predstavi društvo in programe po imenu: Dnevni center za brezdomce, Društvo prostovoljcev Vincencijeve zveze dobrote (VZD). Programi: dnevni center, zavetišče, terensko delo.<span class="q-hint">gost dobi prostor</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kdo so vaši ljudje in koliko jih pride: dnevno okoli 50 do 70 ljudi, letno 760 do 900 različnih oseb. V Sloveniji je brez doma več kot 3.000 ljudi. Kako se struktura spreminja: vse več mladih in bolnih starejših.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj naredi vaš center poseben v primerjavi z drugimi.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Po čem bi želela, da vas ljudje prepoznajo.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 9. FINANCIRANJE IN POVABILO K POMOČI -->
+  <div class="section" data-section="9">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">9</div>
+      <div class="section-info"><div class="section-title">Financiranje in povabilo k pomoči</div></div>
+      <div class="section-countdown" data-minutes="8" onclick="event.stopPropagation(); toggleCountdown(this)">8'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Kako se financirate. Večino operativnih stroškov pokrijeta država in občina, donacije in prostovoljci ostalo.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kako se financirate. Večino operativnih stroškov pokrijeta država in občina, donacije gredo predvsem za investicije in posebne projekte, prostovoljci pa zagotovijo delo, ki ga sicer ne bi mogli plačati.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj brez prostovoljcev ne bi šlo. Kako nekdo postane prostovoljec, kaj ga čaka.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Konkretne oblike podpore: 1 % dohodnine, Vincencijev koledar, donacije.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Če bi danes nekoga prosila za eno stvar, kaj bi bila.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 10. ŠIRŠA SLIKA -->
+  <div class="section" data-section="10">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">10</div>
+      <div class="section-info"><div class="section-title">Širša slika</div></div>
+      <div class="section-countdown" data-minutes="13" onclick="event.stopPropagation(); toggleCountdown(this)">13'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">"Več kot je smisla, manjša je potreba po odvisnosti." Smisel kot zdravilo.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Tvoj citat: "Več kot je smisla, manjša je potreba po odvisnosti." Smisel kot zdravilo.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Veliko se govori, da bo ena največjih stisk prihodnosti ravno pomanjkanje smisla, tehnologija in AI pa pogosto navedeni kot vzrok. Kako ti, ki delaš z ljudmi, ki jim je smisel razpadel, gledaš na to.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kako vidiš vpliv tehnologije na človeške odnose v prihodnosti. Nas zbližuje ali nas dela bolj osamljene? In obratno: bi tehnologija lahko človeka naredila bolj vidnega, ne le odtujenega (dokumenti in identiteta, lasten obraz pred darovalcem, terenska ekipa, zdravstvo)?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Gostoljubje kot širši družbeni koncept, ne le panoga. Etika odnosa v času manipulacije, poniževanja, zaničevanja.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Tvoja vizija: kaj bi morala družba, država, mesto narediti, da brezdomstvo zares naslovijo.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 11. ZAKLJUČEK -->
+  <div class="section" data-section="11">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">11</div>
+      <div class="section-info"><div class="section-title">Zaključek</div></div>
+      <div class="section-countdown" data-minutes="5" onclick="event.stopPropagation(); toggleCountdown(this)">5'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Sva kakšno temo izpustila, ki bi jo želela odpreti.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Sva kakšno temo izpustila, ki bi jo želela odpreti.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Zadnja misel, sporočilo poslušalcu, kaj bi želela, da odnese iz tega pogovora.</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Fiksni panel za zapiske -->
+<div class="notes-panel collapsed">
+  <div class="notes-head">
+    <span class="notes-title">Zapiski</span>
+    <span class="notes-actions">
+      <button class="notes-clear" onclick="clearNotes()">počisti</button>
+      <button class="notes-toggle" onclick="toggleNotes()" id="notesToggle">▲</button>
+    </span>
+  </div>
+  <textarea id="notesArea" placeholder="Zapiski med pogovorom… (samodejno shranjeni v brskalniku)"></textarea>
+  <div class="notes-saved" id="notesSaved">shranjeno</div>
+</div>
+
+<script>
+  // Timer (štoparica)
+  let timerInterval = null, elapsed = 0, running = false;
+  function fmt(s){ const m = Math.floor(s/60), sec = s%60; return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'); }
+  function toggleTimer(){
+    const btn = document.getElementById('timerBtn'), disp = document.getElementById('timerDisplay');
+    if(running){
+      clearInterval(timerInterval); running = false;
+      btn.textContent = 'RESUME'; disp.classList.remove('running'); disp.classList.add('paused');
+    } else {
+      running = true; btn.textContent = 'PAUSE'; disp.classList.add('running'); disp.classList.remove('paused');
+      timerInterval = setInterval(() => { elapsed++; disp.textContent = fmt(elapsed); }, 1000);
+    }
+  }
+  function resetTimer(){
+    clearInterval(timerInterval); running = false; elapsed = 0;
+    const btn = document.getElementById('timerBtn'), disp = document.getElementById('timerDisplay');
+    btn.textContent = 'START'; disp.textContent = '00:00'; disp.classList.remove('running','paused');
+  }
+
+  // Ura
+  function updateClock(){
+    const d = new Date();
+    const h = String(d.getHours()).padStart(2,'0'), m = String(d.getMinutes()).padStart(2,'0');
+    document.getElementById('clockDisplay').textContent = h+':'+m;
+  }
+  updateClock(); setInterval(updateClock, 10000);
+
+  // Sekcije
+  function toggleSection(header){
+    const sec = header.closest('.section');
+    sec.classList.toggle('open'); sec.classList.toggle('active');
+  }
+  function toggleAsked(el){ el.classList.toggle('asked'); }
+
+  // Odštevanje na sekcijo
+  function toggleCountdown(el){
+    if(el._int){
+      clearInterval(el._int); el._int = null;
+      el.classList.remove('counting','overtime');
+      el.textContent = el.dataset.minutes + "'";
+      return;
+    }
+    el._remaining = parseInt(el.dataset.minutes,10) * 60;
+    el.classList.add('counting');
+    const render = () => {
+      const sign = el._remaining < 0 ? '-' : '';
+      const abs = Math.abs(el._remaining);
+      el.textContent = sign + Math.floor(abs/60) + ':' + String(abs%60).padStart(2,'0');
+    };
+    render();
+    el._int = setInterval(() => {
+      el._remaining--;
+      if(el._remaining < 0){ el.classList.remove('counting'); el.classList.add('overtime'); }
+      render();
+    }, 1000);
+  }
+
+  // Zapiski s samodejnim shranjevanjem
+  const notes = document.getElementById('notesArea');
+  const savedTag = document.getElementById('notesSaved');
+  let savedTimer = null;
+  try { const s = localStorage.getItem('ep07-notes'); if(s) notes.value = s; } catch(e){}
+  notes.addEventListener('input', () => {
+    try {
+      localStorage.setItem('ep07-notes', notes.value);
+      savedTag.classList.add('show');
+      clearTimeout(savedTimer);
+      savedTimer = setTimeout(() => savedTag.classList.remove('show'), 1200);
+    } catch(e){}
+  });
+  function clearNotes(){
+    if(confirm('Počistim vse zapiske?')){
+      notes.value = '';
+      try { localStorage.removeItem('ep07-notes'); } catch(e){}
+    }
+  }
+
+  // Zložljiv panel zapiskov na mobilcu
+  function toggleNotes(){
+    const p = document.querySelector('.notes-panel');
+    p.classList.toggle('collapsed');
+    document.getElementById('notesToggle').textContent = p.classList.contains('collapsed') ? '▲' : '▼';
+  }
+</script>
+
+</body>
+</html>
