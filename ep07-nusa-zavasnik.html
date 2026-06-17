@@ -113,10 +113,11 @@
 
   /* Fiksni panel za zapiske ob robu */
   .notes-panel {
-    position: fixed; top: 61px; right: 0; bottom: 0; width: 320px; z-index: 90;
+    position: fixed; top: 92px; right: 48px; bottom: 56px; width: 400px; z-index: 90;
     background: rgba(6,16,31,0.94); backdrop-filter: blur(10px);
-    border-left: 1px solid rgba(176,137,96,0.25);
-    display: flex; flex-direction: column; padding: 16px 16px 20px;
+    border: 1px solid rgba(176,137,96,0.28); border-radius: 14px;
+    box-shadow: 0 12px 44px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column; padding: 16px 18px 18px;
   }
   .notes-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .notes-head .notes-title { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-light); }
@@ -136,12 +137,12 @@
 
   /* Na velikih zaslonih vsebino odmaknemo od panela */
   @media (min-width: 1024px) {
-    body { padding-right: 320px; }
+    body { padding-right: 496px; }
   }
 
   /* Na mobilcu je panel zložljiv (privzeto zaprt, da ostane prostor za branje) */
   @media (max-width: 1023px) {
-    .notes-panel { top: auto; left: 0; right: 0; bottom: 0; width: auto; height: 46vh; border-left: none; border-top: 1px solid rgba(176,137,96,0.3); box-shadow: 0 -8px 24px rgba(0,0,0,0.45); transition: height 0.25s ease; }
+    .notes-panel { top: auto; left: 0; right: 0; bottom: 0; width: auto; height: 46vh; border: none; border-top: 1px solid rgba(176,137,96,0.3); border-radius: 0; box-shadow: 0 -8px 24px rgba(0,0,0,0.45); transition: height 0.25s ease; }
     .notes-panel.collapsed { height: 50px; }
     .notes-panel.collapsed textarea, .notes-panel.collapsed .notes-saved { display: none; }
     .notes-toggle { display: inline-block; }
@@ -211,7 +212,7 @@
     <div class="section-body">
       <div class="questions">
         <div class="question" onclick="toggleAsked(this)"><div class="question-text">Pozdrav in dobrodošlica: toplo, osebno. Hvala, da si si vzela čas in prišla.</div></div>
-        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Napoved + hook: predstavi Nušo, strokovna delavka v Dnevnem centru za brezdomce pri VZD. Teza: tvoji gostje nimajo denarja, rezervacij, ocen na TripAdvisorju, pa vseeno pravijo, da je to "najbolj človeško zavetišče v Sloveniji". Kaj po tvojem mnenju ustvarja takšen občutek? Začela je kot prostovoljka in ostala, ker je ta svet ni spustil. Danes o gostoljubju v najčistejši obliki.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Napoved + hook: Ti si strokovna delavka v Dnevnem centru za brezdomce pri dobrodelni organizaciji Vincencijeva zveza dobrote. Teza: tvoji gostje nimajo denarja, rezervacij, ocen na TripAdvisorju, pa vseeno pravijo, da je to "najbolj človeško zavetišče v Sloveniji". Kaj po tvojem mnenju ustvarja takšen občutek?</div></div>
         <div class="question" onclick="toggleAsked(this)"><div class="question-text">Daj ji besedo: kako bi se sama predstavila, kaj bi dodala.</div></div>
         <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ice-breaker: rekla si, da bi na večerjo povabila papeža Frančiška. Zakaj prav njega?</div></div>
       </div>
