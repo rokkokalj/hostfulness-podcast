@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EP09 · Tilen Albreht Centrih</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold-dark: #825A3A;
+    --gold-mid: #B08960;
+    --gold-light: #DEBA92;
+    --gold-muted: #D8B98C;
+    --bg-navy: #06101F;
+    --bg-black: #000000;
+    --text-primary: #FFFFFF;
+    --text-secondary: #C6A67F;
+    --font-family: "Montserrat", sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font-family); font-optical-sizing: auto; background: linear-gradient(180deg, var(--bg-navy), var(--bg-black)) no-repeat; background-color: var(--bg-black); min-height: 100vh; color: var(--text-primary); line-height: 1.6; padding-bottom: 200px; }
+
+  .timer-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(10,15,30,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(130,90,58,0.3); display: flex; align-items: center; justify-content: space-between; padding: 12px 32px; }
+  .timer-left { display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--gold-muted); }
+  .timer-left span { color: var(--gold-light); font-weight: 500; }
+  .timer-center { display: flex; align-items: center; gap: 16px; }
+  .timer-display { font-size: 36px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 2px; color: #fff; }
+  .timer-display.running { color: var(--gold-light); }
+  .timer-display.paused { color: #fbbf24; }
+  .timer-btn { background: none; border: 1px solid var(--gold-muted); color: var(--gold-muted); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: inherit; transition: all 0.2s; }
+  .timer-btn:hover { border-color: var(--gold-light); color: var(--gold-light); }
+  .timer-btn.start { border-color: var(--gold-mid); color: var(--gold-mid); }
+  .timer-btn.start:hover { background: rgba(176,137,96,0.1); }
+  .clock-display { font-size: 14px; color: var(--gold-muted); font-variant-numeric: tabular-nums; }
+
+  .header { padding: 100px 32px 40px; max-width: 720px; margin: 0 auto; text-align: center; }
+  .header .ep-label { font-size: 11px; text-transform: uppercase; letter-spacing: 4px; color: var(--gold-muted); margin-bottom: 12px; }
+  .header h1 {
+    font-size: 32px; font-weight: 700; margin-bottom: 8px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-mid), var(--gold-light));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; display: inline-block; line-height: 1.4;
+  }
+  .header .subtitle { font-size: 14px; color: var(--text-secondary); }
+
+  .red-thread { max-width: 720px; margin: 0 auto 32px; padding: 20px 28px; background: rgba(130,90,58,0.06); border: 1px solid rgba(176,137,96,0.2); border-radius: 10px; font-size: 14px; color: rgba(255,255,255,0.95); text-align: center; }
+  .red-thread strong { color: var(--gold-light); font-weight: 500; }
+
+  .constraint-box { max-width: 720px; margin: 0 auto 32px; padding: 16px 24px; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.25); border-radius: 10px; font-size: 13px; color: rgba(255,255,255,0.95); }
+  .constraint-box h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #fca5a5; margin-bottom: 10px; }
+  .constraint-box ul { margin: 0 0 0 18px; list-style: disc; }
+  .constraint-box li { margin-bottom: 5px; }
+  .constraint-box strong { color: #fca5a5; font-weight: 600; }
+
+  .ice-breaker-box { max-width: 720px; margin: 0 auto 48px; padding: 24px 28px; background: rgba(130,90,58,0.06); border: 1px solid rgba(176,137,96,0.2); border-radius: 10px; }
+  .ice-breaker-box h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-light); margin-bottom: 16px; }
+  .ice-breaker-box .ice-item { padding: 8px 14px; margin-bottom: 4px; font-size: 14px; color: #fff; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
+  .ice-breaker-box .ice-item:hover { background: rgba(176,137,96,0.08); }
+  .ice-breaker-box .ice-item.used { opacity: 0.3; text-decoration: line-through; text-decoration-color: var(--gold-muted); }
+
+  .timeline { max-width: 720px; margin: 0 auto; padding: 0 32px; position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 52px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, rgba(176,137,96,0.15), rgba(176,137,96,0.3), rgba(176,137,96,0.15)); }
+
+  .section { position: relative; margin-bottom: 40px; }
+  .section-header { display: flex; align-items: center; flex-wrap: nowrap; gap: 16px; padding: 16px 0; cursor: pointer; user-select: none; }
+  .section-header .section-dot, .section-header .section-countdown, .section-header .section-chevron { flex-shrink: 0; }
+  .section-header .section-info { min-width: 0; }
+  .section-dot { width: 42px; height: 42px; min-width: 42px; border-radius: 50%; background: rgba(6,16,31,0.92); border: 2px solid rgba(176,137,96,0.3); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--gold-muted); z-index: 2; transition: all 0.3s; }
+  .section-header:hover .section-dot, .section.active .section-dot { border-color: var(--gold-mid); color: var(--gold-light); background: rgba(176,137,96,0.1); }
+  .section-info { flex: 1; }
+  .section-title { font-size: 17px; font-weight: 600; color: var(--gold-muted); transition: color 0.2s; }
+  .section-header:hover .section-title { color: var(--gold-light); }
+  .section-flag { display: block; width: max-content; max-width: 100%; margin-top: 5px; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gold-light); background: rgba(176,137,96,0.12); border: 1px solid rgba(176,137,96,0.3); padding: 2px 8px; border-radius: 999px; line-height: 1.5; }
+
+  .section-countdown {
+    width: 42px; height: 42px; min-width: 42px; border-radius: 50%;
+    background: rgba(6,16,31,0.92); border: 2px solid rgba(176,137,96,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--gold-muted);
+    cursor: pointer; transition: all 0.3s; user-select: none; font-variant-numeric: tabular-nums;
+    overflow: hidden; white-space: nowrap;
+  }
+  .section-countdown.counting, .section-countdown.overtime { font-size: 10px; letter-spacing: -0.3px; }
+  .section-countdown:hover { border-color: var(--gold-mid); color: var(--gold-light); }
+  .section-countdown.counting { border-color: var(--gold-mid); color: var(--gold-light); background: rgba(176,137,96,0.12); animation: pulse 2s infinite; }
+  .section-countdown.overtime { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,0.08); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+  .section-chevron { color: var(--gold-muted); font-size: 18px; transition: transform 0.3s; min-width: 20px; text-align: center; }
+  .section.open .section-chevron { transform: rotate(90deg); color: var(--gold-light); }
+
+  .section-body { max-height: 0; overflow: hidden; visibility: hidden; transition: max-height 0.4s ease, visibility 0s 0.4s; }
+  .section.open .section-body { max-height: 4000px; visibility: visible; transition: max-height 0.4s ease, visibility 0s; }
+  .questions { margin-left: 62px; padding: 4px 0 24px; }
+  .question { padding: 14px 20px; margin-bottom: 6px; background: rgba(6,16,31,0.75); border-radius: 8px; border-left: 3px solid rgba(176,137,96,0.2); cursor: pointer; transition: all 0.2s; }
+  .question:hover { background: rgba(6,16,31,0.9); border-left-color: var(--gold-mid); }
+  .question.asked { opacity: 0.35; border-left-color: transparent; }
+  .question-text { font-size: 15px; font-weight: 500; color: #fff; }
+  .question.asked .question-text { text-decoration: line-through; text-decoration-color: var(--gold-muted); }
+  .question-text .q-hint { display: block; margin-top: 5px; font-size: 13px; font-style: italic; color: var(--gold-muted); text-decoration: none; }
+
+  .section-preview {
+    margin-left: 62px;
+    margin-bottom: 6px;
+    padding: 6px 20px 14px;
+    font-size: 15px;
+    line-height: 1.55;
+    color: #fff;
+    white-space: normal;
+  }
+  .section.open .section-preview { display: none; }
+
+  .section-divider { margin-left: 62px; border: none; border-top: 1px solid rgba(176,137,96,0.12); margin-bottom: 0; }
+
+  .note-block { margin-left: 62px; padding: 16px 20px; background: rgba(176,137,96,0.06); border: 1px solid rgba(176,137,96,0.15); border-radius: 8px; margin-bottom: 24px; font-size: 13px; color: rgba(255,255,255,0.95); }
+  .note-block strong { color: var(--gold-light); font-weight: 500; }
+
+  /* Fiksni panel za zapiske ob robu */
+  .notes-panel {
+    position: fixed; top: 92px; right: 48px; bottom: 56px; width: 400px; z-index: 90;
+    background: rgba(6,16,31,0.94); backdrop-filter: blur(10px);
+    border: 1px solid rgba(176,137,96,0.28); border-radius: 14px;
+    box-shadow: 0 12px 44px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column; padding: 16px 18px 18px;
+  }
+  .notes-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .notes-head .notes-title { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-light); }
+  .notes-clear { background: none; border: 1px solid var(--gold-muted); color: var(--gold-muted); font-size: 10px; padding: 3px 9px; border-radius: 5px; cursor: pointer; font-family: inherit; letter-spacing: 1px; transition: all 0.2s; }
+  .notes-clear:hover { border-color: var(--gold-light); color: var(--gold-light); }
+  .notes-panel textarea {
+    flex: 1; width: 100%; resize: none;
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(176,137,96,0.2); border-radius: 8px;
+    color: #fff; font-family: inherit; font-size: 14px; line-height: 1.6; padding: 12px;
+  }
+  .notes-panel textarea:focus { outline: none; border-color: var(--gold-mid); }
+  .notes-saved { font-size: 10px; color: var(--gold-muted); text-align: right; margin-top: 6px; height: 12px; opacity: 0; transition: opacity 0.3s; }
+  .notes-saved.show { opacity: 1; }
+  .notes-actions { display: flex; gap: 8px; align-items: center; }
+  .notes-toggle { display: none; background: none; border: 1px solid var(--gold-muted); color: var(--gold-muted); font-size: 12px; padding: 3px 10px; border-radius: 5px; cursor: pointer; font-family: inherit; line-height: 1; }
+  .notes-toggle:hover { border-color: var(--gold-light); color: var(--gold-light); }
+
+  /* Na velikih zaslonih vsebino odmaknemo od panela */
+  @media (min-width: 1024px) {
+    body { padding-right: 496px; }
+  }
+
+  /* Na mobilcu je panel zložljiv (privzeto zaprt) */
+  @media (max-width: 1023px) {
+    .notes-panel { top: auto; left: 0; right: 0; bottom: 0; width: auto; height: 46vh; border: none; border-top: 1px solid rgba(176,137,96,0.3); border-radius: 0; box-shadow: 0 -8px 24px rgba(0,0,0,0.45); transition: height 0.25s ease; }
+    .notes-panel.collapsed { height: 50px; }
+    .notes-panel.collapsed textarea, .notes-panel.collapsed .notes-saved { display: none; }
+    .notes-toggle { display: inline-block; }
+    body { padding-bottom: 64px; }
+  }
+
+  @media (max-width: 600px) {
+    .timer-bar { padding: 8px 12px; }
+    .timer-left { display: none; }
+    .timer-display { font-size: 24px; letter-spacing: 1px; }
+    .timer-btn { padding: 5px 10px; font-size: 11px; }
+    .clock-display { font-size: 12px; }
+    .header { padding: 80px 16px 26px; }
+    .header h1 { font-size: 24px; }
+    .timeline { padding: 0 12px; }
+    .timeline::before { left: 30px; }
+    .section-header { gap: 10px; padding: 14px 0; }
+    .section-dot { width: 36px; height: 36px; min-width: 36px; font-size: 13px; }
+    .section-countdown { width: 40px; height: 40px; min-width: 40px; }
+    .section-title { font-size: 15px; }
+    .questions { margin-left: 38px; padding-right: 4px; }
+    .question { padding: 12px 14px; }
+    .question-text { font-size: 14px; }
+    .question-text .q-hint { font-size: 12px; }
+    .note-block { margin-left: 38px; padding: 12px 14px; }
+    .section-divider { margin-left: 38px; }
+    .section-preview { margin-left: 38px; padding: 4px 14px 12px; font-size: 14px; }
+    .ice-breaker-box, .red-thread, .constraint-box { margin-left: 12px; margin-right: 12px; padding: 16px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="timer-bar">
+  <div class="timer-left">EP09 <span>Tilen Albreht Centrih</span></div>
+  <div class="timer-center">
+    <button class="timer-btn start" onclick="toggleTimer()" id="timerBtn">START</button>
+    <div class="timer-display" id="timerDisplay">00:00</div>
+    <button class="timer-btn" onclick="resetTimer()">RESET</button>
+  </div>
+  <div class="clock-display" id="clockDisplay">--:--</div>
+</div>
+
+<div class="header">
+  <div class="ep-label">Hostfulness Podcast &middot; Epizoda 09</div>
+  <h1>Tilen Albreht Centrih</h1>
+  <div class="subtitle">Managing director &middot; NEU Residences Ljubljana &middot; soavtor "Hospitality 2.0"</div>
+</div>
+
+<div class="red-thread">
+  <strong>Hotel brez recepcije, gostoljubje brez alibija.</strong> Kaj tehnologija v gostoljubju sme prevzeti in česa ne sme nikoli. NEU je živi laboratorij vprašanja, ki ga Tilen raziskuje tudi akademsko: ali digitalizacija človeški stik odstrani ali ga samo premakne?
+</div>
+
+<div class="ice-breaker-box">
+  <h3>Ice-breaker (pred uradnim začetkom)</h3>
+  <div class="ice-item" style="color:#FFFFFF" onclick="this.classList.toggle('used')">Uradni Instagram profil NEU Residences (@neu_residences) te je leta 2023 v predstavitvi ekipe opisal kot "the brain behind the brilliance", ti pa si sebe opisal s tremi besedami: "back office guy". Katera verzija je bližje resnici?</div>
+  <div class="ice-item" style="color:#FFFFFF" onclick="this.classList.toggle('used')">Katera je najbolj nenavadna prošnja gosta, ki ste jo dobili v hotelu brez recepcije?</div>
+</div>
+
+<div class="timeline">
+
+  <!-- 0. UVOD -->
+  <div class="section" data-section="0">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">0</div>
+      <div class="section-info"><div class="section-title">Uvod</div></div>
+      <div class="section-countdown" data-minutes="3" onclick="event.stopPropagation(); toggleCountdown(this)">3'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Pozdrav, čestitka za imenovanje za Managing directorja in hook: kje je meja, ki je tehnologija v gostoljubju ne sme prestopiti.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Pozdrav in dobrodošlica: toplo, osebno.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Napoved: hotel brez recepcije z Booking oceno 9,2 in bazenom z razgledom na grad; njegov vodja je eden redkih slovenskih hotelirjev, ki hkrati piše mednarodno recenzirane znanstvene članke o filozofiji gostoljubja.<span class="q-hint">čestitka za imenovanje za Managing directorja (marec 2026)</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Hook napoved: danes bova iskala mejo — kaj tehnologija v gostoljubju sme prevzeti in česa ne sme nikoli.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Daj mu besedo: kako bi se sam predstavil, kaj bi dodal.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 1. TVOJA POT -->
+  <div class="section" data-section="1">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">1</div>
+      <div class="section-info"><div class="section-title">Tvoja pot</div></div>
+      <div class="section-countdown" data-minutes="12" onclick="event.stopPropagation(); toggleCountdown(this)">12'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Iz Žirov v srce Ljubljane: zavestna odločitev za hotelirstvo, od prvega zaposlenega do Managing directorja pri ~28.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Iz Žirov v srce Ljubljane: <span style="color:#7EB6FF">hotelirstvo ni bilo samoumevno</span>. Kdaj in zakaj si se zavestno odločil zanj.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Bled (VGS) in Turistica: kaj ti je dala šola in česa te šola ni mogla naučiti.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Eden prvih zaposlenih ob zagonu NEU-ja (2022): kako izgleda hotel, ki še ne obstaja. Kaj si takrat delal čisto operativno.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Od Sales &amp; Revenue Managerja do Managing directorja v štirih letih. Kaj se je z imenovanjem zares spremenilo, kaj je zdaj drugače kot prej.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Akademik in praktik hkrati: podnevi revenue in prodaja, vzporedno trije znanstveni članki o filozofiji gostoljubja. Zakaj oboje? Kaj ti akademsko delo da, česar praksa ne more, in obratno.<span class="q-hint">hook: hotelirstvo kot intelektualna disciplina, ne le servisna dejavnost</span></div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 2. NEU RESIDENCES -->
+  <div class="section" data-section="2">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">2</div>
+      <div class="section-info"><div class="section-title">NEU Residences<span class="section-flag">prostor za predstavitev</span></div></div>
+      <div class="section-countdown" data-minutes="12" onclick="event.stopPropagation(); toggleCountdown(this)">12'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Smart stay, NE-hotel in NEU-how, NEUBAR kot mestno zbirališče (gostje in lokalci), gostova pot po digitalni poti.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Predstavi hišo, kot bi jo nekomu, ki je še ne pozna: smart stay, 55 apartmajev, "home away from home". Za koga je NEU pravi naslov in kdo pri vas prevladuje.<span class="q-hint">poslovni, bleisure, daljša bivanja</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">NE-hotel in NEU-how: v NEU pravite, da upravljanje nastanitvene nepremičnine ni samo operativa, ampak sistem — temu rečete NEU-how (podatkovna logika, operativna disciplina, jasno pozicioniranje). Kaj to pomeni za tri deležnike: lastnika (transparentnost, merljiv donos), upravljalca (strukturiran sistem dela) in gosta (izkušnja, ki presega prenočitev). <span style="color:#7EB6FF">"NEU ni hotel in ni klasičen najem" — kaj je torej?</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text"><span style="color:#7EB6FF">NEUBAR kot mestno zbirališče: ne samo hotelski bar</span> — za istimi mizami gostje in Ljubljančani. Zakaj ste bar zavestno odprli mestu, kaj se zgodi z vzdušjem hiše, ko lokalci postanejo njen del, in kaj imajo od tega gostje? Kaj se zgodi, ko se turist in Ljubljančan srečata ob isti kavi.<span class="q-hint">Rokov poudarek — to mu najbolj pade v oči</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Druge posebnosti, na katere si ponosen: rooftop bazen z razgledom na grad, coworking.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Gostova pot po digitalni poti: od rezervacije do odjave vse teče digitalno. Kje na tej poti se človeški dotik namerno "vrine"? Kateri koraki so zavestno ostali človeški?<span class="q-hint">research gap — tega še nihče ni odprl</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text" style="font-size:13px; color:rgba(255,255,255,0.75)">Trajnost, ki jo gost dejansko občuti: ločeni koši v apartmaju, brisače na zahtevo. Ali gostje to cenijo ali je certifikat bolj obljuba samemu sebi.<span class="q-hint">rezerva, če je čas — manj pomembno</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Trajnostni ROI: je Green Key prinesel merljive rezultate (višji ADR, drugačni gostje)?<span class="q-hint">research gap</span></div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 3. EKIPA -->
+  <div class="section" data-section="3">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">3</div>
+      <div class="section-info"><div class="section-title">Ekipa v NEU</div></div>
+      <div class="section-countdown" data-minutes="13" onclick="event.stopPropagation(); toggleCountdown(this)">13'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Kako izbiraš ljudi, pristnost in profesionalnost z roko v roki. In vodilna teza: pravi "wow moment" nastane, ko osebje preseže protokol.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text"><span style="color:#7EB6FF">Kdo so ljudje, ki soustvarjajo NEU izkušnjo.</span> Predstavi ekipo.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text"><span style="color:#7EB6FF">Kako izbiraš sodelavce:</span> katere značilnosti iščeš, kaj mora človek prinesti s sabo in česa ga lahko naučiš. Se gostoljubnost da naučiti ali je drža?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Pristnost in profesionalnost z roko v roki: kako gresta skupaj, kje se zalomi. <span style="color:#7EB6FF">Kdaj profesionalnost ubije pristnost in obratno.</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Vodilna teza: SOP-e za hišo si postavil sam — <span style="color:#7EB6FF">in hkrati veš, da pravi "wow moment" nastane takrat, ko osebje preseže protokol.</span> Kako to dvoje sobiva? Kdaj je preseganje protokola zaželeno in kdaj tveganje?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Trening za preseganje protokola: kako brez klasične recepcije učiš osebje "preseganja protokola"? Kakšen je onboarding, kakšni rituali, kako se prenaša kultura.<span class="q-hint">research gap — tega še nihče ni odprl</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text"><span style="color:#7EB6FF">Konkretna zgodba: wow moment ekipe, ki ga ne boš pozabil.</span></div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 4. GOSTOLJUBJE -->
+  <div class="section" data-section="4">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">4</div>
+      <div class="section-info"><div class="section-title">Gostoljubje<span class="section-flag">leča podcasta</span></div></div>
+      <div class="section-countdown" data-minutes="17" onclick="event.stopPropagation(); toggleCountdown(this)">17'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Gostoljubje skozi oči praktika in raziskovalca. Razlika med gostinsko storitvijo in gostoljubnostjo kot človeško držo, gostoljubje izven panoge, Aristotelove vrline.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj je gostoljubje zate — kot praktik in kot raziskovalec. Kje se pogleda ujameta, kje si prideta navzkriž.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">V raziskovanju ločite dva pojma, ki ju slovenščina oba prevaja kot "gostoljubje": hospitality (gostinska dejavnost — soba, hrana, storitev, ki se plača) in hospitableness (gostoljubnost — človeška drža, iskrena želja poskrbeti za drugega). Razloži razliko po domače: kaj od tega se da kupiti in kaj ne.<span class="q-hint">iz njegovega članka: Mody idr. — hospitableness je prava ustreznica slovenski gostoljubnosti</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Rokovo stališče (postavi, potem vprašaj): gostoljubje ni storitev, je razmerje med ljudmi. Odgovornost je obojestranska: gostitelj daje, gost spoštuje meje. Kako to vidiš iz prakse — <span style="color:#7EB6FF">kje je meja odgovornosti gosta?</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text"><span style="color:#7EB6FF">Gostoljubje izven panoge</span>: tvoj tretji članek obravnava gostoljubje kot socialno prakso onkraj komercialnega turizma (gastrodiplomacija). <span style="color:#7EB6FF">Kje vse vidiš gostoljubje zunaj hotelirstva</span> — v zdravstvu, šoli, službi, doma? Bi bil svet drugačen, če bi ljudje bolj zavestno "gostili" drug drugega?<span class="q-hint">Roka posebej zanima</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Aristotelove vrline: tvoj drugi članek bere kakovost turizma skozi Aristotelove vrline. Kaj Aristotel pove hotelirju leta 2026? Katera vrlina panogi najbolj manjka?<span class="q-hint">Rok napove kot bralec članka</span></div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 5. TEHNOLOGIJA IN GOSTOLJUBJE -->
+  <div class="section" data-section="5">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">5</div>
+      <div class="section-info"><div class="section-title">Tehnologija in gostoljubje<span class="section-flag">jedro epizode</span></div></div>
+      <div class="section-countdown" data-minutes="17" onclick="event.stopPropagation(); toggleCountdown(this)">17'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Hospitality 2.0: ali tehnologija percepcijo gostoljubja krepi ali razvrednoti. Brez recepcije, OTA neodvisnost, empatija in AI.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Hospitality 2.0: osrednje vprašanje članka — <span style="color:#7EB6FF">ali implementacija tehnologije percepcijo gostoljubja krepi ali razvrednoti</span>. Kaj je kratek odgovor in kaj te je pri raziskovanju najbolj presenetilo glede na to, kar vsak dan gledaš v praksi.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Dimenzije gostoljubja: članek ugotavlja, da tehnologija lahko prevzame učinkovitost in zabavo, nikoli pa priznanja (občutek pomembnosti, cenjenosti) in prave empatije. Se s to delitvijo tudi po dveh letih prakse še strinjaš? Katera dimenzija te je presenetila?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">NEU-how teza: učinkovitost in gostova percepcija kakovosti nista nasprotnika — <span style="color:#7EB6FF">optimizacija nikoli ne sme iti na račun kakovosti.</span> Kako to zagotovite v praksi? Kdaj sta si učinkovitost in kakovost nazadnje prišli navzkriž in kaj je prevladalo?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text"><span style="color:#7EB6FF">Filozofija "brez recepcije":</span> ali digitalni check-in človeški stik dejansko nadomesti ali ga samo premakne? Kdaj ste vedeli, da je bila odločitev prava — in kdaj ste podvomili?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Smer OTA neodvisnosti: direktni booking model — brez recepcije je tehnološka infrastruktura za direct booking ključna. Kako gradite direktne rezervacije, kaj deluje, kaj je precenjeno. Kje so OTA-ji še vedno nepogrešljivi.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text"><span style="color:#7EB6FF">Empatija in AI: v članku svarite pred situacijo, ko bi se gost ob AI počutil bolj "slišanega" kot ob človeku</span>. Zakaj je to nevarno? Kje je meja, ki je pri avtomatizaciji stika ne bi smeli prestopiti?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Rokovo stališče: more tech for more humanity — tehnologija naj gostitelja razbremeni administracije, da mu ostane čas za človeka. Ali se to v praksi res zgodi — ali sproščeni čas požre nova administracija?<span class="q-hint">po občutku</span></div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 6. TRENDI -->
+  <div class="section" data-section="6">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">6</div>
+      <div class="section-info"><div class="section-title">Trendi v panogi</div></div>
+      <div class="section-countdown" data-minutes="8" onclick="event.stopPropagation(); toggleCountdown(this)">8'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Kaj navdušuje, kaj skrbi. Precenjeni in podcenjeni trendi, spremembe v vedenju gostov.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj se v hotelirstvu trenutno dogaja, kar te navdušuje, in kaj te skrbi.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kateri trend je po tvoje precenjen in kateri podcenjen?<span class="q-hint">hyper-personalizacija, AI concierge, workation, branded residences...</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Revenue pogled: kako se spreminja vedenje gostov pri rezervacijah (booking window, direktni kanali, cenovna občutljivost).</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 7. LJUBLJANA -->
+  <div class="section" data-section="7">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">7</div>
+      <div class="section-info"><div class="section-title">Destinacija Ljubljana</div></div>
+      <div class="section-countdown" data-minutes="8" onclick="event.stopPropagation(); toggleCountdown(this)">8'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Sezonalnost, konkurenca, kadri. Kaj Ljubljani še manjka, da bi bila celoletna.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Izzivi delovanja v Ljubljani: sezonalnost (poletni turizem vs. jesenski kongresi), nova konkurenca, Airbnb, kadri.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj Ljubljani kot destinaciji še manjka, da bi bila celoletna.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 8. VIZIJA -->
+  <div class="section" data-section="8">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">8</div>
+      <div class="section-info"><div class="section-title">Vizija: hotelirstvo v dobi AI<span class="section-flag">voditeljski blok</span></div></div>
+      <div class="section-countdown" data-minutes="12" onclick="event.stopPropagation(); toggleCountdown(this)">12'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Kaj ostane človeku, ko AI prevzame vse. Hotel kot arhitektura srečanja z neznancem. In doba univerzalnega dohodka.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kam gre hotelirstvo v naslednjih 10 letih, ko AI prevzame vse, kar se prevzeti da. Kaj ostane človeku.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Rokovo stališče (postavi kot tezo): <span style="color:#7EB6FF">človek je bitje, ki potrebuje svoj čas med neznanci. Hotel ni prenočišče</span>, je arhitektura srečanja z neznancem — in prav to postane v dobi AI in izobilja luksuz, ki ga digitalni sloj ne more replicirati. Se strinjaš? Kaj to pomeni za to, kako se hoteli gradijo in vodijo?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text"><span style="color:#7EB6FF">Doba univerzalnega dohodka</span> (Rokov eksperiment): če čez 20 let velik del ljudi ne bo delal za preživetje — kaj se zgodi s potovanji, hoteli, gostoljubjem? Več gostov ali manj? Drugačni gostje?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">NEU-how na trgu: letos boste svoje pristope, procese in model upravljanja pod znamko NEU-how sistematično ponudili tudi širšemu trgu — lastnikom in upravljalcem. Kaj je ambicija? Kaj bo najtežje prenesti iz ene hiše na tuje objekte?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Tvoja osebna vizija: kje se vidiš čez 5 let — NEU, akademija, kaj tretjega?</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 9. ZAKLJUČEK -->
+  <div class="section" data-section="9">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">9</div>
+      <div class="section-info"><div class="section-title">Zaključek</div></div>
+      <div class="section-countdown" data-minutes="5" onclick="event.stopPropagation(); toggleCountdown(this)">5'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Izpuščene teme, nasvet mlademu hotelirju, gostoljubje v enem stavku, refleksija.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Sva kakšno temo izpustila, ki bi jo želel odpreti.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Nasvet mlademu človeku, ki danes vstopa v hotelirstvo.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Če bi moral v enem stavku povedati, kaj je zate gostoljubje — kaj bi rekel?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Koga v panogi resnično spoštuješ?<span class="q-hint">potencialni naslednji gost</span></div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Zaključek voditelja: kratka refleksija (1-2 stavka), zahvala, povabilo poslušalcem.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- OPCIJSKE TEME -->
+  <div class="section" data-section="opt">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">OPT</div>
+      <div class="section-info"><div class="section-title">Opcijske teme<span class="section-flag">vpleti kadarkoli</span></div></div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Zgodba objekta (hibrid stavbe) in Porsche polnilnice.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Zgodba objekta: hibrid stanovanjske stavbe in hotela (28 enot lastniških, 27 za najem) — kaj to pomeni za vodenje.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Porsche Destination Charging: detajl, ki nagovori premium gosta brez besed — moč tihih signalov.</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Fiksni panel za zapiske -->
+<div class="notes-panel collapsed">
+  <div class="notes-head">
+    <span class="notes-title">Zapiski</span>
+    <span class="notes-actions">
+      <button class="notes-clear" onclick="clearNotes()">počisti</button>
+      <button class="notes-toggle" onclick="toggleNotes()" id="notesToggle">▲</button>
+    </span>
+  </div>
+  <textarea id="notesArea" placeholder="Zapiski med pogovorom… (samodejno shranjeni v brskalniku)"></textarea>
+  <div class="notes-saved" id="notesSaved">shranjeno</div>
+</div>
+
+<script>
+  // Timer (štoparica)
+  let timerInterval = null, elapsed = 0, running = false;
+  function fmt(s){ const m = Math.floor(s/60), sec = s%60; return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'); }
+  function toggleTimer(){
+    const btn = document.getElementById('timerBtn'), disp = document.getElementById('timerDisplay');
+    if(running){
+      clearInterval(timerInterval); running = false;
+      btn.textContent = 'RESUME'; disp.classList.remove('running'); disp.classList.add('paused');
+    } else {
+      running = true; btn.textContent = 'PAUSE'; disp.classList.add('running'); disp.classList.remove('paused');
+      timerInterval = setInterval(() => { elapsed++; disp.textContent = fmt(elapsed); }, 1000);
+    }
+  }
+  function resetTimer(){
+    clearInterval(timerInterval); running = false; elapsed = 0;
+    const btn = document.getElementById('timerBtn'), disp = document.getElementById('timerDisplay');
+    btn.textContent = 'START'; disp.textContent = '00:00'; disp.classList.remove('running','paused');
+  }
+
+  // Ura
+  function updateClock(){
+    const d = new Date();
+    const h = String(d.getHours()).padStart(2,'0'), m = String(d.getMinutes()).padStart(2,'0');
+    document.getElementById('clockDisplay').textContent = h+':'+m;
+  }
+  updateClock(); setInterval(updateClock, 10000);
+
+  // Sekcije
+  function toggleSection(header){
+    const sec = header.closest('.section');
+    sec.classList.toggle('open'); sec.classList.toggle('active');
+  }
+  function toggleAsked(el){ el.classList.toggle('asked'); }
+
+  // Odštevanje na sekcijo
+  function toggleCountdown(el){
+    if(el._int){
+      clearInterval(el._int); el._int = null;
+      el.classList.remove('counting','overtime');
+      el.textContent = el.dataset.minutes + "'";
+      return;
+    }
+    el._remaining = parseInt(el.dataset.minutes,10) * 60;
+    el.classList.add('counting');
+    const render = () => {
+      const sign = el._remaining < 0 ? '-' : '';
+      const abs = Math.abs(el._remaining);
+      el.textContent = sign + Math.floor(abs/60) + ':' + String(abs%60).padStart(2,'0');
+    };
+    render();
+    el._int = setInterval(() => {
+      el._remaining--;
+      if(el._remaining < 0){ el.classList.remove('counting'); el.classList.add('overtime'); }
+      render();
+    }, 1000);
+  }
+
+  // Zapiski s samodejnim shranjevanjem
+  const notes = document.getElementById('notesArea');
+  const savedTag = document.getElementById('notesSaved');
+  let savedTimer = null;
+  try { const s = localStorage.getItem('ep09-notes'); if(s) notes.value = s; } catch(e){}
+  notes.addEventListener('input', () => {
+    try {
+      localStorage.setItem('ep09-notes', notes.value);
+      savedTag.classList.add('show');
+      clearTimeout(savedTimer);
+      savedTimer = setTimeout(() => savedTag.classList.remove('show'), 1200);
+    } catch(e){}
+  });
+  function clearNotes(){
+    if(confirm('Počistim vse zapiske?')){
+      notes.value = '';
+      try { localStorage.removeItem('ep09-notes'); } catch(e){}
+    }
+  }
+
+  // Zložljiv panel zapiskov na mobilcu
+  function toggleNotes(){
+    const p = document.querySelector('.notes-panel');
+    p.classList.toggle('collapsed');
+    document.getElementById('notesToggle').textContent = p.classList.contains('collapsed') ? '▲' : '▼';
+  }
+</script>
+
+</body>
+</html>
