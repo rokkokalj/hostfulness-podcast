@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hostfulness Podcast · Osnutek pogovora s Tilnom</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold-dark: #825A3A;
+    --gold-mid: #B08960;
+    --gold-light: #DEBA92;
+    --gold-muted: #D8B98C;
+    --bg-navy: #06101F;
+    --bg-black: #000000;
+    --text-primary: #FFFFFF;
+    --text-secondary: #C6A67F;
+    --font-family: "Montserrat", sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @page { size: A4; margin: 0; }
+
+  body {
+    font-family: var(--font-family);
+    font-optical-sizing: auto;
+    background: linear-gradient(180deg, var(--bg-navy), var(--bg-black)) no-repeat;
+    background-color: var(--bg-black);
+    min-height: 100vh;
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page { max-width: 720px; margin: 0 auto; padding: 56px 32px 64px; }
+
+  .section { page-break-inside: avoid; break-inside: avoid; margin-bottom: 36px; }
+  .flow-list li { page-break-inside: avoid; break-inside: avoid; }
+  .practical, .red-thread, .footer { page-break-inside: avoid; break-inside: avoid; }
+
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid rgba(176,137,96,0.3);
+  }
+
+  .header .ep-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--gold-muted);
+    margin-bottom: 12px;
+  }
+
+  .header h1 {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-mid), var(--gold-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+    line-height: 1.4;
+  }
+
+  .header .subtitle { font-size: 14px; color: var(--text-secondary); }
+
+  .intro {
+    background: rgba(130,90,58,0.06);
+    border: 1px solid rgba(176,137,96,0.2);
+    border-radius: 10px;
+    padding: 18px 24px;
+    margin-bottom: 36px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.92);
+  }
+
+  .section h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--gold-light);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(176,137,96,0.15);
+  }
+
+  .section p { margin-bottom: 10px; font-size: 14px; color: rgba(255,255,255,0.92); line-height: 1.7; }
+
+  .red-thread {
+    background: rgba(130,90,58,0.06);
+    border: 1px solid rgba(176,137,96,0.2);
+    border-radius: 10px;
+    padding: 20px 26px;
+  }
+
+  .red-thread .rt-title {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gold-light);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+
+  .red-thread p { font-size: 13.5px; color: rgba(255,255,255,0.92); margin-bottom: 0; }
+
+  .flow-intro { font-size: 13px; color: var(--gold-muted); margin-bottom: 18px; line-height: 1.7; }
+
+  .flow-list { list-style: none; padding: 0; counter-reset: flow; }
+
+  .flow-list li {
+    counter-increment: flow;
+    position: relative;
+    padding: 12px 16px 12px 58px;
+    margin-bottom: 8px;
+    background: rgba(6,16,31,0.75);
+    border-radius: 8px;
+    border-left: 3px solid rgba(176,137,96,0.25);
+    line-height: 1.6;
+  }
+
+  .flow-list li::before {
+    content: counter(flow);
+    position: absolute;
+    left: 14px;
+    top: 13px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(6,16,31,0.92);
+    border: 2px solid rgba(176,137,96,0.4);
+    color: var(--gold-light);
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .flow-list li strong { color: var(--gold-light); font-weight: 600; font-size: 14px; }
+
+  .flow-list li .desc {
+    display: block;
+    color: rgba(255,255,255,0.78);
+    font-size: 13px;
+    margin-top: 3px;
+  }
+
+  .practical {
+    background: rgba(130,90,58,0.06);
+    border: 1px solid rgba(176,137,96,0.2);
+    border-radius: 10px;
+    padding: 20px 26px;
+  }
+
+  .practical ul { list-style: none; padding: 0; }
+
+  .practical li {
+    position: relative;
+    padding: 6px 0 6px 20px;
+    font-size: 13.5px;
+    color: rgba(255,255,255,0.92);
+    line-height: 1.6;
+  }
+
+  .practical li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 14px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-mid), var(--gold-light));
+  }
+
+  .practical li strong { color: var(--gold-light); font-weight: 600; }
+
+  .leaf {
+    text-align: center;
+    margin: 8px 0 24px;
+    color: var(--gold-mid);
+    font-size: 14px;
+    opacity: 0.5;
+    letter-spacing: 10px;
+  }
+
+  .footer {
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(176,137,96,0.2);
+  }
+
+  .footer .closing { font-size: 14px; color: rgba(255,255,255,0.92); margin-bottom: 16px; }
+
+  .footer .name {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--gold-light);
+    line-height: 1.4;
+  }
+
+  .footer .name-wrap { text-align: right; }
+  .footer .name { display: inline-block; }
+
+  .footer .role { font-size: 11px; color: var(--text-secondary); text-align: right; margin-top: 2px; }
+
+  @media (max-width: 600px) {
+    .page { padding: 36px 20px 48px; }
+    .header h1 { font-size: 24px; }
+    .flow-list li { padding-left: 52px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="header">
+    <div class="ep-label">Hostfulness Podcast &middot; Epizoda 09</div>
+    <h1>Osnutek pogovora s Tilnom</h1>
+    <div class="subtitle">Tilen Albreht Centrih &middot; Managing director, NEU Residences Ljubljana</div>
+  </div>
+
+  <div class="section">
+    <h2>O podcastu</h2>
+    <p>Hostfulness je podcast o gostoljubju kot odnosu med ljudmi in kot osnovnem elementu panoge gostinstva. Gre za sproščene in globlje pogovore z ljudmi, ki jim pristno gostoljubje nekaj pomeni.</p>
+    <p>S tabo se pogovor postavi točno na stičišče, ki mene osebno najbolj zanima: tehnologija in pristno gostoljubje. Vodiš hotel brez klasične recepcije, hkrati pa v znanstvenih člankih raziskuješ, ali tehnologija gostoljubje krepi ali razvrednoti. Malo je ljudi, ki to vprašanje hkrati živijo v praksi in ga akademsko preučujejo.</p>
+    <p>Pogovor ni mišljen kot predavanje ali intervju s &laquo;pravimi odgovori&raquo;, temveč naj bi bil to spontan pogovor z neko rdečo nitjo.</p>
+  </div>
+
+  <div class="section">
+    <h2>Rdeča nit pogovora</h2>
+    <div class="red-thread">
+      <span class="rt-title">Hotel brez recepcije, gostoljubje brez alibija: kaj tehnologija v gostoljubju sme prevzeti in česa ne sme nikoli.</span>
+      <p>NEU Residences je živi laboratorij vprašanja, ki si ga v članku Hospitality 2.0 zastavljaš akademsko: ko odstraniš recepcijo, ali s tem odstraniš človeški stik ali ga samo premakneš drugam? Ocena 9,2 na Bookingu pove, da gostje nekaj očitno začutijo. Skupaj bova iskala, kje točno je meja: katere dele izkušnje tehnologija opravi bolje od človeka in kateri deli brez človeka izgubijo smisel.</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Okvirni tok pogovora</h2>
+    <p class="flow-intro">Pogovor naj bi tekel približno takole, nit ni strogo začrtana, prilagajava se sproti. Vmes zaideva, prehitevava, se vrneva nazaj ali temo povsem izpustiva. Vse je ok. Na vsak način dobiš dovolj prostora za predstavitev NEU Residences.</p>
+    <ol class="flow-list">
+      <li>
+        <strong>Tvoja pot</strong>
+        <span class="desc">Življenjska in predvsem karierna pot: iz Žirov prek Bleda in Turistice do srca Ljubljane, od enega prvih zaposlenih ob zagonu NEU-ja do Managing directorja.</span>
+      </li>
+      <li>
+        <strong>NEU Residences</strong>
+        <span class="desc">Predstavitev hiše (tudi čas za promocijo): smart stay koncept, posebnosti, malo o operations in o poti v smer OTA neodvisnosti z direktnimi rezervacijami. In kaj ste že dosegli: Green Key in Slovenia Green certifikata, Booking ocena 9,2.</span>
+      </li>
+      <li>
+        <strong>Ekipa v NEU Residences</strong>
+        <span class="desc">Kako se sodelavce izbira, pristnost in profesionalnost z roko v roki, kaj je pomembno, da sodelavci obvladajo, kakšne značilnosti naj imajo.</span>
+      </li>
+      <li>
+        <strong>Gostoljubje na splošno</strong>
+        <span class="desc">Tvoja leča kot praktik in raziskovalec; posebej zanimivo gostoljubje izven panoge. Tukaj lahko tudi o Aristotelovih vrlinah.</span>
+      </li>
+      <li>
+        <strong>Tehnologija v hotelirstvu</strong>
+        <span class="desc">Tvoj članek Hospitality 2.0, filozofija &laquo;brez recepcije&raquo;, meje avtomatizacije.</span>
+      </li>
+      <li>
+        <strong>Trendi v panogi</strong>
+        <span class="desc">Kaj navdušuje, kaj skrbi, kaj je precenjeno.</span>
+      </li>
+      <li>
+        <strong>Destinacija Ljubljana</strong>
+        <span class="desc">Prednosti in izzivi delovanja v prestolnici.</span>
+      </li>
+      <li>
+        <strong>Vizija prihodnosti hotelirstva</strong>
+        <span class="desc">Sploh v dobi AI, morda celo v dobi univerzalnega dohodka.</span>
+      </li>
+      <li>
+        <strong>Kamor naju zanese pogovor</strong>
+        <span class="desc">In zaključek: nasvet, sporočilo, povabilo.</span>
+      </li>
+    </ol>
+  </div>
+
+  <div class="section">
+    <h2>Praktično</h2>
+    <div class="practical">
+      <ul>
+        <li><strong>Trajanje:</strong> ciljava nekje okrog 2 uri, brez problema tudi manj ali več. Odvisno kako in v katero smer bo tekel pogovor.</li>
+        <li><strong>Ton:</strong> sproščen.</li>
+        <li><strong>Priprava:</strong> odgovorov se ne učiti na pamet.</li>
+        <li><strong>Zgodbe:</strong> najboljše zgodbe so tiste, ki pridejo spontano. Lahko pa razmisliš vsaj o kakšni konkretni zgodbi, anekdoti ali pripetljaju z gosti. Zgodbe vedno oživijo pogovor.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="leaf">&bull; &bull; &bull;</div>
+
+  <div class="footer">
+    <div class="closing">Veselim se pogovora!</div>
+    <div class="name-wrap"><span class="name">Rok Kokalj</span></div>
+    <div class="role">Voditelj, Hostfulness Podcast</div>
+  </div>
+
+</div>
+
+</body>
+</html>
