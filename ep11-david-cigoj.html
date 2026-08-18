@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EP11 · David Cigoj</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold-dark: #825A3A;
+    --gold-mid: #B08960;
+    --gold-light: #DEBA92;
+    --gold-muted: #D8B98C;
+    --bg-navy: #06101F;
+    --bg-black: #000000;
+    --text-primary: #FFFFFF;
+    --text-secondary: #C6A67F;
+    --font-family: "Montserrat", sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font-family); font-optical-sizing: auto; background: linear-gradient(180deg, var(--bg-navy), var(--bg-black)) no-repeat; background-color: var(--bg-black); min-height: 100vh; color: var(--text-primary); line-height: 1.6; padding-bottom: 200px; }
+
+  .timer-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(10,15,30,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(130,90,58,0.3); display: flex; align-items: center; justify-content: space-between; padding: 12px 32px; }
+  .timer-left { display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--gold-muted); }
+  .timer-left span { color: var(--gold-light); font-weight: 500; }
+  .timer-center { display: flex; align-items: center; gap: 16px; }
+  .timer-display { font-size: 36px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 2px; color: #fff; }
+  .timer-display.running { color: var(--gold-light); }
+  .timer-display.paused { color: #fbbf24; }
+  .timer-btn { background: none; border: 1px solid var(--gold-muted); color: var(--gold-muted); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: inherit; transition: all 0.2s; }
+  .timer-btn:hover { border-color: var(--gold-light); color: var(--gold-light); }
+  .timer-btn.start { border-color: var(--gold-mid); color: var(--gold-mid); }
+  .timer-btn.start:hover { background: rgba(176,137,96,0.1); }
+  .clock-display { font-size: 14px; color: var(--gold-muted); font-variant-numeric: tabular-nums; }
+
+  .header { padding: 100px 32px 40px; max-width: 720px; margin: 0 auto; text-align: center; }
+  .header .ep-label { font-size: 11px; text-transform: uppercase; letter-spacing: 4px; color: var(--gold-muted); margin-bottom: 12px; }
+  .header h1 {
+    font-size: 32px; font-weight: 700; margin-bottom: 8px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-mid), var(--gold-light));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; display: inline-block; line-height: 1.4;
+  }
+  .header .subtitle { font-size: 14px; color: var(--text-secondary); }
+
+  .red-thread { max-width: 720px; margin: 0 auto 32px; padding: 20px 28px; background: rgba(130,90,58,0.06); border: 1px solid rgba(176,137,96,0.2); border-radius: 10px; font-size: 14px; color: rgba(255,255,255,0.95); text-align: center; }
+  .red-thread strong { color: var(--gold-light); font-weight: 500; }
+
+  .constraint-box { max-width: 720px; margin: 0 auto 32px; padding: 16px 24px; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.25); border-radius: 10px; font-size: 13px; color: rgba(255,255,255,0.95); }
+  .constraint-box h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #fca5a5; margin-bottom: 10px; }
+  .constraint-box ul { margin: 0 0 0 18px; list-style: disc; }
+  .constraint-box li { margin-bottom: 5px; }
+  .constraint-box strong { color: #fca5a5; font-weight: 600; }
+
+  .ice-breaker-box { max-width: 720px; margin: 0 auto 48px; padding: 24px 28px; background: rgba(130,90,58,0.06); border: 1px solid rgba(176,137,96,0.2); border-radius: 10px; }
+  .ice-breaker-box h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-light); margin-bottom: 16px; line-height: 1.5; overflow-wrap: break-word; }
+  .ice-breaker-box .ice-item { padding: 8px 14px; margin-bottom: 4px; font-size: 14px; color: #fff; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
+  .ice-breaker-box .ice-item:hover { background: rgba(176,137,96,0.08); }
+  .ice-breaker-box .ice-item.used { opacity: 0.3; text-decoration: line-through; text-decoration-color: var(--gold-muted); }
+
+  .timeline { max-width: 720px; margin: 0 auto; padding: 0 32px; position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 52px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, rgba(176,137,96,0.15), rgba(176,137,96,0.3), rgba(176,137,96,0.15)); }
+
+  .section { position: relative; margin-bottom: 40px; }
+  .section-header { display: flex; align-items: center; flex-wrap: nowrap; gap: 16px; padding: 16px 0; cursor: pointer; user-select: none; }
+  .section-header .section-dot, .section-header .section-countdown, .section-header .section-chevron { flex-shrink: 0; }
+  .section-header .section-info { min-width: 0; }
+  .section-dot { width: 42px; height: 42px; min-width: 42px; border-radius: 50%; background: rgba(6,16,31,0.92); border: 2px solid rgba(176,137,96,0.3); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--gold-muted); z-index: 2; transition: all 0.3s; }
+  .section-header:hover .section-dot, .section.active .section-dot { border-color: var(--gold-mid); color: var(--gold-light); background: rgba(176,137,96,0.1); }
+  .section-info { flex: 1; }
+  .section-title { font-size: 17px; font-weight: 600; color: var(--gold-muted); transition: color 0.2s; }
+  .section-header:hover .section-title { color: var(--gold-light); }
+  .section-flag { display: block; width: max-content; max-width: 100%; margin-top: 5px; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gold-light); background: rgba(176,137,96,0.12); border: 1px solid rgba(176,137,96,0.3); padding: 2px 8px; border-radius: 999px; line-height: 1.5; }
+
+  .section-countdown {
+    width: 42px; height: 42px; min-width: 42px; border-radius: 50%;
+    background: rgba(6,16,31,0.92); border: 2px solid rgba(176,137,96,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--gold-muted);
+    cursor: pointer; transition: all 0.3s; user-select: none; font-variant-numeric: tabular-nums;
+    overflow: hidden; white-space: nowrap;
+  }
+  .section-countdown.counting, .section-countdown.overtime { font-size: 10px; letter-spacing: -0.3px; }
+  .section-countdown:hover { border-color: var(--gold-mid); color: var(--gold-light); }
+  .section-countdown.counting { border-color: var(--gold-mid); color: var(--gold-light); background: rgba(176,137,96,0.12); animation: pulse 2s infinite; }
+  .section-countdown.overtime { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,0.08); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+  .section-chevron { color: var(--gold-muted); font-size: 18px; transition: transform 0.3s; min-width: 20px; text-align: center; }
+  .section.open .section-chevron { transform: rotate(90deg); color: var(--gold-light); }
+
+  .section-body { max-height: 0; overflow: hidden; visibility: hidden; transition: max-height 0.4s ease, visibility 0s 0.4s; }
+  .section.open .section-body { max-height: 6000px; visibility: visible; transition: max-height 0.4s ease, visibility 0s; }
+  .questions { margin-left: 62px; padding: 4px 0 24px; }
+
+  /* Link do namena poglavja -> popup */
+  .opis-link { margin-left: 62px; margin-bottom: 10px; display: inline-flex; align-items: center; gap: 7px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--gold-muted); cursor: pointer; border: 1px solid rgba(176,137,96,0.3); background: rgba(176,137,96,0.06); padding: 5px 12px; border-radius: 999px; transition: all 0.2s; user-select: none; }
+  .opis-link:hover { color: var(--gold-light); border-color: var(--gold-mid); background: rgba(176,137,96,0.12); }
+  .opis-link::before { content: 'ℹ'; font-size: 13px; }
+
+  .question { padding: 16px 20px; margin-bottom: 8px; background: rgba(6,16,31,0.75); border-radius: 8px; border-left: 3px solid rgba(176,137,96,0.2); cursor: pointer; transition: all 0.2s; }
+  .question:hover { background: rgba(6,16,31,0.9); border-left-color: var(--gold-mid); }
+  .question.asked { opacity: 0.35; border-left-color: transparent; }
+  .question-text { font-size: 15px; font-weight: 500; color: #fff; line-height: 1.65; }
+  .question.asked .question-text { text-decoration: line-through; text-decoration-color: var(--gold-muted); }
+  .q-hint { display: block; margin-top: 8px; font-size: 13px; font-style: italic; color: var(--gold-muted); line-height: 1.55; }
+  .question.asked .q-hint { text-decoration: none; }
+
+  /* Vodilno (ključno) vprašanje — vizualno izpostavljeno */
+  .question.key { background: linear-gradient(135deg, rgba(176,137,96,0.14), rgba(6,16,31,0.85)); border-left: 4px solid var(--gold-mid); box-shadow: 0 4px 18px rgba(130,90,58,0.15); }
+  .question.key:hover { border-left-color: var(--gold-light); }
+  .question.key .question-text { font-size: 16px; font-weight: 600; }
+  .q-badge { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #06101F; background: linear-gradient(90deg, var(--gold-mid), var(--gold-light)); padding: 3px 10px; border-radius: 999px; margin-bottom: 10px; }
+
+  /* Stališče voditelja */
+  .stance-block { margin-left: 62px; margin-bottom: 10px; padding: 16px 20px; background: rgba(99,102,241,0.10); border: 1px solid rgba(129,140,248,0.3); border-left: 4px solid #818cf8; border-radius: 8px; font-size: 13.5px; color: rgba(255,255,255,0.95); line-height: 1.6; }
+  .stance-block .stance-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #a5b4fc; margin-bottom: 7px; }
+
+  /* Opozorilo za celo poglavje */
+  .warn-block { margin-left: 62px; margin-bottom: 10px; padding: 14px 18px; background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.25); border-left: 4px solid #ef4444; border-radius: 8px; font-size: 13px; color: rgba(255,255,255,0.95); }
+  .warn-block strong { color: #fca5a5; }
+
+  .section-preview {
+    margin-left: 62px;
+    margin-bottom: 6px;
+    padding: 6px 20px 14px;
+    font-size: 15px;
+    line-height: 1.55;
+    color: #fff;
+    white-space: normal;
+  }
+  .section.open .section-preview { display: none; }
+
+  .section-divider { margin-left: 62px; border: none; border-top: 1px solid rgba(176,137,96,0.12); margin-bottom: 0; }
+
+  .note-block { margin-left: 62px; padding: 16px 20px; background: rgba(176,137,96,0.06); border: 1px solid rgba(176,137,96,0.15); border-radius: 8px; margin-bottom: 24px; font-size: 13px; color: rgba(255,255,255,0.95); }
+  .note-block strong { color: var(--gold-light); font-weight: 500; }
+
+  /* Popup z namenom poglavja (ob strani, X za zaprtje) */
+  .opis-popup {
+    position: fixed; top: 92px; right: 48px; width: 400px; max-height: calc(100vh - 148px); z-index: 95;
+    background: rgba(6,16,31,0.96); backdrop-filter: blur(12px);
+    border: 1px solid rgba(176,137,96,0.35); border-radius: 14px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    display: none; flex-direction: column;
+    overflow: hidden;
+  }
+  .opis-popup.show { display: flex; }
+  .opis-popup-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 18px 18px 12px 22px; border-bottom: 1px solid rgba(176,137,96,0.18); cursor: move; user-select: none; touch-action: none; }
+  .opis-popup.dragging { transition: none; opacity: 0.92; }
+  .opis-popup-title { font-size: 14px; font-weight: 600; color: var(--gold-light); line-height: 1.4; }
+  .opis-popup-label { display: block; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-muted); margin-bottom: 5px; }
+  .opis-popup-close { flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(176,137,96,0.4); background: none; color: var(--gold-muted); font-size: 15px; line-height: 1; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .opis-popup-close:hover { color: #fff; border-color: var(--gold-light); background: rgba(176,137,96,0.12); }
+  .opis-popup-body { padding: 16px 22px 20px; overflow-y: auto; font-size: 13.5px; line-height: 1.7; color: rgba(255,255,255,0.94); }
+  .opis-popup-body p { margin-bottom: 12px; }
+  .opis-popup-body p:last-child { margin-bottom: 0; }
+  .opis-popup-body strong { color: var(--gold-light); font-weight: 600; }
+
+  /* Fiksni panel za zapiske ob robu */
+  .notes-panel {
+    position: fixed; top: 92px; right: 48px; bottom: 56px; width: 400px; z-index: 90;
+    background: rgba(6,16,31,0.94); backdrop-filter: blur(10px);
+    border: 1px solid rgba(176,137,96,0.28); border-radius: 14px;
+    box-shadow: 0 12px 44px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column; padding: 16px 18px 18px;
+  }
+  .notes-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .notes-head .notes-title { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-light); }
+  .notes-clear { background: none; border: 1px solid var(--gold-muted); color: var(--gold-muted); font-size: 10px; padding: 3px 9px; border-radius: 5px; cursor: pointer; font-family: inherit; letter-spacing: 1px; transition: all 0.2s; }
+  .notes-clear:hover { border-color: var(--gold-light); color: var(--gold-light); }
+  .notes-panel textarea {
+    flex: 1; width: 100%; resize: none;
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(176,137,96,0.2); border-radius: 8px;
+    color: #fff; font-family: inherit; font-size: 14px; line-height: 1.6; padding: 12px;
+  }
+  .notes-panel textarea:focus { outline: none; border-color: var(--gold-mid); }
+  .notes-saved { font-size: 10px; color: var(--gold-muted); text-align: right; margin-top: 6px; height: 12px; opacity: 0; transition: opacity 0.3s; }
+  .notes-saved.show { opacity: 1; }
+  .notes-actions { display: flex; gap: 8px; align-items: center; }
+  .notes-toggle { display: none; background: none; border: 1px solid var(--gold-muted); color: var(--gold-muted); font-size: 12px; padding: 3px 10px; border-radius: 5px; cursor: pointer; font-family: inherit; line-height: 1; }
+  .notes-toggle:hover { border-color: var(--gold-light); color: var(--gold-light); }
+
+  /* Stalno vidna navigacija poglavij: levi stolpec na širokih, vodoravni trak pod štoparico na ožjih zaslonih */
+  .chapter-rail {
+    position: fixed; left: 16px; top: 92px; bottom: 16px; width: 200px; z-index: 90;
+    display: none; flex-direction: column; gap: 2px; overflow-y: auto;
+    background: rgba(6,16,31,0.85); backdrop-filter: blur(8px);
+    border: 1px solid rgba(176,137,96,0.22); border-radius: 12px; padding: 12px 10px;
+  }
+  .chapter-rail .rail-title { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-muted); padding: 2px 8px 8px; }
+  .rail-item { display: flex; align-items: baseline; gap: 8px; padding: 6px 8px; border-radius: 7px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s; }
+  .rail-item:hover { background: rgba(176,137,96,0.10); }
+  .rail-item .rail-num { flex-shrink: 0; width: 18px; font-size: 11px; font-weight: 700; color: var(--gold-muted); font-variant-numeric: tabular-nums; }
+  .rail-item .rail-label { flex: 1; min-width: 0; font-size: 12px; color: rgba(255,255,255,0.85); line-height: 1.35; overflow-wrap: break-word; }
+  .rail-item .rail-min { flex-shrink: 0; font-size: 10px; color: var(--gold-muted); font-variant-numeric: tabular-nums; }
+  .rail-item.active { background: rgba(176,137,96,0.14); border-left-color: var(--gold-mid); }
+  .rail-item.active .rail-label { color: var(--gold-light); font-weight: 600; }
+  .rail-info { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(176,137,96,0.4); background: none; color: var(--gold-muted); font-size: 11px; line-height: 1; cursor: pointer; font-family: inherit; align-self: center; transition: all 0.15s; }
+  .rail-info:hover { color: var(--gold-light); border-color: var(--gold-light); background: rgba(176,137,96,0.12); }
+
+  /* Na velikih zaslonih vsebino odmaknemo od panela; rail se pokaže nad ~1280px */
+  @media (min-width: 1024px) {
+    body { padding-right: 496px; }
+  }
+  @media (min-width: 1280px) {
+    .chapter-rail { display: flex; }
+    body { padding-left: 232px; }
+  }
+
+  /* Pod 1280px: vodoravni trak s poglavji, pripet pod štoparico */
+  @media (max-width: 1279px) {
+    .chapter-rail {
+      display: flex; flex-direction: row; align-items: center;
+      left: 0; right: 0; top: 61px; bottom: auto; width: auto;
+      overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch;
+      border-radius: 0; border-left: none; border-right: none; border-top: none;
+      padding: 7px 10px; gap: 6px;
+    }
+    .chapter-rail .rail-title { display: none; }
+    .rail-item { flex-shrink: 0; border: 1px solid rgba(176,137,96,0.25); border-left: 1px solid rgba(176,137,96,0.25); border-radius: 999px; padding: 4px 11px; gap: 6px; }
+    .rail-item.active { border-color: var(--gold-mid); }
+    .rail-item .rail-label { display: none; }
+    .rail-item.active .rail-label { display: inline; font-size: 11px; }
+    .rail-item .rail-min { font-size: 10px; }
+    .rail-info { width: 16px; height: 16px; font-size: 10px; }
+    body { padding-top: 46px; }
+  }
+  @media (max-width: 600px) {
+    .chapter-rail { top: 41px; }
+  }
+
+  /* Na mobilcu je panel zložljiv (privzeto zaprt), popup čez cel ekran spodaj */
+  @media (max-width: 1023px) {
+    .notes-panel { top: auto; left: 0; right: 0; bottom: 0; width: auto; height: 46vh; border: none; border-top: 1px solid rgba(176,137,96,0.3); border-radius: 0; box-shadow: 0 -8px 24px rgba(0,0,0,0.45); transition: height 0.25s ease; }
+    .notes-panel.collapsed { height: 50px; }
+    .notes-panel.collapsed textarea, .notes-panel.collapsed .notes-saved { display: none; }
+    .notes-toggle { display: inline-block; }
+    body { padding-bottom: 64px; }
+    .opis-popup { left: 12px; right: 12px; width: auto; top: 90px; max-height: 60vh; }
+  }
+
+  @media (max-width: 600px) {
+    .timer-bar { padding: 8px 12px; }
+    .timer-left { display: none; }
+    .timer-display { font-size: 24px; letter-spacing: 1px; }
+    .timer-btn { padding: 5px 10px; font-size: 11px; }
+    .clock-display { font-size: 12px; }
+    .header { padding: 80px 16px 26px; }
+    .header h1 { font-size: 24px; }
+    .timeline { padding: 0 12px; }
+    .timeline::before { left: 30px; }
+    .section-header { gap: 10px; padding: 14px 0; }
+    .section-dot { width: 36px; height: 36px; min-width: 36px; font-size: 13px; }
+    .section-countdown { width: 40px; height: 40px; min-width: 40px; }
+    .section-title { font-size: 15px; }
+    .questions { margin-left: 38px; padding-right: 4px; }
+    .question { padding: 12px 14px; }
+    .question-text { font-size: 14px; }
+    .question.key .question-text { font-size: 15px; }
+    .q-hint { font-size: 12px; }
+    .note-block, .stance-block, .warn-block { margin-left: 38px; padding: 12px 14px; }
+    .opis-link { margin-left: 38px; }
+    .section-divider { margin-left: 38px; }
+    .section-preview { margin-left: 38px; padding: 4px 14px 12px; font-size: 14px; }
+    .ice-breaker-box, .red-thread, .constraint-box { margin-left: 12px; margin-right: 12px; padding: 16px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="timer-bar">
+  <div class="timer-left">EP11 <span>David Cigoj</span></div>
+  <div class="timer-center">
+    <button class="timer-btn start" onclick="toggleTimer()" id="timerBtn">START</button>
+    <div class="timer-display" id="timerDisplay">00:00</div>
+    <button class="timer-btn" onclick="resetTimer()">RESET</button>
+  </div>
+  <div class="clock-display" id="clockDisplay">--:--</div>
+</div>
+
+<nav class="chapter-rail" id="chapterRail">
+  <div class="rail-title">Potek pogovora</div>
+  <div class="rail-item" data-target="0"><span class="rail-num">0</span><span class="rail-label">Uvod</span><span class="rail-min">5'</span></div>
+  <div class="rail-item" data-target="1"><span class="rail-num">1</span><span class="rail-label">Fant z meje</span><span class="rail-min">8'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(1)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="2"><span class="rail-num">2</span><span class="rail-label">Vodnik med kulturami</span><span class="rail-min">14'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(2)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="3"><span class="rail-num">3</span><span class="rail-label">Gostoljubne družbe</span><span class="rail-min">10'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(3)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="4"><span class="rail-num">4</span><span class="rail-label">Model razvoja zavesti</span><span class="rail-min">14'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(4)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="5"><span class="rail-num">5</span><span class="rail-label">Gostoljubje kot razvoj</span><span class="rail-min">12'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(5)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="6"><span class="rail-num">6</span><span class="rail-label">Paradoks gostoljubja</span><span class="rail-min">10'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(6)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="7"><span class="rail-num">7</span><span class="rail-label">Slovenija</span><span class="rail-min">12'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(7)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="8"><span class="rail-num">8</span><span class="rail-label">Tehnologija in AI</span><span class="rail-min">8'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(8)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="9"><span class="rail-num">9</span><span class="rail-label">Zaključek + knjiga</span><span class="rail-min">10'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(9)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="opt"><span class="rail-num">±</span><span class="rail-label">Opcijske teme</span><span class="rail-min"></span></div>
+</nav>
+
+<div class="header">
+  <div class="ep-label">Hostfulness Podcast &middot; Epizoda 11</div>
+  <h1>David Cigoj</h1>
+  <div class="subtitle">Avtor knjige Razvoj zavesti &middot; 18+ let mednarodni turistični vodnik</div>
+</div>
+
+<div class="red-thread">
+  <strong>Gostoljubje kot ogledalo in kot orodje razvoja.</strong> Človek, ki je 18 let živel med kulturami sveta kot vodnik, je iz tega izpeljal model razvoja posameznikov in družb. Midva ga obrneva na gostoljubje: je gostoljubnost ogledalo razvitosti družbe? In ali lahko gostoljubje, dajanje in prejemanje, človeka in družbo dejansko razvija? Vmes: kje smo Slovenci.
+</div>
+
+<div class="constraint-box">
+  <h3>Pravila pred snemanjem</h3>
+  <ul>
+    <li><strong>Fokus:</strong> če pogovor zaide v dnevno politiko ali ocene religij, preusmeri: "to nese v drugo oddajo, mene zanima gost in gostitelj".</li>
+    <li><strong>Register:</strong> knjiga stoji na znanosti in avtor se od new agea izrecno distancira; pogovor drži na znanstveni strani.</li>
+    <li><strong>Hierarhija stopenj lahko zveni elitistično:</strong> varovalka so njegove lastne opombe (nikogar ne obtožujemo; tudi pozne stopnje niso idealne; na vseh stopnjah je mogoče prijetno življenje).</li>
+    <li><strong>Rokovi zapiski so valuta epizode:</strong> vprašanja "ob branju sem si zapisal" v poglavjih 4, 7 in 8.</li>
+    <li><strong>Radio popravek:</strong> njegove oddaje so bile Via positiva na Radiu Ognjišče in Radio Koper, ne "Radio Positiva".</li>
+  </ul>
+</div>
+
+<div class="ice-breaker-box">
+  <h3>Ice-breaker (pred uradnim začetkom)</h3>
+  <div class="ice-item" onclick="this.classList.toggle('used')">V enem intervjuju si priznal, da ne zdržiš dolgo za prepočasnimi vozniki. Kako si se pripeljal do naju?</div>
+  <div class="ice-item" onclick="this.classList.toggle('used')">Bral sem, da zbiraš zanimive članke. Koliko jih imaš in kako jih sploh organiziraš?</div>
+</div>
+
+<div class="timeline">
+
+  <!-- 0. UVOD -->
+  <div class="section" data-section="0">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">0</div>
+      <div class="section-info"><div class="section-title">Uvod</div></div>
+      <div class="section-countdown" data-minutes="5" onclick="event.stopPropagation(); toggleCountdown(this)">5'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Špica, predstavitev gosta (vodnik → knjiga → Luthar) in ritual: "kaj bi dodal?"</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Živi uvod: "Danes je z mano David Cigoj. David, ti si že od leta 2000 mednarodni turistični vodnik: Angleže in Američane vodiš po Evropi, Indiji in Kitajski, Slovence pa si vodil tudi po Angliji. Iz tega življenja med kulturami je nastala tvoja knjiga Razvoj zavesti, o kateri direktor ZRC SAZU (Znanstvenoraziskovalnega centra Slovenske akademije znanosti in umetnosti) dr. Oto Luthar pravi, da bi jo moral prebrati vsak državljan tega sveta. Jaz sem jo prebral s svinčnikom v roki in danes bova preverila, kaj tvoj model razvoja posameznikov in družb pove o temi tega podcasta: o gostoljubju. David, dobrodošel."</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ritual: "Preden začneva: kaj bi tej predstavitvi dodal ali popravil?"</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 1. FANT Z MEJE -->
+  <div class="section" data-section="1">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">1</div>
+      <div class="section-info"><div class="section-title">Fant z meje<span class="section-flag">opener</span></div></div>
+      <div class="section-countdown" data-minutes="8" onclick="event.stopPropagation(); toggleCountdown(this)">8'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Miren, kilometer od italijanske meje: od kod radovednost do kultur. Pri 15 sam s kolesom v Francijo. Kratko in toplo, brez teorije.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(1)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Doma si manj kot kilometer od italijanske meje. Povej mi o prvem trenutku, ko si kot otrok začutil: aha, tam čez živijo drugače. Kaj te je pri Italijanih kot mulca najbolj begalo?</div><div class="q-hint">Njegova lastna iztočnica iz Via positive; pusti anekdote. Meja kot prva učilnica kulturnih razlik.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Pri petnajstih si sam s kolesom šel v Francijo. Kdo te je pustil in kaj si na tisti poti izvedel o sebi?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Sam praviš, da od petnajstega leta skoraj neprestano potuješ. Kje na teh zgodnjih poteh si bil prvič v življenju zares nekomu gost? Kako te je svet takrat sprejemal?</div><div class="q-hint">Prvi most na gostoljubje, še brez teorije; iščeva zgodbo o prejetem gostoljubju. Njegov citat iz Via positive: od petnajstega leta naprej skoraj neprestano potujem.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 2. OSEMNAJST LET MED KULTURAMI -->
+  <div class="section" data-section="2">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">2</div>
+      <div class="section-info"><div class="section-title">Osemnajst let med kulturami: vodnik</div></div>
+      <div class="section-countdown" data-minutes="14" onclick="event.stopPropagation(); toggleCountdown(this)">14'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Vodniška kariera kot terensko delo za knjigo: Angleži tretjino leta, Indija, Kitajska. Vodnik kot totalni gostitelj.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(2)">Namen poglavja</div>
+      <div class="stance-block"><span class="stance-label">Stališče voditelja (ob prehodu)</span>Gostoljubje ni storitev, je razmerje. Dobesedno pomeni ljubiti gosta: izraziti najboljši del sebe do neznanca in sprejeti odgovornost za njegov čas. Vodnik je zame najčistejša oblika tega razmerja: gost mu zaupa cel svoj dopust, brez sobe, v katero bi se umaknil.</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Z domačimi in tujimi gosti si preživel, in še preživiš, po tretjino leta. Hotelir ima gosta tri dni in ga vidi na zajtrku; ti jih imaš štirinajst dni, štiriindvajset ur na dan. Kaj se o ljudeh naučiš šele takrat, ko si njihov gostitelj tako dolgo, da maske padejo?</div><div class="q-hint">Vodnik kot totalni gostitelj; lovi konkretne prizore, ne posplošenih tez.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kot vodnik si s skupinami prespal v stotinah hotelov po treh celinah. Kaj loči hotel, ki ga vodnik obožuje, od tistega, ki se ga boji? Kaj hotel naredi tvojim gostom, da ti reši ali uniči večer?</div><div class="q-hint">Zlato za hotelirsko publiko; vodnik vidi hotel kot profesionalni gost s 40 gosti za sabo.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ko se na poti zalomi, zamuda, slaba soba, odpovedan program: kaj po tvojih izkušnjah šteje bolj, rešitev sama ali način, kako jo gostu razložiš?</div><div class="q-hint">Krizna komunikacija vodnika kot univerzalna hospitality lekcija; išči konkretno zgodbo o reševanju.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kje na svetu si ti osebno doživel največje gostoljubje? Ne najboljši servis, največje gostoljubje. In kaj je tisti človek naredil?</div><div class="q-hint">Nezasedeno vprašanje, javno o tem ni govoril nikoli. Razlika servis proti odnosu je nastavek za poglavje 5.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Praviš, da se moraš kot vodnik kulturi gostov prilagoditi, sicer deluješ smešno in nezrelo. Daj mi primer: kaj točno si moral pri sebi spremeniti za Angleže?</div><div class="q-hint">Tu prvič omeni kulturo odgovornosti; ne razvijaj je še, samo označi, vrneva se v poglavju 3.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Obrnjen položaj: leta 2011 si Slovence vodil po Angliji. Kako se Slovenci obnašamo kot gostje? Bodi brutalno iskren.</div><div class="q-hint">Most na Slovenijo (poglavje 7) in na Stonehenge (poglavje 4); še ne odpiraj uvida.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 3. ZAKAJ SO NEKATERE DRUŽBE BOLJ GOSTOLJUBNE -->
+  <div class="section" data-section="3">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">3</div>
+      <div class="section-info"><div class="section-title">Zakaj so nekatere družbe bolj gostoljubne?<span class="section-flag">prelom v tezo</span></div></div>
+      <div class="section-countdown" data-minutes="10" onclick="event.stopPropagation(); toggleCountdown(this)">10'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Prehod od zgodb k modelu skozi najino vprašanje. Angleška prijaznost = kultura odgovornosti; prijaznost ni manira, ampak razvojna stopnja.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(3)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Po vseh teh letih in državah: zakaj so nekatere družbe do tujca tople in druge hladne? Je gostoljubje stvar tradicije, revščine, vere, ali nekaj tretjega?</div><div class="q-hint">Pusti ga do kulture odgovornosti; to je njegov elevator pitch. Če ostane abstrakten: "primerjaj mi Anglijo in Indijo na konkretnem primeru".</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">O Angležih praviš: videti so samo prijazni, v resnici pa je za tem kultura odgovornosti. Razloži mi razliko med prijaznostjo in odgovornostjo do drugega. Kje se to dvoje razide?</div><div class="q-hint">Ključna distinkcija za cel podcast; prijaznost kot tehnika proti odgovornosti kot drži. Poveži z definicijo hostfulness: zavestna prisotnost do drugega.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Družbe meriš z raziskavami vrednot. Ali kje na svetu obstaja družba, ki je po tvojih merilih visoko razvita, pa hladna do tujcev? Ali obratno: nerazvita, pa izjemno gostoljubna?</div><div class="q-hint">Nastavek za soočenje v poglavju 6; samo odpri, ne pritiskaj še.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 4. KNJIGA: MODEL RAZVOJA ZAVESTI -->
+  <div class="section" data-section="4">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">4</div>
+      <div class="section-info"><div class="section-title">Knjiga: model razvoja zavesti</div></div>
+      <div class="section-countdown" data-minutes="14" onclick="event.stopPropagation(); toggleCountdown(this)">14'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Stonehenge 2011 kot vstop, potem model po plasteh: potrebe → moč iti preko sebe → formula → stopnje po barvah. Poljudni jezik, znanost, ne ezoterika.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(4)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Leta 2011 se pelješ mimo Stonehengea in po petnajstih minutah tišine se ti sestavi slika, iz katere nastane 462 strani debela knjiga. Popelji me v tisti trenutek: kaj točno si uvidel?</div><div class="q-hint">Najbolj filmska zgodba, ki jo ima; vprašaj po detajlih, ki jih javno ne pove: kaj je bilo prej, kaj je naredil tisti večer.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Zdaj pa model za mojo mamo: človek je bitje potreb. Katere so te potrebe in kaj se z nami zgodi, ko so zadovoljene, in kaj, ko niso?</div><div class="q-hint">Psihološke potrebe (avtonomija, kompetenca, povezanost) + njegov dodatek duhovnih (resnica, pravica, lepota, dobro). Povezanost podčrtaj, to je najin most h gostoljubju.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">V knjigi opisuješ stopnje razvoja po barvah in trdiš, da po istih stopnjah napredujejo posamezniki in celotne družbe. Prevedi mi Evropo v barve: kje je Nemčija, kje Skandinavija, kje Balkan?</div><div class="q-hint">Spiralna dinamika; naj bo konkreten z družbami, ne z definicijami stopenj. Slovenijo parkiraj za poglavje 7.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ob branju sem si na rob zapisal tvoj podatek, da je samo eden od sedmih ljudi pripravljen narediti spremembo, tudi ko gre za življenje in smrt. Zakaj se tako zelo upiramo lastnemu razvoju?</div><div class="q-hint">Rokov zapisek s str. 297 (imunost na spremembe, Kegan); osebna nota: bralec s svinčnikom.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Od gurujev osebne rasti se izrecno distanciraš: praviš, da stari modreci o sodobnem življenju marsičesa niso mogli vedeti. Kaj tvoja knjiga pove, česar tisočletja modrosti ne?</div><div class="q-hint">Demokracija, enakopravnost, kulturni vpliv na posameznika; znanost proti ezoteriki; kratko, ne polemiziraj.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 5. GOSTOLJUBJE KOT POT RAZVOJA -->
+  <div class="section" data-section="5">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">5</div>
+      <div class="section-info"><div class="section-title">Gostoljubje kot pot razvoja<span class="section-flag">jedro epizode</span></div></div>
+      <div class="section-countdown" data-minutes="12" onclick="event.stopPropagation(); toggleCountdown(this)">12'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Vrh mapiranja: v njegovem seznamu razvojnih praks sta dobesedno "iti stran od doma" in "delati s strankami". Potovanje razvija gosta, gostiteljstvo gostitelja.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(5)">Namen poglavja</div>
+      <div class="stance-block"><span class="stance-label">Stališče voditelja</span>Gostoljubje je manjkajoča vez med socialnim in duhovnim bitjem: šele ko socialno delovanje usmeriš v dobrobit sočloveka, se odnosi povežejo s smislom. Osebna izpolnitev brez delovanja za drugega ni dosegljiva. Indoevropski koren ghos-ti pomeni tujca in iz njega izhajajo host, guest in hostile: tujec lahko postane gost ali sovražnik, gostoljubje je izbira dobronamernosti.</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">V knjigi naštevaš prakse, ki razvijajo zavest, in med njimi sta dobesedno: iti stran od doma in delati s strankami, kjer sam stopiš v ozadje. Trdiš torej, da gostiteljstvo človeka razvija?</div><div class="q-hint">Stavek epizode; naj razloži mehanizem (stopiš v ozadje = manjšanje ega = razvoj). Njegova teza: ego se razvija tako, da plahni.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ali te je vodenje, torej četrt stoletja služenja gostom, razvilo? Kaj v tebi je zgradilo prav gostiteljstvo, česar ne bi nič drugega?</div><div class="q-hint">Osebna verifikacija teze; brez tega ostane teorija.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Zdaj pa obratna smer: kaj gostoljubje naredi tistemu, ki ga prejme? Ko tujec nekje doživi iskren sprejem, se v njem kaj razvije, ali je samo prijetna izkušnja?</div><div class="q-hint">Povezanost kot potreba, zaupanje; nastavek: gost, ki je bil deležen gostoljubja, ga nese naprej.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Moja teza: gostoljubje je most med odnosi in smislom. Šele ko svoje odnose usmeriš v dobro drugega, dobijo smisel. Kam to sede v tvoj model?</div><div class="q-hint">Njegove duhovne potrebe (dobro, lepota, pravica, resnica) so naravni priklop; pusti mu, da tezo nadgradi ali popravi.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Beseda gost in beseda sovražnik prihajata iz istega korena: ghos-ti, tujec. Vsak tujec lahko postane gost ali sovražnik. Kaj v človeku odloči, v katero smer gre?</div><div class="q-hint">Njegov jezik: obrambni mehanizmi, zadovoljene potrebe, zaupanje. Lep filozofski vrh poglavja.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 6. PARADOKS GOSTOLJUBJA -->
+  <div class="section" data-section="6">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">6</div>
+      <div class="section-info"><div class="section-title">Paradoks gostoljubja<span class="section-flag">soočenje</span></div></div>
+      <div class="section-countdown" data-minutes="10" onclick="event.stopPropagation(); toggleCountdown(this)">10'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Model pod stresom: legendarno gostoljubje najdemo ravno v družbah z dna njegovih lestvic. Beduin ti da zadnjo kavo, Šved ti je ne ponudi.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(6)">Namen poglavja</div>
+      <div class="warn-block"><strong>Ton poglavja:</strong> intelektualno soočenje, ne napad. David dilemo verjetno pozna in ima odgovor; naj ga razvije do konca, ne prekinjaj prehitro.</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Zdaj pa trd oreh. Tvoj model pravi: poznejša stopnja, boljša družba v vsem. Ampak največje gostoljubje sem doživel in o njem poslušam ravno iz družb z dna tvojih lestvic: Balkan, Indija, arabski svet. Beduin ti da zadnjo kavo, Šved ti je ne ponudi. Kje se tvoj model zmoti, ali kaj jaz narobe razumem kot gostoljubje?</div><div class="q-hint">Najmočnejše vprašanje epizode, nihče mu ga še ni zastavil. Verjetni odgovor: tradicionalno gostoljubje je kolektivna norma (dolžnost, čast, pričakovana vzajemnost), razvito pa avtonomna izbira. Ne spusti prehitro: vprašaj, katero je potem pristnejše.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ali razvoj gostoljubje ubije? Gostilna pri babici je imela dušo, štiri zvezdice imajo standarde. Ko se družba profesionalizira, gostoljubje postane storitev, in ravno storitev ni več razmerje. Kako se temu izognemo?</div><div class="q-hint">Njegov pojem notranje motivacije: dokler je gostoljubje zunanje motivirano (napitnina, ocena na bookingu), je servis; ko je notranje, je odnos na višji stopnji.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj pa gost na visoki stopnji razvoja? Ali zna biti sploh še gost: hvaležen, prisoten, ali samo zahteven potrošnik doživetij?</div><div class="q-hint">Gostoljubje kot dvosmerno razmerje; njegov material: oranžni dosežkar kot potrošnik, zeleni in rumeni kot prisoten gost.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 7. SLOVENIJA -->
+  <div class="section" data-section="7">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">7</div>
+      <div class="section-info"><div class="section-title">Slovenija: od živali iz kletke do gostoljubne družbe<span class="section-flag">Rokova glavna teza</span></div></div>
+      <div class="section-countdown" data-minutes="12" onclick="event.stopPropagation(); toggleCountdown(this)">12'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Diagnoza Slovenije (56. od 166, zaupanje, mentaliteta žrtve v gostinstvu) in glavna teza: gostoljubje kot vzvod razvoja družbe.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(7)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Ob tvojem opisu Slovencev sem si na rob knjige zapisal: smo kot žival, spuščena iz kletke. Na nesvobodo smo zelo navezani, na svobodo pa še nismo pripravljeni. Sem te prav razumel? Kje smo Slovenci danes na tvoji lestvici?</div><div class="q-hint">Rokov zapisek kot iztočnica; njegova diagnoza: tekmovalni individualisti, nezaupanje, polovica poti. Naj konkretizira s primeri iz vsakdana.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Knjigo prodajaš na zaupanje: pošlješ jo z računom, ki ga kupec plača, ko želi. To je gostoljubna poteza do neznanca. Koliko računov ostane neplačanih? Kaj ti ta eksperiment pove o nas?</div><div class="q-hint">Živ test njegove teze o zaupanju; konkretna številka bo zlata.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Slovenski turizem: gostje nas v anketah hvalijo, mi pa za šankom jamramo nad njimi. Je v našem gostinstvu več srčnosti ali več mentalitete žrtve?</div><div class="q-hint">Mentaliteta žrtve aplicirana na panogo; pazi, da ne postane zmerjanje panoge, išči mehanizem: nezadovoljene potrebe zaposlenih.</div></div>
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Zdaj pa moja glavna teza tega pogovora. Če prav razumem tvoj model, potem gostoljubje ni samo posledica razvoja družbe, ampak lahko tudi orodje zanj: vsak gostoljuben stik gradi zaupanje, zaupanje pa je po tvojem gorivo razvoja. Ali lahko družba, ki se zavestno odloči biti bolj gostoljubna, s tem pospeši svoj razvoj?</div><div class="q-hint">Sinteza epizode; njegova veriga: gostoljubje → zaupanje → emergentnost → razvoj. Če pritrdi, vprašaj: kje bi Slovenija začela jutri?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">V knjigi omenjaš tudi neformalen predlog: javni zavod za človeški razvoj in blagostanje. Če bi ga vodil ti, kaj bi bil prvi projekt?</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 8. TEHNOLOGIJA -->
+  <div class="section" data-section="8">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">8</div>
+      <div class="section-info"><div class="section-title">Tehnologija, AI in razvoj zavesti<span class="section-flag">DNA obvezno</span></div></div>
+      <div class="section-countdown" data-minutes="8" onclick="event.stopPropagation(); toggleCountdown(this)">8'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">AI kot pospeševalec ali uspavanka razvoja; kaj od vodniškega poklica preživi; tehnologija v službi gostoljubja.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(8)">Namen poglavja</div>
+      <div class="stance-block"><span class="stance-label">Stališče voditelja</span>Tehnologija je najboljša takrat, ko gostitelja razbremeni administracije, da ostane to, česar ni mogoče avtomatizirati: človek v odnosu. Človek je bitje, ki potrebuje svoj čas med neznanci; hotel je arhitektura srečanja z neznancem in tega AI ne more nadomestiti, lahko pa ustvari pogoje zanj.</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Piše se leto 2026, vsak od nas ima v žepu umetno inteligenco. Za razvoj zavesti: je to največji pospeševalec v zgodovini ali najudobnejša uspavanka? Tvoja knjiga pravi, da ljudje iščemo tolažbo, ne resnice, in AI zna tolažiti bolje kot karkoli doslej.</div><div class="q-hint">Njegova distinkcija tolažba proti resnici, aplicirana na AI; pusti obe strani, sam predlaga preverjanje idej z UI kot razvojno orodje.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ob branju sem si zapisal: večino problemov rešujemo hevristično, s praktičnimi bližnjicami, in mogoče je ravno to tisto, kar nas loči od strojev. Kaj po tvojem ostane človeku, česar AI ne bo prevzel?</div><div class="q-hint">Rokov zapisek s str. 319; most na gostoljubje: odnos, prisotnost, iti preko sebe.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Vodnik prihodnosti: AI ti danes sestavi itinerar, prevaja v realnem času, razloži vsako katedralo. Kaj od vodniškega poklica preživi in kaj upravičeno umre?</div><div class="q-hint">Njegova lastna koža v igri; pričakovana poanta: informacije umrejo, odnos in branje skupine preživita.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 9. ZAKLJUČEK -->
+  <div class="section" data-section="9">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">9</div>
+      <div class="section-info"><div class="section-title">Zaključek<span class="section-flag">DNA prostor za gosta</span></div></div>
+      <div class="section-countdown" data-minutes="10" onclick="event.stopPropagation(); toggleCountdown(this)">10'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Optimistični dvig, prostor za knjigo, preskok sredi 40. let in zadnje vprašanje o gostoljubnem življenju. Zadnji stavek naj bo njegov.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(9)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Tvoja knjiga se ob vseh distopičnih napovedih konča optimistično, celo z vprašanjem zlate dobe. Od kod ti ta optimizem, ko pa svet od 2016 po tvojih lastnih podatkih nazaduje?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Predstavi zdaj knjigo človeku, ki posluša med vožnjo domov: komu je namenjena, kaj bo po 462 straneh drugače v njegovem življenju, in kje jo dobi?</div><div class="q-hint">DNA prostor za gosta; naj pove kot zgodbo, ne oglas. Iztočnica: prodaja na zaupanje, odprtokodni koncept.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Sredi štiridesetih se ti je pri Stonehengeu sestavila slika. Kaj bi rekel štiridesetletniku, ki posluša ta pogovor in čuti, da je čas za njegov preskok?</div><div class="q-hint">Pri njem se je preskok zgodil dobesedno sredi 40. let; poslušalcu daj oprijemljiv prvi korak.</div></div>
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Za konec pa domov, h gostoljubju. Po vsem, kar veš o razvoju človeka: kaj se zgodi s človekom, ki se odloči, da bo živel gostoljubno, do gostov, sosedov, tujcev? Kdo postane?</div><div class="q-hint">Zadnji stavek epizode naj bo njegov; pusti tišino.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Refleksija voditelja: gostoljubje sem imel za vrlino razvitih; danes odhajam z mislijo, da je tudi pot do razvitosti. Gostitelj se razvija s tem, ko stopi v ozadje. Zahvala, poziv k naročnini.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- OPCIJSKE TEME -->
+  <div class="section" data-section="opt">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">OPT</div>
+      <div class="section-info"><div class="section-title">Opcijske teme<span class="section-flag">vpleti kadarkoli</span></div></div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Preskok pri 40, moč volje, kultura odgovornosti v ekipi, novinarska leta, svetnik, angleška izdaja, Hofstede za hotelirje.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Preskok sredi štiridesetih: zakaj se razvojni preskok tako pogosto zgodi ravno v srednjih letih?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Moč volje je kot mišica in se izčrpa. Gostitelj cel dan odloča za druge; kaj tvoj model svetuje njemu, da ob desetih zvečer ne obupa nad zadnjim gostom?</div><div class="q-hint">Njegov blok o izčrpanosti ega; zelo praktično za hotelirje.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kultura odgovornosti v hotelski ekipi: kako vodja zgradi tim, ki dela iz odgovornosti, ne na ukaz?</div><div class="q-hint">Njegovih šest ravni motivacije, od vsiljene regulacije do notranje.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kot novinar si v Sobotni prilogi pisal o italijanski in nemški mentaliteti. Kaj od tistih opažanj še danes drži?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Vodil si po Evropi, Indiji in Kitajski. Povej mi eno zgodbo s teh potovanj, ki je nikoli ne poveš, pa bi jo moral.</div><div class="q-hint">O teh destinacijah javno skoraj ne govori. Pusti tišino.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">V knjigi pišeš o samoabsorbiranih ljudeh: na potovanju jih zanima samo, kaj jedo, kje spijo in kako se počutijo. Ti si to kot vodnik gledal četrt stoletja. Koga potovanje dejansko razvija in koga pusti popolnoma nespremenjenega, čeprav sta sedela na istem avtobusu?</div><div class="q-hint">Rokov zapisek s str. 33 (ČE POTUJEJO); krasna vez med knjigo in vodniško prakso: isti itinerar, dva popolnoma različna izplena.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Bil si občinski svetnik: suhozidi, kamp Sela na Krasu. Kako izgleda turizem, zgrajen na tvojem modelu?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj je z razvojnočloveškim svetiščem na prostem na Krasu? Kako izgleda svetišče za razvoj zavesti?</div><div class="q-hint">Malo znana iztočnica; status ni javno znan, iskreno vprašaj.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj pripravljaš zdaj? Tretjo izdajo, nov projekt, nova potovanja?</div><div class="q-hint">Javnih nastopov po novembru 2024 ni; odgovor bo svež za vse.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Novembra 2024 si knjigo predstavil britanski Galileo Commission. Kako angleško govoreči svet sprejema slovensko teorijo vsega?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Hofstede za hotelirje: nemški gost in italijanski gost prideta na isto recepcijo. Kaj naj receptor ve o njunih kulturah, da bosta oba doživela gostoljubje?</div><div class="q-hint">Kulturne dimenzije kot praktični priročnik; zelo uporabno za poslušalce iz panoge.</div></div>
+      </div>
+      <div class="note-block"><strong>Opombe za voditelja:</strong> Fokus drži na gostu in gostitelju. &middot; Hierarhija stopenj: ob zdrsu v "boljši in slabši ljudje" uporabi njegove lastne opombe (nikogar ne obtožujemo, na vseh stopnjah je mogoče prijetno življenje). &middot; Rokovi zapiski "ob branju sem si zapisal" so avtentična valuta epizode (poglavja 4, 7, 8). &middot; Če zmanjkuje časa, združi poglavje 3 s 4; poglavij 5, 6 in 7 ne krajšaj. &middot; Skupaj ~103 min bruto. &middot; Drži tempo s stransko navigacijo levo: ko poglavje preseže svoj čas, zapri in naprej.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Popup z namenom poglavja -->
+<div class="opis-popup" id="opisPopup">
+  <div class="opis-popup-head">
+    <div class="opis-popup-title"><span class="opis-popup-label">Namen poglavja</span><span id="opisTitle"></span></div>
+    <button class="opis-popup-close" onclick="hideOpis()" aria-label="Zapri">✕</button>
+  </div>
+  <div class="opis-popup-body" id="opisBody"></div>
+</div>
+
+<!-- Fiksni panel za zapiske -->
+<div class="notes-panel collapsed">
+  <div class="notes-head">
+    <span class="notes-title">Zapiski</span>
+    <span class="notes-actions">
+      <button class="notes-clear" onclick="clearNotes()">počisti</button>
+      <button class="notes-toggle" onclick="toggleNotes()" id="notesToggle">▲</button>
+    </span>
+  </div>
+  <textarea id="notesArea" placeholder="Zapiski med pogovorom… (samodejno shranjeni v brskalniku)"></textarea>
+  <div class="notes-saved" id="notesSaved">shranjeno</div>
+</div>
+
+<script>
+  // Nameni poglavij (popup vsebina)
+  const OPISI = {
+    1: { title: 'Fant z meje', body: '<p>Humanizacija in izvor radovednosti. David je rojen v Mirnu, manj kot kilometer od italijanske meje, na stičišču slovanskega, germanskega in romanskega sveta, med komunizmom in kapitalizmom. Sam pravi, da ga je od nekdaj zanimalo, zakaj so Italijani tako drugačni, zakaj tako drugače živijo. Pri 15 letih se je sam s kolesom odpravil v Francijo in od takrat skoraj neprestano potuje.</p><p>Poslušalec v prvih minutah dobi človeka, ne teoretika: <strong>meja kot prva učilnica kulturnih razlik</strong>. Za voditelja: kratko in toplo, ne teoretiziraj še.</p>' },
+    2: { title: 'Osemnajst let med kulturami: vodnik', body: '<p>Jedro prvega dela: vodniška kariera kot terensko delo za knjigo. Od leta 2000 mednarodni vodnik za tuje agencije; z Angleži zgornjega srednjega razreda po tretjino leta skupaj; Evropa, Indija, Kitajska. Sam pravi, da tak človek z delčkom možganov neprestano analizira obnašanje ljudi drugih narodnosti. Njegov ključni uvid: v medkulturnem okolju ohraniti slovensko obnašanje ni primerno; prilagoditi se moraš, sicer deluješ smešno in nezrelo.</p><p>Tu je tudi <strong>vodnik kot poklic gostoljubja</strong>: gostitelj, ki gosta drži za roko 14 dni, 24 ur na dan, brez recepcije, v tujem okolju. Research gap: o konkretnih prizorih iz Indije in Kitajske javno skoraj ne govori; imena agencij niso nikjer objavljena.</p>' },
+    3: { title: 'Zakaj so nekatere družbe bolj gostoljubne?', body: '<p>Prehod od zgodb k modelu, ampak skozi najino vprašanje, ne skozi kazalo knjige. Njegova formula za angleško prijaznost: večina bi rekla, da so Angleži prijazni, skromni, sproščeni in humorni, ampak v resnici gre za več, gre za <strong>kulturo odgovornosti</strong>. Prijaznost torej ni manira, ampak izraz razvojne stopnje družbe.</p><p>Tu David naravno vpelje aparat knjige (zrelost družb, Svetovna raziskava vrednot, merjenje optimalnosti delovanja v 166 državah), ker ga potrebuje za odgovor. <strong>Poslušalec dobi teorijo kot odgovor na vprašanje, ki si ga je ob zgodbah že sam zastavil.</strong></p>' },
+    4: { title: 'Knjiga: model razvoja zavesti', body: '<p>Osrednja predstavitev knjige, začeta s filmsko zgodbo: 2011, vožnja pri Stonehengeu, po petnajstih minutah kontemplacije uvid, iz katerega je nastalo življenjsko delo. Potem model po plasteh: (1) človek je bitje potreb: fiziološke, psihološke (avtonomija, kompetenca, povezanost) in po njegovem predlogu duhovne (resnica, pravica, lepota, dobro); (2) zadovoljene potrebe dajejo moč, da gremo preko sebe; nezadovoljene rodijo kljubovalnost, iluzije in mentaliteto žrtve; (3) formula: svoboda krat opolnomočenje plus odgovornost krat ljubezen je enako razvoj; (4) stopnje razvoja po barvah, za posameznike in družbe.</p><p>Knjiga je sinteza velikih imen (Maslow, Deci in Ryan, Kegan, Cook-Greuter, Graves, Kohlberg, Welzel, Hofstede, Seligman), kar poudari kredibilnost: <strong>to ni new age</strong>. Za voditelja: drži ga na poljudnem jeziku, vsako stopnjo naj ilustrira s človekom ali družbo, ki jo poslušalec pozna.</p>' },
+    5: { title: 'Gostoljubje kot pot razvoja', body: '<p>Vrh mapiranja: gostoljubje ne kot posledica razvoja, ampak kot njegovo orodje. Izhodišče je Davidov lastni seznam praks, ki razvijajo zavest; na njem sta dobesedno <strong>"iti stran od doma" in "delati s strankami, kjer sam stopiš v ozadje"</strong>. Torej: potovanje razvija gosta, gostiteljstvo razvija gostitelja. Podporne izjave: ljudje, ki so s svojim življenjem zadovoljni, so običajno tudi prijetni ljudje; v odnosih je včasih dobro iti preko sebe; povezanost je osnovna psihološka potreba, ki jo nagrajuje hormonski sistem.</p><p>Tu vstopi Rokova teza o gostoljubju kot mostu med socialnim in duhovnim bitjem ter etimologija ghos-ti. Vprašanje za Davida: kam v njegov model to sede?</p>' },
+    6: { title: 'Paradoks gostoljubja', body: '<p>Najmočnejše vprašanje epizode, po zgrajenem zaupanju. Njegov model je hierarhičen: družbe na poznejših stopnjah so boljše v vsem. Ampak legendarno gostoljubje najdemo ravno v družbah, ki jih lestvica uvršča nizko: Balkan, arabski svet, Indija, Gruzija. Skandinavija je na vrhu lestvic razvoja in zaupanja, a je nihče ne opisuje kot toplo. Torej: ali lestvica meri nekaj drugega kot toplino do tujca, ali obstajata <strong>dve različni gostoljubji</strong> (tradicionalno kot dolžnost in čast, razvito kot odgovornost in prisotnost)?</p><p>Drugi krak: ali gostoljubje na visokih stopnjah sploh preživi, ali se profesionalizira v servis in izgubi dušo. To je hkrati vprašanje slovenskega turizma: od srčnosti gostilne do standardiziranega hotela.</p>' },
+    7: { title: 'Slovenija: od živali iz kletke do gostoljubne družbe', body: '<p>Domači teren in Rokova glavna usmeritev: kako bi večja gostoljubnost razvila slovensko družbo. Izhodišča: Slovenija na 56. mestu od 166 po optimalnosti delovanja, Balkan kot črna luknja; Slovenci bi si lahko bolj zaupali; smo nekje na polovici poti osvobajanja. Rokovi zapiski: Slovenci smo kot žival, spuščena iz kletke; tekmovalni individualisti s slabim fitom za kolektivizem.</p><p>Konkretni testi: prodaja knjige na zaupanje (deluje?); slovenski turizem med srčnostjo in jamranjem (mentaliteta žrtve v gostinstvu); kaj bi se spremenilo, če bi bili bolj gostoljubni tudi med sabo. <strong>Zaključni lok: gostoljubje kot vzvod, ki ga družba lahko zavestno uporabi za lasten razvoj.</strong></p>' },
+    8: { title: 'Tehnologija, AI in razvoj zavesti', body: '<p>Obvezni tehnološki sklop, tokrat na ravni razvoja človeka. Trije kraki: (1) AI in razvoj zavesti: pomaga rasti (dostop do znanja, ogledalo za refleksijo; sam predlaga preverjanje idej z umetno inteligenco) ali uspava (tolažba namesto resnice, algoritemske iluzije, polarizacija kot vojna brez fizičnega spopada); (2) Rokov zapisek: večino problemov rešujemo hevristično, mogoče je to tisto, kar nas loči od AI; (3) turizem in vodnik v dobi AI.</p><p>Nevronova optika, subtilno: tehnologija naj gostitelja razbremeni, da ostane človek v odnosu. Davidov okvir to podpre: <strong>če administracija žre moč volje gostitelja, tehnologija, ki jo prevzame, gostitelju vrne moč za odnos.</strong></p>' },
+    9: { title: 'Zaključek', body: '<p>Optimistični dvig, ki je Davidova naravna registracija: ob apokaliptičnih napovedih ima knjiga izrecno pozitivno sporočilo, celo vprašanje zlate dobe. Vmes <strong>DNA prostor za gosta</strong>: David predstavi knjigo poslušalcu kot zgodbo (2. izdaja, angleška izdaja New World Philosophy for You, prodaja na zaupanje, odprtokodni koncept). Osebni iztek: preskok se običajno zgodi sredi štiridesetih let, kar je bilo pri njem s Stonehengeom dobesedno res.</p><p>Refleksija voditelja: gostoljubje sem imel za vrlino razvitih; danes odhajam z mislijo, da je tudi pot do razvitosti. Gostitelj se razvija s tem, ko stopi v ozadje. Zahvala, poziv k naročnini.</p>' }
+  };
+
+  let opisOpenId = null;
+  function showOpis(id){
+    const o = OPISI[id];
+    if(!o) return;
+    const popup = document.getElementById('opisPopup');
+    if(opisOpenId === id && popup.classList.contains('show')){ hideOpis(); return; }
+    document.getElementById('opisTitle').textContent = o.title;
+    document.getElementById('opisBody').innerHTML = o.body;
+    popup.classList.add('show');
+    opisOpenId = id;
+  }
+  function hideOpis(){
+    document.getElementById('opisPopup').classList.remove('show');
+    opisOpenId = null;
+  }
+
+  // Premikanje popupa z miško (drag za glavo popupa)
+  (function(){
+    const popup = document.getElementById('opisPopup');
+    const head = popup.querySelector('.opis-popup-head');
+    let dragging = false, offsetX = 0, offsetY = 0;
+    head.addEventListener('pointerdown', function(e){
+      if (e.target.closest('.opis-popup-close')) return;
+      dragging = true;
+      const rect = popup.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+      popup.classList.add('dragging');
+      head.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    head.addEventListener('pointermove', function(e){
+      if (!dragging) return;
+      const rect = popup.getBoundingClientRect();
+      let x = e.clientX - offsetX;
+      let y = e.clientY - offsetY;
+      x = Math.max(0, Math.min(x, window.innerWidth - rect.width));
+      y = Math.max(0, Math.min(y, window.innerHeight - 48));
+      popup.style.left = x + 'px';
+      popup.style.top = y + 'px';
+      popup.style.right = 'auto';
+    });
+    head.addEventListener('pointerup', function(e){
+      dragging = false;
+      popup.classList.remove('dragging');
+      head.releasePointerCapture(e.pointerId);
+    });
+  })();
+
+  // Timer (štoparica)
+  let timerInterval = null, elapsed = 0, running = false;
+  function fmt(s){ const m = Math.floor(s/60), sec = s%60; return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'); }
+  function toggleTimer(){
+    const btn = document.getElementById('timerBtn'), disp = document.getElementById('timerDisplay');
+    if(running){
+      clearInterval(timerInterval); running = false;
+      btn.textContent = 'RESUME'; disp.classList.remove('running'); disp.classList.add('paused');
+    } else {
+      running = true; btn.textContent = 'PAUSE'; disp.classList.add('running'); disp.classList.remove('paused');
+      timerInterval = setInterval(() => { elapsed++; disp.textContent = fmt(elapsed); }, 1000);
+    }
+  }
+  function resetTimer(){
+    clearInterval(timerInterval); running = false; elapsed = 0;
+    const btn = document.getElementById('timerBtn'), disp = document.getElementById('timerDisplay');
+    btn.textContent = 'START'; disp.textContent = '00:00'; disp.classList.remove('running','paused');
+  }
+
+  // Ura
+  function updateClock(){
+    const d = new Date();
+    const h = String(d.getHours()).padStart(2,'0'), m = String(d.getMinutes()).padStart(2,'0');
+    document.getElementById('clockDisplay').textContent = h+':'+m;
+  }
+  updateClock(); setInterval(updateClock, 10000);
+
+  // Sekcije
+  function toggleSection(header){
+    const sec = header.closest('.section');
+    sec.classList.toggle('open'); sec.classList.toggle('active');
+  }
+  function toggleAsked(el){ el.classList.toggle('asked'); }
+
+  // Odštevanje na sekcijo
+  function toggleCountdown(el){
+    if(el._int){
+      clearInterval(el._int); el._int = null;
+      el.classList.remove('counting','overtime');
+      el.textContent = el.dataset.minutes + "'";
+      return;
+    }
+    el._remaining = parseInt(el.dataset.minutes,10) * 60;
+    el.classList.add('counting');
+    const render = () => {
+      const sign = el._remaining < 0 ? '-' : '';
+      const abs = Math.abs(el._remaining);
+      el.textContent = sign + Math.floor(abs/60) + ':' + String(abs%60).padStart(2,'0');
+    };
+    render();
+    el._int = setInterval(() => {
+      el._remaining--;
+      if(el._remaining < 0){ el.classList.remove('counting'); el.classList.add('overtime'); }
+      render();
+    }, 1000);
+  }
+
+  // Zapiski s samodejnim shranjevanjem
+  const notes = document.getElementById('notesArea');
+  const savedTag = document.getElementById('notesSaved');
+  let savedTimer = null;
+  try { const s = localStorage.getItem('ep11-notes'); if(s) notes.value = s; } catch(e){}
+  notes.addEventListener('input', () => {
+    try {
+      localStorage.setItem('ep11-notes', notes.value);
+      savedTag.classList.add('show');
+      clearTimeout(savedTimer);
+      savedTimer = setTimeout(() => savedTag.classList.remove('show'), 1200);
+    } catch(e){}
+  });
+  function clearNotes(){
+    if(confirm('Počistim vse zapiske?')){
+      notes.value = '';
+      try { localStorage.removeItem('ep11-notes'); } catch(e){}
+    }
+  }
+
+  // Stranska navigacija: klik skoči na poglavje, scroll-spy označi aktivno
+  (function(){
+    const rail = document.getElementById('chapterRail');
+    if(!rail) return;
+    const items = Array.from(rail.querySelectorAll('.rail-item'));
+    const sections = {};
+    document.querySelectorAll('.section[data-section]').forEach(s => { sections[s.dataset.section] = s; });
+    items.forEach(it => {
+      it.addEventListener('click', () => {
+        const sec = sections[it.dataset.target];
+        if(sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    const setActive = id => {
+      items.forEach(it => it.classList.toggle('active', it.dataset.target === id));
+      const act = items.find(it => it.dataset.target === id);
+      if(act && rail.scrollWidth > rail.clientWidth + 4){
+        rail.scrollTo({ left: act.offsetLeft - rail.clientWidth/2 + act.offsetWidth/2, behavior: 'smooth' });
+      }
+    };
+    const spy = () => {
+      let current = '0';
+      const mark = window.innerHeight * 0.30;
+      Object.entries(sections).forEach(([id, sec]) => {
+        if(sec.getBoundingClientRect().top <= mark) current = id;
+      });
+      setActive(current);
+    };
+    document.addEventListener('scroll', spy, { passive: true });
+    spy();
+  })();
+
+  // Zložljiv panel zapiskov na mobilcu
+  function toggleNotes(){
+    const p = document.querySelector('.notes-panel');
+    p.classList.toggle('collapsed');
+    document.getElementById('notesToggle').textContent = p.classList.contains('collapsed') ? '▲' : '▼';
+  }
+</script>
+
+</body>
+</html>
