@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hostfulness Podcast · EP14: Uroš Ambrožič</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold-dark: #825A3A;
+    --gold-mid: #B08960;
+    --gold-light: #DEBA92;
+    --gold-muted: #D8B98C;
+    --bg-navy: #06101F;
+    --bg-black: #000000;
+    --text-primary: #FFFFFF;
+    --text-secondary: #C6A67F;
+    --font-family: "Montserrat", sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font-family); font-optical-sizing: auto; background: linear-gradient(180deg, var(--bg-navy), var(--bg-black)) no-repeat; background-color: var(--bg-black); min-height: 100vh; color: var(--text-primary); line-height: 1.6; padding-bottom: 200px; }
+
+  .timer-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(10,15,30,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(130,90,58,0.3); display: flex; align-items: center; justify-content: space-between; padding: 12px 32px; }
+  .timer-left { display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--gold-muted); }
+  .timer-left span { color: var(--gold-light); font-weight: 500; }
+  .timer-center { display: flex; align-items: center; gap: 16px; }
+  .timer-display { font-size: 36px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 2px; color: #fff; }
+  .timer-display.running { color: var(--gold-light); }
+  .timer-display.paused { color: #fbbf24; }
+  .timer-btn { background: none; border: 1px solid var(--gold-muted); color: var(--gold-muted); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: inherit; transition: all 0.2s; }
+  .timer-btn:hover { border-color: var(--gold-light); color: var(--gold-light); }
+  .timer-btn.start { border-color: var(--gold-mid); color: var(--gold-mid); }
+  .timer-btn.start:hover { background: rgba(176,137,96,0.1); }
+  .clock-display { font-size: 14px; color: var(--gold-muted); font-variant-numeric: tabular-nums; }
+
+  .header { padding: 100px 32px 40px; max-width: 720px; margin: 0 auto; text-align: center; }
+  .header .ep-label { font-size: 11px; text-transform: uppercase; letter-spacing: 4px; color: var(--gold-muted); margin-bottom: 12px; }
+  .header h1 {
+    font-size: 32px; font-weight: 700; margin-bottom: 8px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-mid), var(--gold-light));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; display: inline-block; line-height: 1.4;
+  }
+  .header .subtitle { font-size: 14px; color: var(--text-secondary); }
+
+  .red-thread { max-width: 720px; margin: 0 auto 32px; padding: 20px 28px; background: rgba(130,90,58,0.06); border: 1px solid rgba(176,137,96,0.2); border-radius: 10px; font-size: 14px; color: rgba(255,255,255,0.95); text-align: center; }
+  .red-thread strong { color: var(--gold-light); font-weight: 500; }
+
+  .profile-box { max-width: 720px; margin: 0 auto 32px; padding: 16px 24px; background: rgba(130,90,58,0.05); border: 1px solid rgba(176,137,96,0.18); border-radius: 10px; font-size: 13px; color: rgba(255,255,255,0.92); }
+  .profile-box h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-light); margin-bottom: 10px; }
+  .profile-box ul { margin: 0 0 0 18px; list-style: disc; }
+  .profile-box li { margin-bottom: 5px; line-height: 1.55; }
+  .profile-box strong { color: var(--gold-light); font-weight: 600; }
+  .profile-box em { color: var(--gold-muted); }
+
+  .constraint-box { max-width: 720px; margin: 0 auto 32px; padding: 16px 24px; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.25); border-radius: 10px; font-size: 13px; color: rgba(255,255,255,0.95); }
+  .constraint-box h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #fca5a5; margin-bottom: 10px; }
+  .constraint-box ul { margin: 0 0 0 18px; list-style: disc; }
+  .constraint-box li { margin-bottom: 5px; }
+  .constraint-box strong { color: #fca5a5; font-weight: 600; }
+
+  .legend-box { max-width: 720px; margin: 0 auto 32px; padding: 14px 24px; background: rgba(130,90,58,0.05); border: 1px solid rgba(176,137,96,0.15); border-radius: 10px; font-size: 12.5px; color: rgba(255,255,255,0.85); display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; justify-content: center; }
+  .legend-box .lg-item { display: inline-flex; align-items: center; gap: 8px; }
+  .legend-box .lg-key { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #06101F; background: linear-gradient(90deg, var(--gold-mid), var(--gold-light)); padding: 3px 10px; border-radius: 999px; }
+  .legend-box .lg-res { display: inline-block; font-size: 9px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-muted); border: 1px dashed rgba(176,137,96,0.5); padding: 2px 9px; border-radius: 999px; opacity: 0.7; }
+
+  .ice-breaker-box { max-width: 720px; margin: 0 auto 48px; padding: 24px 28px; background: rgba(130,90,58,0.06); border: 1px solid rgba(176,137,96,0.2); border-radius: 10px; }
+  .ice-breaker-box h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-light); margin-bottom: 16px; line-height: 1.5; overflow-wrap: break-word; }
+  .ice-breaker-box .ice-item { padding: 8px 14px; margin-bottom: 4px; font-size: 14px; color: #fff; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
+  .ice-breaker-box .ice-item:hover { background: rgba(176,137,96,0.08); }
+  .ice-breaker-box .ice-item.used { opacity: 0.3; text-decoration: line-through; text-decoration-color: var(--gold-muted); }
+
+  .timeline { max-width: 720px; margin: 0 auto; padding: 0 32px; position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 52px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, rgba(176,137,96,0.15), rgba(176,137,96,0.3), rgba(176,137,96,0.15)); }
+
+  .section { position: relative; margin-bottom: 40px; }
+  .section-header { display: flex; align-items: center; flex-wrap: nowrap; gap: 16px; padding: 16px 0; cursor: pointer; user-select: none; }
+  .section-header .section-dot, .section-header .section-countdown, .section-header .section-chevron { flex-shrink: 0; }
+  .section-header .section-info { min-width: 0; }
+  .section-dot { width: 42px; height: 42px; min-width: 42px; border-radius: 50%; background: rgba(6,16,31,0.92); border: 2px solid rgba(176,137,96,0.3); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--gold-muted); z-index: 2; transition: all 0.3s; }
+  .section-header:hover .section-dot, .section.active .section-dot { border-color: var(--gold-mid); color: var(--gold-light); background: rgba(176,137,96,0.1); }
+  .section-info { flex: 1; }
+  .section-title { font-size: 17px; font-weight: 600; color: var(--gold-muted); transition: color 0.2s; }
+  .section-header:hover .section-title { color: var(--gold-light); }
+  .section-flag { display: block; width: max-content; max-width: 100%; margin-top: 5px; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gold-light); background: rgba(176,137,96,0.12); border: 1px solid rgba(176,137,96,0.3); padding: 2px 8px; border-radius: 999px; line-height: 1.5; }
+
+  .section-countdown {
+    width: 42px; height: 42px; min-width: 42px; border-radius: 50%;
+    background: rgba(6,16,31,0.92); border: 2px solid rgba(176,137,96,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--gold-muted);
+    cursor: pointer; transition: all 0.3s; user-select: none; font-variant-numeric: tabular-nums;
+    overflow: hidden; white-space: nowrap;
+  }
+  .section-countdown.counting, .section-countdown.overtime { font-size: 10px; letter-spacing: -0.3px; }
+  .section-countdown:hover { border-color: var(--gold-mid); color: var(--gold-light); }
+  .section-countdown.counting { border-color: var(--gold-mid); color: var(--gold-light); background: rgba(176,137,96,0.12); animation: pulse 2s infinite; }
+  .section-countdown.overtime { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,0.08); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+  .section-chevron { color: var(--gold-muted); font-size: 18px; transition: transform 0.3s; min-width: 20px; text-align: center; }
+  .section.open .section-chevron { transform: rotate(90deg); color: var(--gold-light); }
+
+  .section-body { max-height: 0; overflow: hidden; visibility: hidden; transition: max-height 0.4s ease, visibility 0s 0.4s; }
+  .section.open .section-body { max-height: 7000px; visibility: visible; transition: max-height 0.4s ease, visibility 0s; }
+  .questions { margin-left: 62px; padding: 4px 0 24px; }
+
+  .opis-link { margin-left: 62px; margin-bottom: 10px; display: inline-flex; align-items: center; gap: 7px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--gold-muted); cursor: pointer; border: 1px solid rgba(176,137,96,0.3); background: rgba(176,137,96,0.06); padding: 5px 12px; border-radius: 999px; transition: all 0.2s; user-select: none; }
+  .opis-link:hover { color: var(--gold-light); border-color: var(--gold-mid); background: rgba(176,137,96,0.12); }
+  .opis-link::before { content: 'ℹ'; font-size: 13px; }
+
+  .question { padding: 16px 20px; margin-bottom: 8px; background: rgba(6,16,31,0.75); border-radius: 8px; border-left: 3px solid rgba(176,137,96,0.2); cursor: pointer; transition: all 0.2s; }
+  .question:hover { background: rgba(6,16,31,0.9); border-left-color: var(--gold-mid); }
+  .question.asked { opacity: 0.35; border-left-color: transparent; }
+  .question-text { font-size: 15px; font-weight: 500; color: #fff; line-height: 1.65; }
+  .question.asked .question-text { text-decoration: line-through; text-decoration-color: var(--gold-muted); }
+  .q-hint { display: block; margin-top: 8px; font-size: 13px; font-style: italic; color: var(--gold-muted); line-height: 1.55; }
+  .question.asked .q-hint { text-decoration: none; }
+
+  .question.key { background: linear-gradient(135deg, rgba(176,137,96,0.14), rgba(6,16,31,0.85)); border-left: 4px solid var(--gold-mid); box-shadow: 0 4px 18px rgba(130,90,58,0.15); }
+  .question.key:hover { border-left-color: var(--gold-light); }
+  .question.key .question-text { font-size: 16px; font-weight: 600; }
+  .q-badge { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #06101F; background: linear-gradient(90deg, var(--gold-mid), var(--gold-light)); padding: 3px 10px; border-radius: 999px; margin-bottom: 10px; }
+
+  .question.reserve { opacity: 0.5; border-left-style: dashed; background: rgba(6,16,31,0.5); }
+  .question.reserve:hover { opacity: 1; background: rgba(6,16,31,0.9); }
+  .question.reserve .question-text { font-size: 13.5px; font-weight: 400; }
+  .q-tag-res { display: inline-block; font-size: 8px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-muted); border: 1px dashed rgba(176,137,96,0.5); padding: 1px 8px; border-radius: 999px; margin-bottom: 7px; }
+
+  .question.read { background: rgba(176,137,96,0.05); border-left: 3px solid rgba(176,137,96,0.35); }
+  .question.read .question-text { font-size: 14.5px; font-weight: 400; color: rgba(255,255,255,0.95); }
+  .q-tag-read { display: inline-block; font-size: 8px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-light); border: 1px solid rgba(176,137,96,0.45); padding: 1px 8px; border-radius: 999px; margin-bottom: 8px; }
+
+  .stance-block { margin-left: 62px; margin-bottom: 10px; padding: 16px 20px; background: rgba(99,102,241,0.10); border: 1px solid rgba(129,140,248,0.3); border-left: 4px solid #818cf8; border-radius: 8px; font-size: 13.5px; color: rgba(255,255,255,0.95); line-height: 1.6; }
+  .stance-block .stance-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #a5b4fc; margin-bottom: 7px; }
+
+  .warn-block { margin-left: 62px; margin-bottom: 10px; padding: 14px 18px; background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.25); border-left: 4px solid #ef4444; border-radius: 8px; font-size: 13px; color: rgba(255,255,255,0.95); }
+  .warn-block strong { color: #fca5a5; }
+
+  .section-preview {
+    margin-left: 62px;
+    margin-bottom: 6px;
+    padding: 6px 20px 14px;
+    font-size: 15px;
+    line-height: 1.55;
+    color: #fff;
+    white-space: normal;
+  }
+  .section.open .section-preview { display: none; }
+
+  .section-divider { margin-left: 62px; border: none; border-top: 1px solid rgba(176,137,96,0.12); margin-bottom: 0; }
+
+  .note-block { margin-left: 62px; padding: 16px 20px; background: rgba(176,137,96,0.06); border: 1px solid rgba(176,137,96,0.15); border-radius: 8px; margin-bottom: 24px; font-size: 13px; color: rgba(255,255,255,0.95); }
+  .note-block strong { color: var(--gold-light); font-weight: 500; }
+
+  /* ADAC BLOK (P8, ob rezervnem vprašanju) */
+  .adac-card { margin: 4px 0 14px; padding: 18px 20px; background: linear-gradient(150deg, rgba(176,137,96,0.12), rgba(6,16,31,0.9)); border: 1px solid rgba(222,186,146,0.4); border-radius: 12px; }
+  .adac-card .adac-title { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-light); margin-bottom: 12px; text-align: center; }
+  .adac-card .adac-sub { font-size: 9.5px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-muted); margin: 10px 0 6px; }
+  .adac-bars { display: flex; flex-direction: column; gap: 5px; }
+  .adac-bar-row { display: flex; align-items: center; gap: 10px; }
+  .adac-bar-row .abl { flex: 0 0 92px; font-size: 12px; color: rgba(255,255,255,0.94); }
+  .adac-bar-row .abt { flex: 1; height: 10px; background: rgba(6,16,31,0.7); border-radius: 999px; overflow: hidden; border: 1px solid rgba(176,137,96,0.2); }
+  .adac-bar-row .abf { height: 100%; background: linear-gradient(90deg, var(--gold-dark), var(--gold-mid), var(--gold-light)); border-radius: 999px; }
+  .adac-bar-row .abv { flex: 0 0 48px; text-align: right; font-size: 12.5px; font-weight: 700; color: var(--gold-light); font-variant-numeric: tabular-nums; }
+  .adac-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .adac-chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 5px 11px; background: rgba(6,16,31,0.7); border: 1px solid rgba(176,137,96,0.25); border-radius: 999px; font-size: 12px; color: rgba(255,255,255,0.9); }
+  .adac-chip b { font-size: 13.5px; font-weight: 700; color: var(--gold-light); font-variant-numeric: tabular-nums; }
+  .adac-chip.zero { border-color: rgba(239,68,68,0.5); background: rgba(239,68,68,0.08); }
+  .adac-chip.zero b { color: #fca5a5; }
+  .adac-sobec { display: flex; gap: 8px; margin-top: 4px; }
+  .adac-tier { flex: 1; text-align: center; padding: 9px 6px; background: rgba(6,16,31,0.7); border: 1px solid rgba(176,137,96,0.25); border-radius: 9px; }
+  .adac-tier.ours { border-color: var(--gold-light); background: rgba(176,137,96,0.16); box-shadow: 0 0 14px rgba(176,137,96,0.2); }
+  .adac-tier .stars { font-size: 15px; letter-spacing: 1px; margin-bottom: 3px; }
+  .adac-tier .tname { font-size: 10.5px; font-weight: 600; color: var(--gold-light); line-height: 1.35; }
+  .adac-tier .twho { font-size: 10px; color: rgba(255,255,255,0.75); margin-top: 3px; line-height: 1.35; }
+  .adac-foot { margin-top: 10px; font-size: 11.5px; color: var(--gold-muted); font-style: italic; text-align: center; line-height: 1.5; }
+
+  /* STATISTIČNI PANEL (levo) */
+  .stats-panel {
+    position: fixed; left: 16px; top: 92px; bottom: 16px; width: 420px; z-index: 96;
+    background: rgba(6,16,31,0.97); backdrop-filter: blur(12px);
+    border: 1px solid rgba(176,137,96,0.35); border-radius: 14px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    display: none; flex-direction: column; overflow: hidden;
+  }
+  .stats-panel.show { display: flex; }
+  .stats-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px 12px 22px; border-bottom: 1px solid rgba(176,137,96,0.18); }
+  .stats-head .stats-title { font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-light); }
+  .stats-close { flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(176,137,96,0.4); background: none; color: var(--gold-muted); font-size: 15px; line-height: 1; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .stats-close:hover { color: #fff; border-color: var(--gold-light); background: rgba(176,137,96,0.12); }
+  .stats-body { padding: 12px 20px 20px; overflow-y: auto; }
+  .stat-group { margin-bottom: 16px; }
+  .stat-group h4 { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-muted); margin-bottom: 7px; padding-bottom: 4px; border-bottom: 1px dashed rgba(176,137,96,0.25); }
+  .stat-row { display: flex; align-items: baseline; gap: 10px; padding: 4px 0; }
+  .stat-row .sv { flex-shrink: 0; min-width: 92px; font-size: 14px; font-weight: 700; color: var(--gold-light); font-variant-numeric: tabular-nums; text-align: right; }
+  .stat-row .sl { flex: 1; font-size: 12px; color: rgba(255,255,255,0.9); line-height: 1.45; }
+  .stat-row .sl em { color: var(--gold-muted); font-style: normal; font-size: 11px; }
+  .stats-open-item { border-left: 3px solid var(--gold-mid) !important; background: rgba(176,137,96,0.10) !important; }
+  @media (max-width: 1023px) {
+    .stats-panel { left: 12px; right: 12px; width: auto; top: 90px; bottom: auto; max-height: 70vh; }
+  }
+  @media (max-width: 600px) {
+    .stat-row .sv { min-width: 76px; font-size: 13px; }
+  }
+
+  .opis-popup {
+    position: fixed; top: 92px; right: 48px; width: 400px; max-height: calc(100vh - 148px); z-index: 95;
+    background: rgba(6,16,31,0.96); backdrop-filter: blur(12px);
+    border: 1px solid rgba(176,137,96,0.35); border-radius: 14px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    display: none; flex-direction: column;
+    overflow: hidden;
+  }
+  .opis-popup.show { display: flex; }
+  .opis-popup-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 18px 18px 12px 22px; border-bottom: 1px solid rgba(176,137,96,0.18); cursor: move; user-select: none; touch-action: none; }
+  .opis-popup.dragging { transition: none; opacity: 0.92; }
+  .opis-popup-title { font-size: 14px; font-weight: 600; color: var(--gold-light); line-height: 1.4; }
+  .opis-popup-label { display: block; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-muted); margin-bottom: 5px; }
+  .opis-popup-close { flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(176,137,96,0.4); background: none; color: var(--gold-muted); font-size: 15px; line-height: 1; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .opis-popup-close:hover { color: #fff; border-color: var(--gold-light); background: rgba(176,137,96,0.12); }
+  .opis-popup-body { padding: 16px 22px 20px; overflow-y: auto; font-size: 13.5px; line-height: 1.7; color: rgba(255,255,255,0.94); }
+  .opis-popup-body p { margin-bottom: 12px; }
+  .opis-popup-body p:last-child { margin-bottom: 0; }
+  .opis-popup-body strong { color: var(--gold-light); font-weight: 600; }
+
+  .notes-panel {
+    position: fixed; top: 92px; right: 48px; bottom: 56px; width: 400px; z-index: 90;
+    background: rgba(6,16,31,0.94); backdrop-filter: blur(10px);
+    border: 1px solid rgba(176,137,96,0.28); border-radius: 14px;
+    box-shadow: 0 12px 44px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column; padding: 16px 18px 18px;
+  }
+  .notes-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .notes-head .notes-title { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-light); }
+  .notes-clear { background: none; border: 1px solid var(--gold-muted); color: var(--gold-muted); font-size: 10px; padding: 3px 9px; border-radius: 5px; cursor: pointer; font-family: inherit; letter-spacing: 1px; transition: all 0.2s; }
+  .notes-clear:hover { border-color: var(--gold-light); color: var(--gold-light); }
+  .notes-panel textarea {
+    flex: 1; width: 100%; resize: none;
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(176,137,96,0.2); border-radius: 8px;
+    color: #fff; font-family: inherit; font-size: 14px; line-height: 1.6; padding: 12px;
+  }
+  .notes-panel textarea:focus { outline: none; border-color: var(--gold-mid); }
+  .notes-saved { font-size: 10px; color: var(--gold-muted); text-align: right; margin-top: 6px; height: 12px; opacity: 0; transition: opacity 0.3s; }
+  .notes-saved.show { opacity: 1; }
+  .notes-actions { display: flex; gap: 8px; align-items: center; }
+  .notes-toggle { display: none; background: none; border: 1px solid var(--gold-muted); color: var(--gold-muted); font-size: 12px; padding: 3px 10px; border-radius: 5px; cursor: pointer; font-family: inherit; line-height: 1; }
+  .notes-toggle:hover { border-color: var(--gold-light); color: var(--gold-light); }
+
+  .chapter-rail {
+    position: fixed; left: 16px; top: 92px; bottom: 16px; width: 200px; z-index: 90;
+    display: none; flex-direction: column; gap: 2px; overflow-y: auto;
+    background: rgba(6,16,31,0.85); backdrop-filter: blur(8px);
+    border: 1px solid rgba(176,137,96,0.22); border-radius: 12px; padding: 12px 10px;
+  }
+  .chapter-rail .rail-title { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-muted); padding: 2px 8px 8px; }
+  .rail-item { display: flex; align-items: baseline; gap: 8px; padding: 6px 8px; border-radius: 7px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s; }
+  .rail-item:hover { background: rgba(176,137,96,0.10); }
+  .rail-item .rail-num { flex-shrink: 0; width: 18px; font-size: 11px; font-weight: 700; color: var(--gold-muted); font-variant-numeric: tabular-nums; }
+  .rail-item .rail-label { flex: 1; min-width: 0; font-size: 12px; color: rgba(255,255,255,0.85); line-height: 1.35; overflow-wrap: break-word; }
+  .rail-item .rail-min { flex-shrink: 0; font-size: 10px; color: var(--gold-muted); font-variant-numeric: tabular-nums; }
+  .rail-item.active { background: rgba(176,137,96,0.14); border-left-color: var(--gold-mid); }
+  .rail-item.active .rail-label { color: var(--gold-light); font-weight: 600; }
+  .rail-info { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(176,137,96,0.4); background: none; color: var(--gold-muted); font-size: 11px; line-height: 1; cursor: pointer; font-family: inherit; align-self: center; transition: all 0.15s; }
+  .rail-info:hover { color: var(--gold-light); border-color: var(--gold-light); background: rgba(176,137,96,0.12); }
+
+  @media (min-width: 1024px) {
+    body { padding-right: 496px; }
+  }
+  @media (min-width: 1280px) {
+    .chapter-rail { display: flex; }
+    body { padding-left: 232px; }
+  }
+
+  @media (max-width: 1279px) {
+    .chapter-rail {
+      display: flex; flex-direction: row; align-items: center;
+      left: 0; right: 0; top: 61px; bottom: auto; width: auto;
+      overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch;
+      border-radius: 0; border-left: none; border-right: none; border-top: none;
+      padding: 7px 10px; gap: 6px;
+    }
+    .chapter-rail .rail-title { display: none; }
+    .rail-item { flex-shrink: 0; border: 1px solid rgba(176,137,96,0.25); border-left: 1px solid rgba(176,137,96,0.25); border-radius: 999px; padding: 4px 11px; gap: 6px; }
+    .rail-item.active { border-color: var(--gold-mid); }
+    .rail-item .rail-label { display: none; }
+    .rail-item.active .rail-label { display: inline; font-size: 11px; }
+    .rail-item .rail-min { font-size: 10px; }
+    .rail-info { width: 16px; height: 16px; font-size: 10px; }
+    body { padding-top: 46px; }
+  }
+  @media (max-width: 600px) {
+    .chapter-rail { top: 41px; }
+  }
+
+  @media (max-width: 1023px) {
+    .notes-panel { top: auto; left: 0; right: 0; bottom: 0; width: auto; height: 46vh; border: none; border-top: 1px solid rgba(176,137,96,0.3); border-radius: 0; box-shadow: 0 -8px 24px rgba(0,0,0,0.45); transition: height 0.25s ease; }
+    .notes-panel.collapsed { height: 50px; }
+    .notes-panel.collapsed textarea, .notes-panel.collapsed .notes-saved { display: none; }
+    .notes-toggle { display: inline-block; }
+    body { padding-bottom: 64px; }
+    .opis-popup { left: 12px; right: 12px; width: auto; top: 90px; max-height: 60vh; }
+  }
+
+  @media (max-width: 600px) {
+    .timer-bar { padding: 8px 12px; }
+    .timer-left { display: none; }
+    .timer-display { font-size: 24px; letter-spacing: 1px; }
+    .timer-btn { padding: 5px 10px; font-size: 11px; }
+    .clock-display { font-size: 12px; }
+    .header { padding: 80px 16px 26px; }
+    .header h1 { font-size: 24px; }
+    .timeline { padding: 0 12px; }
+    .timeline::before { left: 30px; }
+    .section-header { gap: 10px; padding: 14px 0; }
+    .section-dot { width: 36px; height: 36px; min-width: 36px; font-size: 13px; }
+    .section-countdown { width: 40px; height: 40px; min-width: 40px; }
+    .section-title { font-size: 15px; }
+    .questions { margin-left: 38px; padding-right: 4px; }
+    .question { padding: 12px 14px; }
+    .question-text { font-size: 14px; }
+    .question.key .question-text { font-size: 15px; }
+    .q-hint { font-size: 12px; }
+    .note-block, .stance-block, .warn-block { margin-left: 38px; padding: 12px 14px; }
+    .opis-link { margin-left: 38px; }
+    .section-divider { margin-left: 38px; }
+    .section-preview { margin-left: 38px; padding: 4px 14px 12px; font-size: 14px; }
+    .ice-breaker-box, .red-thread, .constraint-box, .legend-box, .profile-box { margin-left: 12px; margin-right: 12px; padding: 16px 18px; }
+    .adac-card { padding: 14px 14px; }
+    .adac-sobec { flex-direction: column; }
+    .adac-bar-row .abl { flex-basis: 74px; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="timer-bar">
+  <div class="timer-left">EP14 <span>Uroš Ambrožič</span></div>
+  <div class="timer-center">
+    <button class="timer-btn start" onclick="toggleTimer()" id="timerBtn">START</button>
+    <div class="timer-display" id="timerDisplay">00:00</div>
+    <button class="timer-btn" onclick="resetTimer()">RESET</button>
+  </div>
+  <div class="clock-display" id="clockDisplay">--:--</div>
+</div>
+
+<nav class="chapter-rail" id="chapterRail">
+  <div class="rail-title">Potek pogovora</div>
+  <div class="rail-item" data-target="0"><span class="rail-num">0</span><span class="rail-label">Uvod</span><span class="rail-min">3'</span></div>
+  <div class="rail-item" data-target="1"><span class="rail-num">1</span><span class="rail-label">Kamp vasi</span><span class="rail-min">7'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(1)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="2"><span class="rail-num">2</span><span class="rail-label">Manj gostov</span><span class="rail-min">7'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(2)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="3"><span class="rail-num">3</span><span class="rail-label">Vsi enaki</span><span class="rail-min">8'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(3)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="4"><span class="rail-num">4</span><span class="rail-label">Župan vasi</span><span class="rail-min">7'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(4)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="5"><span class="rail-num">5</span><span class="rail-label">Momenti resnice</span><span class="rail-min">7'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(5)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="6"><span class="rail-num">6</span><span class="rail-label">Narava</span><span class="rail-min">6'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(6)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="7"><span class="rail-num">7</span><span class="rail-label">Tehnologija</span><span class="rail-min">8'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(7)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="8"><span class="rail-num">8</span><span class="rail-label">Panoga</span><span class="rail-min">7'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(8)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="9"><span class="rail-num">9</span><span class="rail-label">Čez 10 let</span><span class="rail-min">5'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(9)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="10"><span class="rail-num">10</span><span class="rail-label">Zaključek</span><span class="rail-min">4'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(10)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="opt"><span class="rail-num">±</span><span class="rail-label">Opcijske teme</span><span class="rail-min"></span></div>
+</nav>
+
+<div class="header">
+  <div class="ep-label">Hostfulness Podcast &middot; Epizoda 14</div>
+  <h1>Uroš Ambrožič</h1>
+  <div class="subtitle">Direktor Kampa Šobec &middot; Podpredsednik Združenja kampov Slovenije &middot; Kamp kot posebna oblika gostoljubja<br>Snemanje: sreda, 16. 9. 2026, ob 11.00 &middot; trajanje ~68 min</div>
+</div>
+
+<div class="red-thread">
+  <strong>Kamp je edina oblika nastanitve, kjer gost ni gost, ampak gostitelj svoje lastne parcele.</strong> Kaj potem sploh ostane gostitelju kampa? Z Urošem preveriva, ali je "ko kampirajo, so vsi enaki" romantika ali poslovni model, zakaj je Šobec zavestno sprejel manj ljudi in jih obdržal dlje, kako se vodi vas s 5.000 ljudmi in šestimi zaposlenimi, in kje se v njej skriva tehnologija.
+</div>
+
+<div class="profile-box">
+  <h3>Profil gosta</h3>
+  <ul>
+    <li><strong>Uroš Ambrožič</strong>, direktor <strong>Kampa Šobec</strong> (Šobec d.o.o., Lesce pri Bledu) od ~2016; podpredsednik <strong>Združenja kampov Slovenije</strong> (TGZS) od 2020; slovenski podpredsednik v evropski federaciji kampov <strong>EFCO &amp; HPA</strong></li>
+    <li>Šobec: največji slovenski kamp, 5 zvezdic, 2025: dobrih 50.000 gostov, 173.000+ nočitev (+3 %), Nemci 41 %, Nizozemci 24 %, Slovenci 4 %; gostje iz več kot sto držav; sezona april do oktober</li>
+    <li>100 % lastnik: <strong>Turistično društvo Lesce</strong> (~1.500 članov); kamp začet 1956 s prostovoljnim delom; podjetje brez dolga, vse investicije iz lastnih sredstev</li>
+    <li>Nagrade: <strong>zlati znak gostoljubnosti TZS 2024 in 2025</strong>; camping.info 2026: najbolje ocenjen slovenski kamp; Naj kamp Adria (Avtokampi.si) 1. mesto 2018, 2019, 2022-2025; Zeleni ključ od 2020</li>
+    <li>Ključna poteza: kapaciteta z ~3.000 na ~2.500 ljudi, cene višje, doba bivanja z 2,8 (2019) na 3,7 dneva (2026), letni gostje podvojeni v 9 letih</li>
+    <li>Ekipa: 6 stalno zaposlenih, ~80 sezonskih, s pogodbenima partnerjema (restavracija, trgovina) ~150 v konici</li>
+    <li>Osebno odgovarja na TripAdvisor ocene kot "Guest Services / Front Office"</li>
+    <li>Pot pred Šobcem javno neznana (starost, izobrazba, prejšnje službe): vprašanje P1/1</li>
+    <li>Temeljno prepričanje za preveriti: <em>"Ko kampirajo, so vsi enaki."</em> Kamp kot oblika nastanitve, kjer premoženje ne določa izkušnje in kjer "prodajamo naravo", ne storitev.</li>
+  </ul>
+</div>
+
+<div class="constraint-box">
+  <h3>Opombe za voditelja</h3>
+  <ul>
+    <li>⚠️ <strong>6-7 mio € investicij velja za obdobje 2016-2019</strong>, ne za "zadnjih pet let".</li>
+    <li>Kampi = 14 % nočitev, NE "več kot apartmaji" (zasebne sobe in apartmaji 24 %).</li>
+    <li>Število parcel: viri 400 do 700; naj pove sam.</li>
+    <li>Bajer in alge: "upravljanje", ne "problem"; ARSO/NIJZ julij 2026, mikrobiološko skladno.</li>
+    <li>Delov intervju (19. 7. 2026) je za plačljivim zidom; vsi citati so iz Gorenjskega glasa (22. 8. 2026) in Dela (9. 4. 2019).</li>
+  </ul>
+</div>
+
+<div class="legend-box">
+  <span class="lg-item"><span class="lg-key">Ključno</span> vodilno vprašanje poglavja</span>
+  <span class="lg-item"><span class="lg-res">Pomožno</span> samo če je čas / pogovor potegne tja</span>
+  <span class="lg-item"><span class="lg-res">Rezervno</span> nadomestno, če glavna vprašanja ne stečejo</span>
+</div>
+
+<div class="ice-breaker-box">
+  <h3>Ice-breaker (pred snemanjem)</h3>
+  <div class="ice-item" onclick="this.classList.toggle('used')">Kje bi bila tvoja parcela, če bi bil gost v lastnem kampu?</div>
+  <div class="ice-item" onclick="this.classList.toggle('used')">Kdaj si nazadnje spal v šotoru?</div>
+</div>
+
+<div class="timeline">
+
+  <!-- 0. UVOD -->
+  <div class="section" data-section="0">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">0</div>
+      <div class="section-info"><div class="section-title">Uvod</div></div>
+      <div class="section-countdown" data-minutes="3" onclick="event.stopPropagation(); toggleCountdown(this)">3'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Nagovor (Šobec, združenje, zlati znak, camping.info) in provokacija kot prvo vprašanje: vsaka sedma nočitev je v kampu, strategija pa kampov skoraj ne pozna.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question read" onclick="toggleAsked(this)"><div class="q-tag-read">Nagovor</div><div class="question-text">V tokratni epizodi podcasta je z mano Uroš Ambrožič, direktor Kampa Šobec v Lescah pri Bledu. Uroš je tudi podpredsednik Združenja kampov Slovenije in slovenski predstavnik v evropskem združenju kampov.<br><br>Pod njegovim vodstvom je Šobec dve leti zapored prejel zlati znak gostoljubnosti Turistične zveze Slovenije, letos pa ga je evropski portal camping.info razglasil za najbolje ocenjen kamp v Sloveniji. Na camping.info ocenjujejo gostje sami.<br><br>Kampi so za slovenski turizem večji, kot se zdi, in prav o tem bova govorila danes. Uroš, dobrodošel.</div></div>
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">⭐ Provokacija</div><div class="question-text">Začniva malo provokativno. Vsaka sedma nočitev v Sloveniji je v kampu. V državni strategiji turizma pa kampi skoraj ne obstajajo. Kjer so omenjeni, so uvrščeni med enostavnejše nastanitve, kot so sobodajalci, ki naj se ne širijo. Ali se kampi pri nas še vedno obravnavajo kot obrobje turizma?</div><div class="q-hint">SURS 2025: kampi 14 % nočitev (hoteli 43 %, zasebne sobe in apartmaji 24 %; NE reči "več kot apartmaji"). Strategija slovenskega turizma 2022-2028: 12 vsebinskih omemb na 309 straneh, str. 26, 105, 108, 146 ("ohranitev obsega ... kampi ipd. na sedanji ravni"). Pusti, da odgovori s Šobcem; ne razvijaj, država pride v P8.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 1. KAMP, KI GA JE ZGRADILA VAS -->
+  <div class="section" data-section="1">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">1</div>
+      <div class="section-info"><div class="section-title">Kamp, ki ga je zgradila vas<span class="section-flag">DNA prostor za gosta &middot; skozi lastništvo in ljudi</span></div></div>
+      <div class="section-countdown" data-minutes="7" onclick="event.stopPropagation(); toggleCountdown(this)">7'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Po sistemski provokaciji pogovor spustiva na človeka: kdo si, kako si prišel sem, kdo je tvoj lastnik. Predstavitev Šobca skozi lastništvo in ljudi, ne skozi seznam ponudbe.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(1)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Preden greva v kamp: kako si sploh prišel na Šobec? O tvoji poti pred tem javno ni skoraj nič.</div><div class="q-hint">Vrzel v researchu; direktor od ~2016, Delo 2019: "papirje zamenjale lopate"; pusti mu 2-3 minute, tu se predstavi sam.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Šobec je v stoodstotni lasti Turističnega društva Lesce. Tvoj lastnik je torej 1.500 sosedov. Komu odgovarjaš, ko lastnik ni investitor, ampak vas?</div><div class="q-hint">1956 prostovoljci z lopatami; Zlatko Kavčič vodi društvo 50+ let; skupščina, ki odloča o milijonskih investicijah; vse iz lastnih sredstev, brez dolga.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Leta 2017 si za časopise rekel, da ste 'prenovili srce kampa', in mislil si 19 kilometrov cevi in kablov pod zemljo. Letos avgusta si rekel, da so srce kampa zaposleni. Kaj se je spremenilo v devetih letih?</div><div class="q-hint">Hook; infrastruktura kot higienski minimum, človek kot razlika.</div></div>
+        <div class="question reserve" onclick="toggleAsked(this)"><div class="q-tag-res">Pomožno</div><div class="question-text">Kaj gosta na Šobcu čaka, česar ne bo dobil v nobenem hotelu na Bledu?</div><div class="q-hint">Prostor za predstavitev kampa: reka, bajer, borovci, pogled na Stol, pasja plaža.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 2. MANJ GOSTOV, VEČ NOČITEV -->
+  <div class="section" data-section="2">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">2</div>
+      <div class="section-info"><div class="section-title">Manj gostov, več nočitev<span class="section-flag">kontraintuitivna odločitev</span></div></div>
+      <div class="section-countdown" data-minutes="7" onclick="event.stopPropagation(); toggleCountdown(this)">7'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Kontraintuitivna poslovna odločitev in njen vpliv na izkušnjo gosta: manj ljudi na isti površini, višja cena, daljše bivanje, več zadovoljstva.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(2)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Leta 2019 ste lahko sprejeli tri tisoč ljudi, danes jih sprejmete 2.500. Zavestno ste se odrekli petsto gostom na dan, dvignili cene, in letne goste podvojili. Kdaj si vedel, da manj pomeni več, in kdo v hiši je temu nasprotoval?</div><div class="q-hint">GG 22. 8. 2026: "ciljamo na manj prihodov gostov, ki ustvarijo več nočitev"; doba bivanja 2,8 → 3,7; Nizozemci skoraj 6 nočitev.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Leta 2019 si zagovarjal svobodo, da si gost sam izbere svoj kotiček v kampu, in takrat je bilo to smotrno. Lani ste skoraj celoten kamp parcelirali. Kaj ste s tem pridobili in kaj izgubili v občutku gosta?</div><div class="q-hint">Verjetni odgovor "vreme": gost z rezervirano parcelo ob slabi napovedi ostane. Free Zone za šotore ostaja brez rezervacij.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Slovenski kamp ima povprečno 2,9 nočitve, nemški kampist na glavnem dopustu 11,4. Vi ste pri 3,7. Ste postajališče na poti na morje ali destinacija?</div><div class="q-hint">SURS 2025 / ADAC 2026; temo lahko vrneš v P9.</div></div>
+        <div class="question reserve" onclick="toggleAsked(this)"><div class="q-tag-res">Pomožno</div><div class="question-text">Cene ste dvignili za 20 do 50 odstotkov in povpraševanje je zraslo. Tvoj sklep je bil, da cena ni ključni dejavnik. Kaj potem je?</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 3. KO KAMPIRAJO, SO VSI ENAKI -->
+  <div class="section" data-section="3">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">3</div>
+      <div class="section-info"><div class="section-title">Ko kampirajo, so vsi enaki: kaj kamp da, česar hotel ne more<span class="section-flag">leča gostoljubja</span></div></div>
+      <div class="section-countdown" data-minutes="8" onclick="event.stopPropagation(); toggleCountdown(this)">8'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Leča gostoljubja. Kamp kot oblika nastanitve, kjer gost sam gostuje na svoji parceli. Hotel prodaja storitev in odvzem odločitev, kamp prodaja pogoje za lastno odločanje.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(3)">Namen poglavja</div>
+      <div class="stance-block"><span class="stance-label">Stališče voditelja (ob vprašanju 3)</span>Človek je bitje, ki potrebuje svoj čas med neznanci. Hotel je arhitektura srečanja z neznancem: lobby, restavracija, recepcija. Kamp to pelje še dlje: sosed je pet metrov stran, brez zidu, brez vloge, in to je v redu. Gostitelj v takem prostoru ni serviser, je kurator pogojev, pod katerimi neznanci varno postanejo skupaj.</div>
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ena od ocen gostov: 'Nobenih prepovedi, kot jih poznamo doma: prepovedano plavanje, prepovedano skakanje, prepovedane viseče mreže. Kampisti smejo uporabljati naravo v celoti.' Je manj pravil oblika gostoljubja?</div><div class="q-hint">TripAdvisor, julij 2026.</div></div>
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Rekel si: 'Ko kampirajo, so vsi enaki. Ni zaprtih sob in nekih ločenih svetov.' Gost s šotorom za 300 evrov in gost z avtodomom za 300.000 evrov sta soseda. Ali res kampirata enako, in kaj to naredi z odnosom med tabo in gostom?</div><div class="q-hint">GG 22. 8. 2026; gost postavi svoj dom, kuha, pere, sprejema obiske; gostitelj daje pogoje, ne storitve.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Nemška raziskava letos: 84 odstotkov kampistov pride zaradi narave, 80 zaradi svobode odločanja. Hotel prodaja urejenost in gostu odvzame odločitve, kamp mu jih vrne. Kaj potem sploh ostane tebi kot gostitelju?</div><div class="q-hint">Tu stališče voditelja (kurator pogojev). ADAC 2026, 4.371 anketirancev.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Gostje pišejo, da se pri vas 'ne počutijo kot v kampu' in da je ekipa izjemno prijazna. Kdaj si nazadnje videl trenutek, ko je nekdo iz ekipe naredil več, kot piše v opisu dela?</div><div class="q-hint">TripAdvisor, avgust 2026; išči konkretno zgodbo.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 4. ŽUPAN VASI -->
+  <div class="section" data-section="4">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">4</div>
+      <div class="section-info"><div class="section-title">Župan vasi: hišni red, sosedje, sobivanje<span class="section-flag">gostoljubje kot vodstvena praksa</span></div></div>
+      <div class="section-countdown" data-minutes="7" onclick="event.stopPropagation(); toggleCountdown(this)">7'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Upravljavec kampa kot upravitelj sobivanja 2.500 ljudi brez zidov. Hišni red kot orodje sobivanja, ne discipline.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(4)">Namen poglavja</div>
+      <div class="stance-block"><span class="stance-label">Stališče voditelja (ob vprašanju 1 ali 2)</span>Gostoljubje ni enostransko. Gostitelj daje, gost spoštuje meje. Če gost prestopi mejo, ima gostitelj pravico, če ne že dolžnost, da ga odslovi. V kampu to velja dvojno: gost, ki krši red, ne krši odnosa s teboj, ampak z dvajsetimi sosedi.</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Ob vikendih je v kampu z dnevnimi obiskovalci do pet tisoč ljudi, 'še ene Lesce', kot praviš. V hotelu je gostitelj butler, v kampu si bolj župan vasi. Kaj je tvoja prva jutranja skrb: gost ali sobivanje gostov?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Nemški kampisti so letos glasovali, katero nenapisano pravilo bi moral poznati vsak: obzirnost, meje parcele, pozdravljanje. Hkrati isti ljudje nočejo 'kamping policije'. Kje je zate meja med redom in svobodo?</div><div class="q-hint">PiNCAMP, avgust 2026: obzirnost 17 %, meje parcele 15 %, pozdravljanje 15 %; "živi in pusti živeti".</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Gost je Šobec ob petkih zvečer opisal kot 'noisy hell'. Ti si mu osebno odgovoril s 400 besedami in mu vljudno popravil tudi število parcel. Zakaj direktor kampa s 173.000 nočitvami sam piše odgovore na TripAdvisor?</div><div class="q-hint">Hook; nastopa kot "Guest Services / Front Office"; gostoljubje kot vodstvena praksa, ne slogan.</div></div>
+        <div class="question reserve" onclick="toggleAsked(this)"><div class="q-tag-res">Pomožno</div><div class="question-text">Kdaj gost prestopi mejo in kako ga odsloviš, ne da bi izgubil še dvajset sosedov, ki so to gledali?</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 5. MOMENTI RESNICE -->
+  <div class="section" data-section="5">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">5</div>
+      <div class="section-info"><div class="section-title">Sanitarije, sezonci in drugi momenti resnice<span class="section-flag">operativa gostoljubja</span></div></div>
+      <div class="section-countdown" data-minutes="7" onclick="event.stopPropagation(); toggleCountdown(this)">7'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Operativa gostoljubja: 6 ljudi, 80 sezoncev, 150 v konici; kakovost proti gostoljubju. Konkretni sistem uvajanja ekipe in merjenja, ali je bil gost sprejet.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(5)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Šest redno zaposlenih, poleti osemdeset sezoncev, s partnerji sto petdeset. Vsako leto se ekipa na novo sestavi. Kako v dveh tednih naučiš študenta, da prepozna trenutek, ko mora narediti korak več?</div><div class="q-hint">Največji GAP; išči sistem: kdo uvaja, kaj je prvi dan, kdo se vrača naslednje leto.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">ADAC-ovi inšpektorji dajo sanitarijam 40 odstotkov celotne ocene kampa. Trenutek resnice v kampu ni check-in, je prvi tuš zjutraj. Kako veš, da so bile sanitarije ob osmih zjutraj takšne, kot jih hočeš?</div><div class="q-hint">6 objektov, 60 tušev, 83 stranišč.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Evropska analiza 15.000 kampov letos: gostje dajo pet zvezdic 64 odstotkom kampov, inšpektorji le 13 odstotkom. Kakovost in zadovoljstvo se merita z različnima instrumentoma. Kateremu ti verjameš in kako sam meriš, ali je bil gost sprejet?</div><div class="q-hint">PiNCAMP, junij 2026; Šobec: 5 zvezdic slovenskih, ADAC 4; anketa obstaja, metodologija ni javna.</div></div>
+        <div class="question reserve" onclick="toggleAsked(this)"><div class="q-tag-res">Pomožno</div><div class="question-text">Nizozemski ACSI pravi, da je prijava ob prihodu najslabši trenutek za osebni stik, ker je gost utrujen; pravi trenutek je jutranji obhod naslednji dan. Hodiš ti zjutraj po kampu? Kaj vidiš, česar recepcija ne vidi?</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 6. NARAVA -->
+  <div class="section" data-section="6">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">6</div>
+      <div class="section-info"><div class="section-title">Narava, ki jo prodajaš, ni več zanesljiva<span class="section-flag">podnebje &middot; trajnost kot praksa</span></div></div>
+      <div class="section-countdown" data-minutes="6" onclick="event.stopPropagation(); toggleCountdown(this)">6'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Kamp kot podnebno najbolj izpostavljena oblika nastanitve; trajnost kot praksa. Gostoljubje v krizi = odgovornost za varnost gosta.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(6)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">'Prodajamo naravo,' si rekel. V zadnjih dvanajstih letih pa ti je narava poslala žled, ki je podrl pol dreves, točo, ki je uničila šotore, poplavo, ki je odnesla most, in letos sušo z algami v bajerju. Kako vodiš podjetje, katerega glavni produkt te ne uboga?</div><div class="q-hint">2014, junij 2023, november 2023 (sanacija sami), julij 2026; alge: vprašaj o upravljanju, ne o problemu.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Avgusta 2023 ste sredi noči s prostovoljnimi gasilci preselili goste, ki jim je grozila Sava. Gostje so odšli zadovoljni. Kaj se je tisto noč zgodilo med tvojo ekipo in gosti, česar v normalni sezoni ne vidiš?</div><div class="q-hint">Lipov list 2024; gostoljubje v krizi = odgovornost za varnost gosta (definicija).</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Zeleni ključ zate 'ni marketing, ampak način dela'. Za vsako podrto drevo posadite dve, lani 500 novih. Kaj od trajnosti gost opazi in kaj ostane nevidno?</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 7. TEHNOLOGIJA -->
+  <div class="section" data-section="7">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">7</div>
+      <div class="section-info"><div class="section-title">Tehnologija v kampu: nevidna ali moteča<span class="section-flag">DNA obvezno &middot; brez prodajanja Nevrona</span></div></div>
+      <div class="section-countdown" data-minutes="8" onclick="event.stopPropagation(); toggleCountdown(this)">8'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">DNA-obvezno poglavje. Konkretno, brez prodajanja Nevrona. Tehnologija kot tiha podpora, ki gostitelju vrne čas za človeka; meja, kjer začne kvariti svobodo.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(7)">Namen poglavja</div>
+      <div class="stance-block"><span class="stance-label">Stališče voditelja (ob vprašanju 2)</span>Tehnologija je smiselna takrat, ko gostitelja razbremeni administrativnega, da mu ostane več časa za človeka. Več tehnologije za več človečnosti, ne obratno. V kampu to pomeni: manj vrste na recepciji ob sobotah, več jutranjih obhodov.</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Avgusta si rekel, da boste uvajali digitalne storitve, ki bodo olajšale delo in gostom ponudile boljšo storitev. Zdaj konkretno: katero opravilo ste v zadnjem letu digitalizirali in katerega se ne boste dotaknili, tudi ko bo mogoče?</div><div class="q-hint">GG 2026; sistem na zaledju Phobs, zemljevid parcel campmap.com; 12 cenovnih con.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Praviš, da 'človeška roka doda piko na i'. Hkrati ima kamp pet tisoč ljudi ob vikendu in šest zaposlenih. Kje tehnologija tvojim ljudem vrne čas za človeka, in kje jim ga vzame?</div><div class="q-hint">Tu stališče voditelja.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Bi pustil, da umetna inteligenca odgovarja gostom na povpraševanja? Ti, ki sam pišeš odgovore na TripAdvisor?</div><div class="q-hint">Veže P4 in P7; konkretna praksa, ne načela.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Gost pride v kamp, da se odklopi, in Wi-Fi je vaša tretja najnižja ocena. Ta isti gost ostane dlje, če Wi-Fi dela. Kako živiš s tem protislovjem?</div><div class="q-hint">ADAC 6,5; KOA 2025: Wi-Fi podaljša bivanje; 60 % kampira, da se odklopi.</div></div>
+        <div class="question reserve" onclick="toggleAsked(this)"><div class="q-tag-res">Pomožno</div><div class="question-text">Evropski kampi uvajajo zapornice s prepoznavo tablic, prepoznavo obraza za bazen in števce elektrike s predplačilom. Pravično, ekološko, in gost postane uporabnik. Kje je zate črta, ko tehnologija začne kvariti svobodo, zaradi katere so ljudje prišli?</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 8. PODPREDSEDNIK -->
+  <div class="section" data-section="8">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">8</div>
+      <div class="section-info"><div class="section-title">Podpredsednik: kaj ti da panoga in kaj daš ti panogi<span class="section-flag">panožni pogled &middot; država</span></div></div>
+      <div class="section-countdown" data-minutes="7" onclick="event.stopPropagation(); toggleCountdown(this)">7'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Panožni pogled skozi njegovo funkcijo; kaj združenje da kampu in kaj kamp panogi. Konkretni dosežki združenja in ena evropska praksa za Slovenijo.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(8)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Od 2020 si podpredsednik Združenja kampov Slovenije in slovenski predstavnik v evropski federaciji kampov. Iskreno: kaj od tega ima Šobec? Informacije, vpliv, mreža, ali predvsem obveznosti?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj je združenje v zadnjih dveh letih konkretno doseglo, česar posamezen kamp sam ne bi mogel?</div><div class="q-hint">Pomoč Menini po poplavah 2023, skupni katalog s STO, generalna skupščina EFCO v Kobaridu 2023, letna analiza finančnih kazalnikov kampov (samo člani).</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Katera ena evropska praksa bi slovenske kampe najbolj premaknila?</div></div>
+        <div class="question reserve" onclick="toggleAsked(this)"><div class="q-tag-res">Rezervno</div><div class="question-text">Slovenija nima nobenega ADAC Superplatza, Hrvaška jih ima 26. Vi ste po slovenski kategorizaciji petzvezdični, po ADAC štirizvezdični. Je to problem infrastrukture, velikosti ali drugačne definicije kakovosti?</div><div class="q-hint">ADAC = največji evropski avtomobilski klub (München, 22+ mio članov), lastna klasifikacija kampov z 200+ kriteriji in inšpektorji; Superplatz = 5 zvezdic, 2025: 200 v Evropi, HR 26, SLO 0; Šobec "ADAC Tipp".</div></div>
+
+        <div class="adac-card">
+          <div class="adac-title">ADAC v številkah</div>
+          <div class="adac-sub">Uteži ocene kampa</div>
+          <div class="adac-bars">
+            <div class="adac-bar-row"><span class="abl">Sanitarije</span><span class="abt"><span class="abf" style="width:100%"></span></span><span class="abv">40 %</span></div>
+            <div class="adac-bar-row"><span class="abl">Teren</span><span class="abt"><span class="abf" style="width:62.5%"></span></span><span class="abv">25 %</span></div>
+            <div class="adac-bar-row"><span class="abl">Prosti čas</span><span class="abt"><span class="abf" style="width:31.25%"></span></span><span class="abv">12,5 %</span></div>
+            <div class="adac-bar-row"><span class="abl">Kopanje</span><span class="abt"><span class="abf" style="width:31.25%"></span></span><span class="abv">12,5 %</span></div>
+            <div class="adac-bar-row"><span class="abl">Oskrba</span><span class="abt"><span class="abf" style="width:25%"></span></span><span class="abv">10 %</span></div>
+          </div>
+          <div class="adac-sub">ADAC Superplatz 2025 (5 zvezdic, 200 v Evropi)</div>
+          <div class="adac-chips">
+            <span class="adac-chip">FR <b>47</b></span>
+            <span class="adac-chip">IT <b>40</b></span>
+            <span class="adac-chip">HR <b>26</b></span>
+            <span class="adac-chip">NL <b>26</b></span>
+            <span class="adac-chip">DE <b>23</b></span>
+            <span class="adac-chip zero">SLO <b>0</b></span>
+          </div>
+          <div class="adac-sub">Šobec</div>
+          <div class="adac-sobec">
+            <div class="adac-tier ours"><div class="stars">★★★★★</div><div class="tname">Slovenska kategorizacija</div><div class="twho">5 zvezdic</div></div>
+            <div class="adac-tier"><div class="stars">★★★★</div><div class="tname">ADAC</div><div class="twho">4 zvezdice &middot; "ADAC Tipp"</div></div>
+          </div>
+          <div class="adac-foot">ADAC: 200+ kriterijev, lastni inšpektorji; Superplatz = 5 zvezdic.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 9. KAMP ČEZ 10 LET -->
+  <div class="section" data-section="9">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">9</div>
+      <div class="section-info"><div class="section-title">Kamp čez 10 let<span class="section-flag">širša slika in vizija</span></div></div>
+      <div class="section-countdown" data-minutes="5" onclick="event.stopPropagation(); toggleCountdown(this)">5'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Širša slika in vizija. Jasna slika, kaj Šobec hoče biti leta 2036.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(9)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Mobilne hiške in najem so v Nemčiji že dohiteli avtodom, mikrokamping pri kmetih se je v treh letih podvojil, rast se seli v april in september. Kaj bo Šobec leta 2036: kamp ali resort v gozdu?</div><div class="q-hint">ADAC 2026: najem 28 % = avtodom 28 %, načrtovano 38 %; mikrokamping 16 → 29 %; SURS: april +22 %.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ob prihodu in odhodu bo gosta od letos čakal vhodni park z vodno skulpturo. Zakaj vlagaš v prvi in zadnji trenutek, ne v parcelo?</div><div class="q-hint">GG 2026: "prostor za postanek ob prihodu in odhodu gostov"; zadnji vtis kot moment resnice.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Če se čez deset let spet usedeva za ta mikrofon: po čem bova vedela, da ti je uspelo?</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 10. ZAKLJUČEK -->
+  <div class="section" data-section="10">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">10</div>
+      <div class="section-info"><div class="section-title">Zaključek</div></div>
+      <div class="section-countdown" data-minutes="4" onclick="event.stopPropagation(); toggleCountdown(this)">4'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Osebna gostova izkušnja, gostoljubje v enem stavku, kaj se od kampa lahko nauči hotel, refleksija voditelja.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(10)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj je tebe kot gosta kje na svetu tako prevzelo, da si rekel: to hočem dati svojim gostom?</div></div>
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Za konec, skozi lečo tega podcasta: kaj je zate osebno gostoljubje, v enem stavku, kot bi ga povedal gostu ob odhodu?</div><div class="q-hint">Pusti tišino.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">In kaj naj naredi hotelir, ki je poslušal ta pogovor, jutri zjutraj: kaj se od kampa lahko nauči hotel?</div></div>
+      </div>
+      <div class="note-block"><strong>Refleksija voditelja:</strong> kamp kot najbolj gola oblika gostoljubja: brez zidov, brez sobe, samo pogoji in ljudje; kar hotel skriva za storitvijo, kamp pokaže.</div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- OPCIJSKE TEME -->
+  <div class="section" data-section="opt">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">OPT</div>
+      <div class="section-info"><div class="section-title">Opcijske teme<span class="section-flag">vpleti kadarkoli</span></div></div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Opombe (statistika), najbolj nenavaden gost, Nemci prehiteli domače, nov pravilnik o kategorizaciji.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question stats-open-item" onclick="event.stopPropagation(); toggleStats()"><div class="q-badge">Opombe</div><div class="question-text">📊 Statistični podatki: klik odpre panel z vsemi ključnimi številkami (levo)</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Gostje iz več kot sto držav: najbolj nenavaden gost</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Nemci so lani prvič prehiteli domače goste v slovenskih kampih (630.000 nočitev, tretjina tujih)</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Nov pravilnik o kategorizaciji: glamp samostojna vrsta od 1. 1. 2027, konec večnih zvezdic (samo če sam odpre glamping)</div></div>
+      </div>
+      <div class="note-block"><strong>Opombe za voditelja:</strong> 6-7 mio € investicij velja za obdobje 2016-2019, ne za "zadnjih pet let". &middot; Kampi = 14 % nočitev, NE "več kot apartmaji" (zasebne sobe in apartmaji 24 %). &middot; Število parcel: viri 400 do 700; naj pove sam. &middot; Bajer in alge: "upravljanje", ne "problem"; ARSO/NIJZ julij 2026, mikrobiološko skladno. &middot; Delov intervju (19. 7. 2026) je za plačljivim zidom; vsi citati so iz Gorenjskega glasa (22. 8. 2026) in Dela (9. 4. 2019). &middot; Skupaj ~69 min po minutaži. &middot; Drži tempo z navigacijo: ko poglavje preseže čas, zapri in naprej.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Statistični panel (levo) -->
+<div class="stats-panel" id="statsPanel">
+  <div class="stats-head">
+    <span class="stats-title">📊 Opombe &middot; ključne številke</span>
+    <button class="stats-close" onclick="toggleStats()" aria-label="Zapri">✕</button>
+  </div>
+  <div class="stats-body">
+
+    <div class="stat-group"><h4>Šobec</h4>
+      <div class="stat-row"><span class="sv">50.000+</span><span class="sl">gostov 2025 (dobrih); 173.000+ nočitev (+3 %); doba bivanja 3,5 <em>(Uroš za 2026: 3,7; 2019: 2,8)</em></span></div>
+      <div class="stat-row"><span class="sv">28.246</span><span class="sl">gostov 2016, 87.421 nočitev → podvojitev v 9 letih; rekord avgust 2024: 71.584 nočitev</span></div>
+      <div class="stat-row"><span class="sv">DE 41 %</span><span class="sl">Nizozemska 24 % <em>(poleti skoraj 6 nočitev)</em>, Poljska 5 %, Slovenija 4 % <em>(predsezona ~9 %)</em></span></div>
+      <div class="stat-row"><span class="sv">3.000 → 2.500</span><span class="sl">kapaciteta ljudi (2019 → danes); ob vikendih z dnevnimi obiskovalci do 5.000</span></div>
+      <div class="stat-row"><span class="sv">12 con</span><span class="sl">~650 parcel <em>(Uroš: ~700)</em> + Free Zone za šotore; 10 bungalovov, 1 apartma, 4 bungalov šotori, 10 Bell šotorov</span></div>
+      <div class="stat-row"><span class="sv">6 / 60 / 83</span><span class="sl">sanitarni objekti / tuši / WC</span></div>
+      <div class="stat-row"><span class="sv">16,30-27,50 €</span><span class="sl">oseba 2026; parcela 9-51 €; pavšal 4.230 €/sezona; klubski popusti 0 % v glavni sezoni; ni na Booking.com</span></div>
+      <div class="stat-row"><span class="sv">6 + ~80</span><span class="sl">stalnih + sezonskih + partnerji = ~150</span></div>
+      <div class="stat-row"><span class="sv">4,89 mio €</span><span class="sl">prihodki 2025 (AJPES); čisti dobiček 1,64 mio €; EBITDA 2,25 mio € (~46 %); 0 € dolgoročnih obveznosti</span></div>
+      <div class="stat-row"><span class="sv">100 %</span><span class="sl">lastnik TD Lesce, ~1.500 članov <em>(2010: 2.646)</em>; kamp od 1956, društvo 1958, d.o.o. 1992</span></div>
+      <div class="stat-row"><span class="sv">4,4 / 8,5 / 8,1</span><span class="sl">Google (7.100) / ACSI / ADAC; camping.info 4,0; TripAdvisor 3,8; najvišja podocena osebje <em>(ADAC 8,7)</em>, najnižje cena/kakovost, hrup, Wi-Fi (6,5)</span></div>
+      <div class="stat-row"><span class="sv">5★ / 4★</span><span class="sl">kategorija SLO / ADAC <em>("ADAC Tipp")</em>; ANWB 4,5</span></div>
+    </div>
+
+    <div class="stat-group"><h4>Slovenija (SURS 2025)</h4>
+      <div class="stat-row"><span class="sv">14 %</span><span class="sl">kampi: 871.163 prihodov, 2.523.400 nočitev (+6,5 %) = 14 % vseh; hoteli 43 %; zasebne sobe in apartmaji 24 %</span></div>
+      <div class="stat-row"><span class="sv">1,25 → 2,5 mio</span><span class="sl">nočitve v kampih 2010 → 2025 podvojene; domači ~600.000 konstantno, tuji 650.000 → 1,9 mio</span></div>
+      <div class="stat-row"><span class="sv">630.000</span><span class="sl">nočitev Nemcev 2025, prvič prehiteli domače; tretjina tujih</span></div>
+      <div class="stat-row"><span class="sv">2,9</span><span class="sl">povprečna doba bivanja; domači 3,2, tuji 2,8 <em>(NL 4,1, IT 2,2)</em></span></div>
+      <div class="stat-row"><span class="sv">4/5</span><span class="sl">nočitev junij-september; avgust 30 %, julij 25 %; rast v aprilu +22 %</span></div>
+      <div class="stat-row"><span class="sv">~34.000</span><span class="sl">ležišč; izvoz avtodomov 922 mio €</span></div>
+      <div class="stat-row"><span class="sv">505.630</span><span class="sl">nočitev Občina Radovljica 2025, 58 % v kampih; TD Lesce &gt;35 % nočitev občine</span></div>
+      <div class="stat-row"><span class="sv">12 vs 156</span><span class="sl">Strategija slovenskega turizma 2022-2028: "kamp" 12 vsebinskih omemb / "hotel" 156 na 309 straneh; str. 146: "ohranitev obsega ... kampi ipd. na sedanji ravni"</span></div>
+    </div>
+
+    <div class="stat-group"><h4>Evropa</h4>
+      <div class="stat-row"><span class="sv">84 / 80 / 76 %</span><span class="sl">ADAC 2026 (4.371 anketirancev): narava / spontanost / pustolovščina; nemški kampist 11,4 noči</span></div>
+      <div class="stat-row"><span class="sv">28 % = 28 %</span><span class="sl">najem = avtodom, načrtovano 38 %; mikrokamping 16 → 29 % <em>(ADAC 2026)</em></span></div>
+      <div class="stat-row"><span class="sv">64 % vs 13 %</span><span class="sl">PiNCAMP junij 2026: gostje 5* za 64 % kampov, ADAC inšpektorji 5* za 13 %; 15.000 kampov, 500.000 ocen</span></div>
+      <div class="stat-row"><span class="sv">40 / 25 / 12,5 / 12,5 / 10</span><span class="sl">ADAC uteži: sanitarije / teren / prosti čas / kopanje / oskrba; top parcela &gt;150 m²</span></div>
+      <div class="stat-row"><span class="sv">200</span><span class="sl">ADAC Superplatz 2025 v Evropi; FR 47, IT 40, HR 26, NL 26, DE 23, SLO 0</span></div>
+      <div class="stat-row"><span class="sv">413 mio</span><span class="sl">EU 2025: nočitev v kampih = 13,4 % vseh; HR 21,9 mio <em>(&gt;20 % vseh nočitev HR)</em></span></div>
+      <div class="stat-row"><span class="sv">17 / 15 / 15 %</span><span class="sl">PiNCAMP nenapisana pravila (avg. 2026): obzirnost / meje parcele / pozdravljanje</span></div>
+      <div class="stat-row"><span class="sv">60 %</span><span class="sl">KOA 2025/26: kampira za odklop; Wi-Fi podaljša bivanje; polovica poustvarja otroški dopust</span></div>
+      <div class="stat-row"><span class="sv">~60 l</span><span class="sl">voda na nočitev v kampu <em>(dom 120 l/dan)</em></span></div>
+      <div class="stat-row"><span class="sv">341/26</span><span class="sl">nov Pravilnik o kategorizaciji (Ur. l. RS, od 20. 4. 2026): kamp in glamp do 5*, 4-5* zunanji ocenjevalec, veljavnost 5/7/10 let, glamp od 1. 1. 2027</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Popup z namenom poglavja -->
+<div class="opis-popup" id="opisPopup">
+  <div class="opis-popup-head">
+    <div class="opis-popup-title"><span class="opis-popup-label">Namen poglavja</span><span id="opisTitle"></span></div>
+    <button class="opis-popup-close" onclick="hideOpis()" aria-label="Zapri">✕</button>
+  </div>
+  <div class="opis-popup-body" id="opisBody"></div>
+</div>
+
+<!-- Fiksni panel za zapiske -->
+<div class="notes-panel collapsed">
+  <div class="notes-head">
+    <span class="notes-title">Zapiski</span>
+    <span class="notes-actions">
+      <button class="notes-clear" onclick="clearNotes()">počisti</button>
+      <button class="notes-toggle" onclick="toggleNotes()" id="notesToggle">▲</button>
+    </span>
+  </div>
+  <textarea id="notesArea" placeholder="Zapiski med pogovorom… (samodejno shranjeni v brskalniku)"></textarea>
+  <div class="notes-saved" id="notesSaved">shranjeno</div>
+</div>
+
+<script>
+  // Nameni poglavij (popup vsebina)
+  const OPISI = {
+    1: { title: 'Kamp, ki ga je zgradila vas', body: '<p><strong>Namen:</strong> Po sistemski provokaciji pogovor spustiva na človeka: kdo si, kako si prišel sem, kdo je tvoj lastnik. Gost dobi prostor za predstavitev Šobca (DNA), a skozi lastništvo in ljudi, ne skozi seznam ponudbe.</p><p><strong>Cilj:</strong> Poslušalec spozna Uroša in razume, da je Šobec last vasi.</p>' },
+    2: { title: 'Manj gostov, več nočitev', body: '<p><strong>Namen:</strong> Kontraintuitivna poslovna odločitev in njen vpliv na izkušnjo gosta.</p><p><strong>Cilj:</strong> Poslušalec odnese: manj ljudi na isti površini, višja cena, daljše bivanje, več zadovoljstva.</p>' },
+    3: { title: 'Ko kampirajo, so vsi enaki: kaj kamp da, česar hotel ne more', body: '<p><strong>Namen:</strong> Leča gostoljubja. Kamp kot oblika nastanitve, kjer gost sam gostuje na svoji parceli.</p><p><strong>Cilj:</strong> Jasna razmejitev: hotel prodaja storitev in odvzem odločitev, kamp prodaja pogoje za lastno odločanje; gostitelj kampa je kurator pogojev.</p>' },
+    4: { title: 'Župan vasi: hišni red, sosedje, sobivanje', body: '<p><strong>Namen:</strong> Upravljavec kampa kot upravitelj sobivanja 2.500 ljudi brez zidov.</p><p><strong>Cilj:</strong> Hišni red kot orodje sobivanja, ne discipline; gostoljubje kot vodstvena praksa.</p>' },
+    5: { title: 'Sanitarije, sezonci in drugi momenti resnice', body: '<p><strong>Namen:</strong> Operativa gostoljubja: 6 ljudi, 80 sezoncev, 150 v konici; kakovost proti gostoljubju.</p><p><strong>Cilj:</strong> Konkretni sistem uvajanja ekipe in merjenja, ali je bil gost sprejet.</p>' },
+    6: { title: 'Narava, ki jo prodajaš, ni več zanesljiva', body: '<p><strong>Namen:</strong> Kamp kot podnebno najbolj izpostavljena oblika nastanitve; trajnost kot praksa.</p><p><strong>Cilj:</strong> Gostoljubje v krizi = odgovornost za varnost gosta; trajnost, ki jo gost opazi in ki je ne.</p>' },
+    7: { title: 'Tehnologija v kampu: nevidna ali moteča', body: '<p><strong>Namen:</strong> DNA-obvezno poglavje. Konkretno, brez prodajanja Nevrona.</p><p><strong>Cilj:</strong> Tehnologija kot tiha podpora, ki gostitelju vrne čas za človeka; meja, kjer začne kvariti svobodo.</p>' },
+    8: { title: 'Podpredsednik: kaj ti da panoga in kaj daš ti panogi', body: '<p><strong>Namen:</strong> Panožni pogled skozi njegovo funkcijo; kaj združenje da kampu in kaj kamp panogi.</p><p><strong>Cilj:</strong> Konkretni dosežki združenja in ena evropska praksa za Slovenijo.</p>' },
+    9: { title: 'Kamp čez 10 let', body: '<p><strong>Namen:</strong> Širša slika in vizija.</p><p><strong>Cilj:</strong> Jasna slika, kaj Šobec hoče biti leta 2036.</p>' },
+    10: { title: 'Zaključek', body: '<p>Osebna gostova izkušnja, gostoljubje v enem stavku (pusti tišino), kaj se od kampa lahko nauči hotel.</p><p><strong>Refleksija voditelja:</strong> kamp kot najbolj gola oblika gostoljubja: brez zidov, brez sobe, samo pogoji in ljudje; kar hotel skriva za storitvijo, kamp pokaže.</p>' }
+  };
+
+  let opisOpenId = null;
+  function showOpis(id){
+    const o = OPISI[id];
+    if(!o) return;
+    const popup = document.getElementById('opisPopup');
+    if(opisOpenId === id && popup.classList.contains('show')){ hideOpis(); return; }
+    document.getElementById('opisTitle').textContent = o.title;
+    document.getElementById('opisBody').innerHTML = o.body;
+    popup.classList.add('show');
+    opisOpenId = id;
+  }
+  function hideOpis(){
+    document.getElementById('opisPopup').classList.remove('show');
+    opisOpenId = null;
+  }
+
+  // Premikanje popupa (drag za glavo popupa)
+  (function(){
+    const popup = document.getElementById('opisPopup');
+    const head = popup.querySelector('.opis-popup-head');
+    let dragging = false, offsetX = 0, offsetY = 0;
+    head.addEventListener('pointerdown', function(e){
+      if (e.target.closest('.opis-popup-close')) return;
+      dragging = true;
+      const rect = popup.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+      popup.classList.add('dragging');
+      head.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    head.addEventListener('pointermove', function(e){
+      if (!dragging) return;
+      const rect = popup.getBoundingClientRect();
+      let x = e.clientX - offsetX;
+      let y = e.clientY - offsetY;
+      x = Math.max(0, Math.min(x, window.innerWidth - rect.width));
+      y = Math.max(0, Math.min(y, window.innerHeight - 48));
+      popup.style.left = x + 'px';
+      popup.style.top = y + 'px';
+      popup.style.right = 'auto';
+    });
+    head.addEventListener('pointerup', function(e){
+      dragging = false;
+      popup.classList.remove('dragging');
+      head.releasePointerCapture(e.pointerId);
+    });
+  })();
+
+  // Timer (štoparica)
+  let timerInterval = null, elapsed = 0, running = false;
+  function fmt(s){ const m = Math.floor(s/60), sec = s%60; return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'); }
+  function toggleTimer(){
+    const btn = document.getElementById('timerBtn'), disp = document.getElementById('timerDisplay');
+    if(running){
+      clearInterval(timerInterval); running = false;
+      btn.textContent = 'RESUME'; disp.classList.remove('running'); disp.classList.add('paused');
+    } else {
+      running = true; btn.textContent = 'PAUSE'; disp.classList.add('running'); disp.classList.remove('paused');
+      timerInterval = setInterval(() => { elapsed++; disp.textContent = fmt(elapsed); }, 1000);
+    }
+  }
+  function resetTimer(){
+    clearInterval(timerInterval); running = false; elapsed = 0;
+    const btn = document.getElementById('timerBtn'), disp = document.getElementById('timerDisplay');
+    btn.textContent = 'START'; disp.textContent = '00:00'; disp.classList.remove('running','paused');
+  }
+
+  // Ura
+  function updateClock(){
+    const d = new Date();
+    const h = String(d.getHours()).padStart(2,'0'), m = String(d.getMinutes()).padStart(2,'0');
+    document.getElementById('clockDisplay').textContent = h+':'+m;
+  }
+  updateClock(); setInterval(updateClock, 10000);
+
+  // Sekcije
+  function toggleSection(header){
+    const sec = header.closest('.section');
+    sec.classList.toggle('open'); sec.classList.toggle('active');
+  }
+  function toggleAsked(el){ el.classList.toggle('asked'); }
+
+  // Odštevanje na sekcijo
+  function toggleCountdown(el){
+    if(el._int){
+      clearInterval(el._int); el._int = null;
+      el.classList.remove('counting','overtime');
+      el.textContent = el.dataset.minutes + "'";
+      return;
+    }
+    el._remaining = parseInt(el.dataset.minutes,10) * 60;
+    el.classList.add('counting');
+    const render = () => {
+      const sign = el._remaining < 0 ? '-' : '';
+      const abs = Math.abs(el._remaining);
+      el.textContent = sign + Math.floor(abs/60) + ':' + String(abs%60).padStart(2,'0');
+    };
+    render();
+    el._int = setInterval(() => {
+      el._remaining--;
+      if(el._remaining < 0){ el.classList.remove('counting'); el.classList.add('overtime'); }
+      render();
+    }, 1000);
+  }
+
+  // Zapiski s samodejnim shranjevanjem
+  const notes = document.getElementById('notesArea');
+  const savedTag = document.getElementById('notesSaved');
+  let savedTimer = null;
+  try { const s = localStorage.getItem('ep14-notes'); if(s) notes.value = s; } catch(e){}
+  notes.addEventListener('input', () => {
+    try {
+      localStorage.setItem('ep14-notes', notes.value);
+      savedTag.classList.add('show');
+      clearTimeout(savedTimer);
+      savedTimer = setTimeout(() => savedTag.classList.remove('show'), 1200);
+    } catch(e){}
+  });
+  function clearNotes(){
+    if(confirm('Počistim vse zapiske?')){
+      notes.value = '';
+      try { localStorage.removeItem('ep14-notes'); } catch(e){}
+    }
+  }
+
+  // Stranska navigacija: klik skoči na poglavje, scroll-spy označi aktivno
+  (function(){
+    const rail = document.getElementById('chapterRail');
+    if(!rail) return;
+    const items = Array.from(rail.querySelectorAll('.rail-item'));
+    const sections = {};
+    document.querySelectorAll('.section[data-section]').forEach(s => { sections[s.dataset.section] = s; });
+    items.forEach(it => {
+      it.addEventListener('click', () => {
+        const sec = sections[it.dataset.target];
+        if(sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    const setActive = id => {
+      items.forEach(it => it.classList.toggle('active', it.dataset.target === id));
+      const act = items.find(it => it.dataset.target === id);
+      if(act && rail.scrollWidth > rail.clientWidth + 4){
+        rail.scrollTo({ left: act.offsetLeft - rail.clientWidth/2 + act.offsetWidth/2, behavior: 'smooth' });
+      }
+    };
+    const spy = () => {
+      let current = '0';
+      const mark = window.innerHeight * 0.30;
+      Object.entries(sections).forEach(([id, sec]) => {
+        if(sec.getBoundingClientRect().top <= mark) current = id;
+      });
+      setActive(current);
+    };
+    document.addEventListener('scroll', spy, { passive: true });
+    spy();
+  })();
+
+  // Statistični panel (levo)
+  function toggleStats(){
+    document.getElementById('statsPanel').classList.toggle('show');
+  }
+
+  // Zložljiv panel zapiskov na mobilcu
+  function toggleNotes(){
+    const p = document.querySelector('.notes-panel');
+    p.classList.toggle('collapsed');
+    document.getElementById('notesToggle').textContent = p.classList.contains('collapsed') ? '▲' : '▼';
+  }
+</script>
+
+</body>
+</html>
