@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hostfulness Podcast · EP15: Vasja Čretnik</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold-dark: #825A3A;
+    --gold-mid: #B08960;
+    --gold-light: #DEBA92;
+    --gold-muted: #D8B98C;
+    --bg-navy: #06101F;
+    --bg-black: #000000;
+    --text-primary: #FFFFFF;
+    --text-secondary: #C6A67F;
+    --font-family: "Montserrat", sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font-family); font-optical-sizing: auto; background: linear-gradient(180deg, var(--bg-navy), var(--bg-black)) no-repeat; background-color: var(--bg-black); min-height: 100vh; color: var(--text-primary); line-height: 1.6; padding-bottom: 200px; }
+
+  .timer-bar { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(10,15,30,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(130,90,58,0.3); display: flex; align-items: center; justify-content: space-between; padding: 12px 32px; }
+  .timer-left { display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--gold-muted); }
+  .timer-left span { color: var(--gold-light); font-weight: 500; }
+  .timer-center { display: flex; align-items: center; gap: 16px; }
+  .timer-display { font-size: 36px; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: 2px; color: #fff; }
+  .timer-display.running { color: var(--gold-light); }
+  .timer-display.paused { color: #fbbf24; }
+  .timer-btn { background: none; border: 1px solid var(--gold-muted); color: var(--gold-muted); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: inherit; transition: all 0.2s; }
+  .timer-btn:hover { border-color: var(--gold-light); color: var(--gold-light); }
+  .timer-btn.start { border-color: var(--gold-mid); color: var(--gold-mid); }
+  .timer-btn.start:hover { background: rgba(176,137,96,0.1); }
+  .clock-display { font-size: 14px; color: var(--gold-muted); font-variant-numeric: tabular-nums; }
+
+  .header { padding: 100px 32px 40px; max-width: 720px; margin: 0 auto; text-align: center; }
+  .header .ep-label { font-size: 11px; text-transform: uppercase; letter-spacing: 4px; color: var(--gold-muted); margin-bottom: 12px; }
+  .header h1 {
+    font-size: 32px; font-weight: 700; margin-bottom: 8px;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-mid), var(--gold-light));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; display: inline-block; line-height: 1.4;
+  }
+  .header .subtitle { font-size: 14px; color: var(--text-secondary); }
+
+  .red-thread { max-width: 720px; margin: 0 auto 32px; padding: 20px 28px; background: rgba(130,90,58,0.06); border: 1px solid rgba(176,137,96,0.2); border-radius: 10px; font-size: 14px; color: rgba(255,255,255,0.95); text-align: center; }
+  .red-thread strong { color: var(--gold-light); font-weight: 500; }
+
+  .profile-box { max-width: 720px; margin: 0 auto 32px; padding: 16px 24px; background: rgba(130,90,58,0.05); border: 1px solid rgba(176,137,96,0.18); border-radius: 10px; font-size: 13px; color: rgba(255,255,255,0.92); }
+  .profile-box h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-light); margin-bottom: 10px; }
+  .profile-box ul { margin: 0 0 0 18px; list-style: disc; }
+  .profile-box li { margin-bottom: 5px; line-height: 1.55; }
+  .profile-box strong { color: var(--gold-light); font-weight: 600; }
+  .profile-box em { color: var(--gold-muted); }
+
+  .constraint-box { max-width: 720px; margin: 0 auto 32px; padding: 16px 24px; background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.25); border-radius: 10px; font-size: 13px; color: rgba(255,255,255,0.95); }
+  .constraint-box h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #fca5a5; margin-bottom: 10px; }
+  .constraint-box ul { margin: 0 0 0 18px; list-style: disc; }
+  .constraint-box li { margin-bottom: 5px; }
+  .constraint-box strong { color: #fca5a5; font-weight: 600; }
+
+  .legend-box { max-width: 720px; margin: 0 auto 32px; padding: 14px 24px; background: rgba(130,90,58,0.05); border: 1px solid rgba(176,137,96,0.15); border-radius: 10px; font-size: 12.5px; color: rgba(255,255,255,0.85); display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; justify-content: center; }
+  .legend-box .lg-item { display: inline-flex; align-items: center; gap: 8px; }
+  .legend-box .lg-key { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #06101F; background: linear-gradient(90deg, var(--gold-mid), var(--gold-light)); padding: 3px 10px; border-radius: 999px; }
+  .legend-box .lg-res { display: inline-block; font-size: 9px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-muted); border: 1px dashed rgba(176,137,96,0.5); padding: 2px 9px; border-radius: 999px; opacity: 0.7; }
+
+  .ice-breaker-box { max-width: 720px; margin: 0 auto 48px; padding: 24px 28px; background: rgba(130,90,58,0.06); border: 1px solid rgba(176,137,96,0.2); border-radius: 10px; }
+  .ice-breaker-box h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-light); margin-bottom: 16px; line-height: 1.5; overflow-wrap: break-word; }
+  .ice-breaker-box .ice-item { padding: 8px 14px; margin-bottom: 4px; font-size: 14px; color: #fff; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
+  .ice-breaker-box .ice-item:hover { background: rgba(176,137,96,0.08); }
+  .ice-breaker-box .ice-item.used { opacity: 0.3; text-decoration: line-through; text-decoration-color: var(--gold-muted); }
+
+  .timeline { max-width: 720px; margin: 0 auto; padding: 0 32px; position: relative; }
+  .timeline::before { content: ''; position: absolute; left: 52px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, rgba(176,137,96,0.15), rgba(176,137,96,0.3), rgba(176,137,96,0.15)); }
+
+  .section { position: relative; margin-bottom: 40px; }
+  .section-header { display: flex; align-items: center; flex-wrap: nowrap; gap: 16px; padding: 16px 0; cursor: pointer; user-select: none; }
+  .section-header .section-dot, .section-header .section-countdown, .section-header .section-chevron { flex-shrink: 0; }
+  .section-header .section-info { min-width: 0; }
+  .section-dot { width: 42px; height: 42px; min-width: 42px; border-radius: 50%; background: rgba(6,16,31,0.92); border: 2px solid rgba(176,137,96,0.3); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: var(--gold-muted); z-index: 2; transition: all 0.3s; }
+  .section-header:hover .section-dot, .section.active .section-dot { border-color: var(--gold-mid); color: var(--gold-light); background: rgba(176,137,96,0.1); }
+  .section-info { flex: 1; }
+  .section-title { font-size: 17px; font-weight: 600; color: var(--gold-muted); transition: color 0.2s; }
+  .section-header:hover .section-title { color: var(--gold-light); }
+  .section-flag { display: block; width: max-content; max-width: 100%; margin-top: 5px; font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--gold-light); background: rgba(176,137,96,0.12); border: 1px solid rgba(176,137,96,0.3); padding: 2px 8px; border-radius: 999px; line-height: 1.5; }
+
+  .section-countdown {
+    width: 42px; height: 42px; min-width: 42px; border-radius: 50%;
+    background: rgba(6,16,31,0.92); border: 2px solid rgba(176,137,96,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; color: var(--gold-muted);
+    cursor: pointer; transition: all 0.3s; user-select: none; font-variant-numeric: tabular-nums;
+    overflow: hidden; white-space: nowrap;
+  }
+  .section-countdown.counting, .section-countdown.overtime { font-size: 10px; letter-spacing: -0.3px; }
+  .section-countdown:hover { border-color: var(--gold-mid); color: var(--gold-light); }
+  .section-countdown.counting { border-color: var(--gold-mid); color: var(--gold-light); background: rgba(176,137,96,0.12); animation: pulse 2s infinite; }
+  .section-countdown.overtime { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,0.08); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+  .section-chevron { color: var(--gold-muted); font-size: 18px; transition: transform 0.3s; min-width: 20px; text-align: center; }
+  .section.open .section-chevron { transform: rotate(90deg); color: var(--gold-light); }
+
+  .section-body { max-height: 0; overflow: hidden; visibility: hidden; transition: max-height 0.4s ease, visibility 0s 0.4s; }
+  .section.open .section-body { max-height: 7000px; visibility: visible; transition: max-height 0.4s ease, visibility 0s; }
+  .questions { margin-left: 62px; padding: 4px 0 24px; }
+
+  .opis-link { margin-left: 62px; margin-bottom: 10px; display: inline-flex; align-items: center; gap: 7px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; color: var(--gold-muted); cursor: pointer; border: 1px solid rgba(176,137,96,0.3); background: rgba(176,137,96,0.06); padding: 5px 12px; border-radius: 999px; transition: all 0.2s; user-select: none; }
+  .opis-link:hover { color: var(--gold-light); border-color: var(--gold-mid); background: rgba(176,137,96,0.12); }
+  .opis-link::before { content: 'ℹ'; font-size: 13px; }
+
+  .question { padding: 16px 20px; margin-bottom: 8px; background: rgba(6,16,31,0.75); border-radius: 8px; border-left: 3px solid rgba(176,137,96,0.2); cursor: pointer; transition: all 0.2s; }
+  .question:hover { background: rgba(6,16,31,0.9); border-left-color: var(--gold-mid); }
+  .question.asked { opacity: 0.35; border-left-color: transparent; }
+  .question-text { font-size: 15px; font-weight: 500; color: #fff; line-height: 1.65; }
+  .question.asked .question-text { text-decoration: line-through; text-decoration-color: var(--gold-muted); }
+  .q-hint { display: block; margin-top: 8px; font-size: 13px; font-style: italic; color: var(--gold-muted); line-height: 1.55; }
+  .question.asked .q-hint { text-decoration: none; }
+
+  .question.key { background: linear-gradient(135deg, rgba(176,137,96,0.14), rgba(6,16,31,0.85)); border-left: 4px solid var(--gold-mid); box-shadow: 0 4px 18px rgba(130,90,58,0.15); }
+  .question.key:hover { border-left-color: var(--gold-light); }
+  .question.key .question-text { font-size: 16px; font-weight: 600; }
+  .q-badge { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #06101F; background: linear-gradient(90deg, var(--gold-mid), var(--gold-light)); padding: 3px 10px; border-radius: 999px; margin-bottom: 10px; }
+
+  .question.reserve { opacity: 0.5; border-left-style: dashed; background: rgba(6,16,31,0.5); }
+  .question.reserve:hover { opacity: 1; background: rgba(6,16,31,0.9); }
+  .question.reserve .question-text { font-size: 13.5px; font-weight: 400; }
+  .q-tag-res { display: inline-block; font-size: 8px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-muted); border: 1px dashed rgba(176,137,96,0.5); padding: 1px 8px; border-radius: 999px; margin-bottom: 7px; }
+
+  .question.read { background: rgba(176,137,96,0.05); border-left: 3px solid rgba(176,137,96,0.35); }
+  .question.read .question-text { font-size: 14.5px; font-weight: 400; color: rgba(255,255,255,0.95); }
+  .q-tag-read { display: inline-block; font-size: 8px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-light); border: 1px solid rgba(176,137,96,0.45); padding: 1px 8px; border-radius: 999px; margin-bottom: 8px; }
+
+  .stance-block { margin-left: 62px; margin-bottom: 10px; padding: 16px 20px; background: rgba(99,102,241,0.10); border: 1px solid rgba(129,140,248,0.3); border-left: 4px solid #818cf8; border-radius: 8px; font-size: 13.5px; color: rgba(255,255,255,0.95); line-height: 1.6; }
+  .stance-block .stance-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #a5b4fc; margin-bottom: 7px; }
+
+  .warn-block { margin-left: 62px; margin-bottom: 10px; padding: 14px 18px; background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.25); border-left: 4px solid #ef4444; border-radius: 8px; font-size: 13px; color: rgba(255,255,255,0.95); }
+  .warn-block strong { color: #fca5a5; }
+
+  .section-preview {
+    margin-left: 62px;
+    margin-bottom: 6px;
+    padding: 6px 20px 14px;
+    font-size: 15px;
+    line-height: 1.55;
+    color: #fff;
+    white-space: normal;
+  }
+  .section.open .section-preview { display: none; }
+
+  .section-divider { margin-left: 62px; border: none; border-top: 1px solid rgba(176,137,96,0.12); margin-bottom: 0; }
+
+  .note-block { margin-left: 62px; padding: 16px 20px; background: rgba(176,137,96,0.06); border: 1px solid rgba(176,137,96,0.15); border-radius: 8px; margin-bottom: 24px; font-size: 13px; color: rgba(255,255,255,0.95); }
+  .note-block strong { color: var(--gold-light); font-weight: 500; }
+
+  /* STATISTIČNI PANEL (levo) */
+  .stats-panel {
+    position: fixed; left: 16px; top: 92px; bottom: 16px; width: 420px; z-index: 96;
+    background: rgba(6,16,31,0.97); backdrop-filter: blur(12px);
+    border: 1px solid rgba(176,137,96,0.35); border-radius: 14px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    display: none; flex-direction: column; overflow: hidden;
+  }
+  .stats-panel.show { display: flex; }
+  .stats-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px 12px 22px; border-bottom: 1px solid rgba(176,137,96,0.18); }
+  .stats-head .stats-title { font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-light); }
+  .stats-close { flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(176,137,96,0.4); background: none; color: var(--gold-muted); font-size: 15px; line-height: 1; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .stats-close:hover { color: #fff; border-color: var(--gold-light); background: rgba(176,137,96,0.12); }
+  .stats-body { padding: 12px 20px 20px; overflow-y: auto; }
+  .stat-group { margin-bottom: 16px; }
+  .stat-group h4 { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-muted); margin-bottom: 7px; padding-bottom: 4px; border-bottom: 1px dashed rgba(176,137,96,0.25); }
+  .stat-row { display: flex; align-items: baseline; gap: 10px; padding: 4px 0; }
+  .stat-row .sv { flex-shrink: 0; min-width: 92px; font-size: 14px; font-weight: 700; color: var(--gold-light); font-variant-numeric: tabular-nums; text-align: right; }
+  .stat-row .sl { flex: 1; font-size: 12px; color: rgba(255,255,255,0.9); line-height: 1.45; }
+  .stat-row .sl em { color: var(--gold-muted); font-style: normal; font-size: 11px; }
+  .stats-open-item { border-left: 3px solid var(--gold-mid) !important; background: rgba(176,137,96,0.10) !important; }
+  @media (max-width: 1023px) {
+    .stats-panel { left: 12px; right: 12px; width: auto; top: 90px; bottom: auto; max-height: 70vh; }
+  }
+  @media (max-width: 600px) {
+    .stat-row .sv { min-width: 76px; font-size: 13px; }
+  }
+
+  .opis-popup {
+    position: fixed; top: 92px; right: 48px; width: 400px; max-height: calc(100vh - 148px); z-index: 95;
+    background: rgba(6,16,31,0.96); backdrop-filter: blur(12px);
+    border: 1px solid rgba(176,137,96,0.35); border-radius: 14px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    display: none; flex-direction: column;
+    overflow: hidden;
+  }
+  .opis-popup.show { display: flex; }
+  .opis-popup-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 18px 18px 12px 22px; border-bottom: 1px solid rgba(176,137,96,0.18); cursor: move; user-select: none; touch-action: none; }
+  .opis-popup.dragging { transition: none; opacity: 0.92; }
+  .opis-popup-title { font-size: 14px; font-weight: 600; color: var(--gold-light); line-height: 1.4; }
+  .opis-popup-label { display: block; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--gold-muted); margin-bottom: 5px; }
+  .opis-popup-close { flex-shrink: 0; width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(176,137,96,0.4); background: none; color: var(--gold-muted); font-size: 15px; line-height: 1; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .opis-popup-close:hover { color: #fff; border-color: var(--gold-light); background: rgba(176,137,96,0.12); }
+  .opis-popup-body { padding: 16px 22px 20px; overflow-y: auto; font-size: 13.5px; line-height: 1.7; color: rgba(255,255,255,0.94); }
+  .opis-popup-body p { margin-bottom: 12px; }
+  .opis-popup-body p:last-child { margin-bottom: 0; }
+  .opis-popup-body strong { color: var(--gold-light); font-weight: 600; }
+
+  .notes-panel {
+    position: fixed; top: 92px; right: 48px; bottom: 56px; width: 400px; z-index: 90;
+    background: rgba(6,16,31,0.94); backdrop-filter: blur(10px);
+    border: 1px solid rgba(176,137,96,0.28); border-radius: 14px;
+    box-shadow: 0 12px 44px rgba(0,0,0,0.5);
+    display: flex; flex-direction: column; padding: 16px 18px 18px;
+  }
+  .notes-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .notes-head .notes-title { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-light); }
+  .notes-clear { background: none; border: 1px solid var(--gold-muted); color: var(--gold-muted); font-size: 10px; padding: 3px 9px; border-radius: 5px; cursor: pointer; font-family: inherit; letter-spacing: 1px; transition: all 0.2s; }
+  .notes-clear:hover { border-color: var(--gold-light); color: var(--gold-light); }
+  .notes-panel textarea {
+    flex: 1; width: 100%; resize: none;
+    background: rgba(0,0,0,0.3); border: 1px solid rgba(176,137,96,0.2); border-radius: 8px;
+    color: #fff; font-family: inherit; font-size: 14px; line-height: 1.6; padding: 12px;
+  }
+  .notes-panel textarea:focus { outline: none; border-color: var(--gold-mid); }
+  .notes-saved { font-size: 10px; color: var(--gold-muted); text-align: right; margin-top: 6px; height: 12px; opacity: 0; transition: opacity 0.3s; }
+  .notes-saved.show { opacity: 1; }
+  .notes-actions { display: flex; gap: 8px; align-items: center; }
+  .notes-toggle { display: none; background: none; border: 1px solid var(--gold-muted); color: var(--gold-muted); font-size: 12px; padding: 3px 10px; border-radius: 5px; cursor: pointer; font-family: inherit; line-height: 1; }
+  .notes-toggle:hover { border-color: var(--gold-light); color: var(--gold-light); }
+
+  .chapter-rail {
+    position: fixed; left: 16px; top: 92px; bottom: 16px; width: 200px; z-index: 90;
+    display: none; flex-direction: column; gap: 2px; overflow-y: auto;
+    background: rgba(6,16,31,0.85); backdrop-filter: blur(8px);
+    border: 1px solid rgba(176,137,96,0.22); border-radius: 12px; padding: 12px 10px;
+  }
+  .chapter-rail .rail-title { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--gold-muted); padding: 2px 8px 8px; }
+  .rail-item { display: flex; align-items: baseline; gap: 8px; padding: 6px 8px; border-radius: 7px; cursor: pointer; border-left: 3px solid transparent; transition: all 0.15s; }
+  .rail-item:hover { background: rgba(176,137,96,0.10); }
+  .rail-item .rail-num { flex-shrink: 0; width: 18px; font-size: 11px; font-weight: 700; color: var(--gold-muted); font-variant-numeric: tabular-nums; }
+  .rail-item .rail-label { flex: 1; min-width: 0; font-size: 12px; color: rgba(255,255,255,0.85); line-height: 1.35; overflow-wrap: break-word; }
+  .rail-item .rail-min { flex-shrink: 0; font-size: 10px; color: var(--gold-muted); font-variant-numeric: tabular-nums; }
+  .rail-item.active { background: rgba(176,137,96,0.14); border-left-color: var(--gold-mid); }
+  .rail-item.active .rail-label { color: var(--gold-light); font-weight: 600; }
+  .rail-info { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(176,137,96,0.4); background: none; color: var(--gold-muted); font-size: 11px; line-height: 1; cursor: pointer; font-family: inherit; align-self: center; transition: all 0.15s; }
+  .rail-info:hover { color: var(--gold-light); border-color: var(--gold-light); background: rgba(176,137,96,0.12); }
+
+  @media (min-width: 1024px) {
+    body { padding-right: 496px; }
+  }
+  @media (min-width: 1280px) {
+    .chapter-rail { display: flex; }
+    body { padding-left: 232px; }
+  }
+
+  @media (max-width: 1279px) {
+    .chapter-rail {
+      display: flex; flex-direction: row; align-items: center;
+      left: 0; right: 0; top: 61px; bottom: auto; width: auto;
+      overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch;
+      border-radius: 0; border-left: none; border-right: none; border-top: none;
+      padding: 7px 10px; gap: 6px;
+    }
+    .chapter-rail .rail-title { display: none; }
+    .rail-item { flex-shrink: 0; border: 1px solid rgba(176,137,96,0.25); border-left: 1px solid rgba(176,137,96,0.25); border-radius: 999px; padding: 4px 11px; gap: 6px; }
+    .rail-item.active { border-color: var(--gold-mid); }
+    .rail-item .rail-label { display: none; }
+    .rail-item.active .rail-label { display: inline; font-size: 11px; }
+    .rail-item .rail-min { font-size: 10px; }
+    .rail-info { width: 16px; height: 16px; font-size: 10px; }
+    body { padding-top: 46px; }
+  }
+  @media (max-width: 600px) {
+    .chapter-rail { top: 41px; }
+  }
+
+  @media (max-width: 1023px) {
+    .notes-panel { top: auto; left: 0; right: 0; bottom: 0; width: auto; height: 46vh; border: none; border-top: 1px solid rgba(176,137,96,0.3); border-radius: 0; box-shadow: 0 -8px 24px rgba(0,0,0,0.45); transition: height 0.25s ease; }
+    .notes-panel.collapsed { height: 50px; }
+    .notes-panel.collapsed textarea, .notes-panel.collapsed .notes-saved { display: none; }
+    .notes-toggle { display: inline-block; }
+    body { padding-bottom: 64px; }
+    .opis-popup { left: 12px; right: 12px; width: auto; top: 90px; max-height: 60vh; }
+  }
+
+  @media (max-width: 600px) {
+    .timer-bar { padding: 8px 12px; }
+    .timer-left { display: none; }
+    .timer-display { font-size: 24px; letter-spacing: 1px; }
+    .timer-btn { padding: 5px 10px; font-size: 11px; }
+    .clock-display { font-size: 12px; }
+    .header { padding: 80px 16px 26px; }
+    .header h1 { font-size: 24px; }
+    .timeline { padding: 0 12px; }
+    .timeline::before { left: 30px; }
+    .section-header { gap: 10px; padding: 14px 0; }
+    .section-dot { width: 36px; height: 36px; min-width: 36px; font-size: 13px; }
+    .section-countdown { width: 40px; height: 40px; min-width: 40px; }
+    .section-title { font-size: 15px; }
+    .questions { margin-left: 38px; padding-right: 4px; }
+    .question { padding: 12px 14px; }
+    .question-text { font-size: 14px; }
+    .question.key .question-text { font-size: 15px; }
+    .q-hint { font-size: 12px; }
+    .note-block, .stance-block, .warn-block { margin-left: 38px; padding: 12px 14px; }
+    .opis-link { margin-left: 38px; }
+    .section-divider { margin-left: 38px; }
+    .section-preview { margin-left: 38px; padding: 4px 14px 12px; font-size: 14px; }
+    .ice-breaker-box, .red-thread, .constraint-box, .legend-box, .profile-box { margin-left: 12px; margin-right: 12px; padding: 16px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="timer-bar">
+  <div class="timer-left">EP15 <span>Vasja Čretnik</span></div>
+  <div class="timer-center">
+    <button class="timer-btn start" onclick="toggleTimer()" id="timerBtn">START</button>
+    <div class="timer-display" id="timerDisplay">00:00</div>
+    <button class="timer-btn" onclick="resetTimer()">RESET</button>
+  </div>
+  <div class="clock-display" id="clockDisplay">--:--</div>
+</div>
+
+<nav class="chapter-rail" id="chapterRail">
+  <div class="rail-title">Potek pogovora</div>
+  <div class="rail-item" data-target="0"><span class="rail-num">0</span><span class="rail-label">Uvod</span><span class="rail-min">2'</span></div>
+  <div class="rail-item" data-target="1"><span class="rail-num">1</span><span class="rail-label">Od didžeja do Aqualune</span><span class="rail-min">7'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(1)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="2"><span class="rail-num">2</span><span class="rail-label">Dnevni kopalec</span><span class="rail-min">5'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(2)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="3"><span class="rail-num">3</span><span class="rail-label">Trije svetovi</span><span class="rail-min">7'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(3)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="4"><span class="rail-num">4</span><span class="rail-label">Kaj bi rekla Pika</span><span class="rail-min">9'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(4)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="5"><span class="rail-num">5</span><span class="rail-label">Selfness</span><span class="rail-min">6'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(5)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="6"><span class="rail-num">6</span><span class="rail-label">Platforma</span><span class="rail-min">8'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(6)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="7"><span class="rail-num">7</span><span class="rail-label">Tehnologija</span><span class="rail-min">6'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(7)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="8"><span class="rail-num">8</span><span class="rail-label">Dve državi</span><span class="rail-min">5'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(8)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="9"><span class="rail-num">9</span><span class="rail-label">Čez 10 let</span><span class="rail-min">4'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(9)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="10"><span class="rail-num">10</span><span class="rail-label">Zaključek</span><span class="rail-min">3'</span><button class="rail-info" onclick="event.stopPropagation(); showOpis(10)" title="Namen poglavja">i</button></div>
+  <div class="rail-item" data-target="opt"><span class="rail-num">±</span><span class="rail-label">Opcijske teme</span><span class="rail-min"></span></div>
+</nav>
+
+<div class="header">
+  <div class="ep-label">Hostfulness Podcast &middot; Epizoda 15</div>
+  <h1>Vasja Čretnik</h1>
+  <div class="subtitle">Prokurist in vodja marketinga Term Olimia &middot; Direktor Term Tuhelj &middot; En resort, trije svetovi<br>Snemanje: termin še ni določen &middot; trajanje ~63 min</div>
+</div>
+
+<div class="red-thread">
+  <strong>Vasja Čretnik je v Terme Olimia prišel iz študentskih dogodkov, ne iz hotelirske šole, in z njimi raste petindvajset let.</strong> Letos je destinacija en resort razrezala na tri svetove in odprla hotel, ki ga sam imenuje čustveno inteligenten: zgrajen okoli otroka, ne okoli starša. Z Vasjo preveriva, kaj sploh pomeni sprejeti otroka kot gosta, česa se o tem lahko naučimo od Pikinega festivala, ki en teden na leto preda mesto otroku, kaj je selfness v primerjavi s hostfulnessom, in kaj po trinajstih letih gradnje ene digitalne platforme gost dejansko občuti.
+</div>
+
+<div class="profile-box">
+  <h3>Profil gosta</h3>
+  <ul>
+    <li><strong>Vasja Čretnik</strong>, prokurist Term Olimia in vodja marketinga, direktor Term Tuhelj (eden od dveh; drugi je <strong>Florjan Vasle</strong>, ki je tudi direktor Term Olimia). Kontaktna oseba za informacije javnega značaja obeh družb.</li>
+    <li>Iz Velenja. Kot otrok je hotel biti mesar. Študij v Mariboru, dogodki v Štuku, didžej. V turizem vstopil v zgodnjih devetdesetih kot vodnik agencije Intelekta (Romunija, Malta). Leta 2001 v Terme Olimia kot upravnik nove Aqualune, od 2003 prodaja in marketing.</li>
+    <li>Mama soorganizatorka Pikinega festivala, oče amaterski gledališki igralec. Doma kuha, pozimi borda. Posebno županovo priznanje Občine Podčetrtek 2022.</li>
+    <li>Terme Olimia: 60 let (1966 leseni bazen, Atomske toplice). 2025: 625.000 kopalcev, 396.000 nočitev; skupina 55 mio EUR prihodkov, 6,6 mio dobička, nad 600.000 nočitev; 55 do 60 % tujih gostov, radij 500 km. Nad 70 mio EUR naložb v treh letih. Približno 420 zaposlenih v Podčetrtku, 230 v Tuhlju. Država ~98 % lastnik.</li>
+    <li><strong>Vilinia</strong> (odprta 22. 5. 2026, ~30 mio EUR, 146 sob, 70 zaposlenih, 10 animatorjev): nad 90 % zasedenost poleti, uspešnica poganjalčki. Sotelia adults only 15+ od 1. 7. 2026. Njegov izraz: <em>»koncept čustveno inteligentnega hotela«</em> (10. 9. 2026).</li>
+    <li><strong>Selfness:</strong> Terme Olimia so »prva selfness destinacija v Sloveniji«; hišni ritual (3 min) za goste in zaposlene; njegov citat 2018: <em>»vsakega gosta prijazno opomnimo in ustavimo, da se zazre vase, še preden je dejansko tega potreben«</em>.</li>
+    <li>Digitalno: 13 let s Humanfrogom (splet, rezervacije, trgovina, spletni check-in ~80 % gostov, profil gosta), Wellcard, TV v sobi, aplikacija med bivanjem in info zasloni (od 2016).</li>
+    <li>Temeljno prepričanje za preveriti: <em>»Bodite maksimalno fer do gostov, zaposlenih in partnerjev, to se vam vrne.«</em> In teza, da je ponudba za vsak segment zdaj »dokončno razvita«.</li>
+  </ul>
+</div>
+
+<div class="legend-box">
+  <span class="lg-item"><span class="lg-key">Ključno</span> vodilno vprašanje poglavja</span>
+  <span class="lg-item"><span class="lg-res">Pomožno</span> samo če je čas / pogovor potegne tja</span>
+</div>
+
+<div class="ice-breaker-box">
+  <h3>Ice-breaker (pred snemanjem)</h3>
+  <div class="ice-item" onclick="this.classList.toggle('used')">Kdaj si nazadnje didžejal?</div>
+  <div class="ice-item" onclick="this.classList.toggle('used')">Kaj skuhaš, ko hočeš nekoga razvajati?</div>
+</div>
+
+<div class="timeline">
+
+  <!-- 0. UVOD -->
+  <div class="section" data-section="0">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">0</div>
+      <div class="section-info"><div class="section-title">Uvod</div></div>
+      <div class="section-countdown" data-minutes="2" onclick="event.stopPropagation(); toggleCountdown(this)">2'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Nagovor: prokurist in vodja marketinga Term Olimia, direktor Term Tuhelj, Vilinia ob šestdesetletnici. Brez uvodnega vprašanja, takoj P1.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question read" onclick="toggleAsked(this)"><div class="q-tag-read">Nagovor</div><div class="question-text">V tokratni epizodi podcasta je z mano Vasja Čretnik, prokurist in vodja marketinga Term Olimia. Hkrati je direktor Term Tuhelj na Hrvaškem.<br><br>Terme Olimia so letos ob svoji šestdesetletnici odprle družinski hotel Vilinia, največjo naložbo v zgodovini podjetja. Vasja je pri tej zgodbi zraven že četrt stoletja.<br><br>Danes bova govorila o tem, kako se v enem resortu hkrati gosti tako družine, pare, kot tudi športnike in druge skupine. Vasja, dobrodošel.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 1. OD DIDŽEJA DO AQUALUNE -->
+  <div class="section" data-section="1">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">1</div>
+      <div class="section-info"><div class="section-title">Od didžeja do Aqualune<span class="section-flag">gost se predstavi sam</span></div></div>
+      <div class="section-countdown" data-minutes="7" onclick="event.stopPropagation(); toggleCountdown(this)">7'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Gost se predstavi sam, skozi pot iz dogodkov v turizem: mesar, Štuk, didžej, vodnik, Aqualuna 2001. Prostor za predstavitev Term Olimia.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(1)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Kot otrok si hotel biti mesar, v Mariboru si delal dogodke v Štuku in didžejal, v turizem si vstopil kot vodnik po Romuniji in Malti, leta 2001 pa si prišel v Podčetrtek upravljat nov vodni park Aqualuna.</div><div class="q-hint">Iztočnica, ne vprašanje; pusti tišino, da pove sam. Štajerski val 5. 9. 2016.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj si se v tistih dveh letih naučil o gostu, ki pride samo za en dan?</div><div class="q-hint">Most v P2.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Petindvajset let v isti hiši. Kaj te je zadržalo tukaj?</div><div class="q-hint">Poslovni turizam 2023: »osebno se počutim del te zgodbe«.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Mineva šestdeset let od lesenega bazena. Kaj danes čaka gosta, česar ne bo dobil v nobenih drugih termah?</div><div class="q-hint">Prostor za predstavitev.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 2. DNEVNI KOPALEC IN HOTELSKI GOST -->
+  <div class="section" data-section="2">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">2</div>
+      <div class="section-info"><div class="section-title">Dnevni kopalec in hotelski gost<span class="section-flag">četrti svet</span></div></div>
+      <div class="section-countdown" data-minutes="5" onclick="event.stopPropagation(); toggleCountdown(this)">5'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Dnevni gost je največji po številu. Kako se razlikuje od hotelskega, kdo ima prednost, kdaj postane hotelski gost, kdo je zahtevnejši.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(2)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Dnevnih kopalcev imate vsako leto več kot nočitev. Kako se za vas dnevni gostje razlikujejo od hotelskih in ali kateremu dajete prednost?</div><div class="q-hint">625.000 kopalcev proti 396.000 nočitev (Novi tednik 10. 9. 2026); Vasle, Finance 14. 5. 2026.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kdaj dnevni kopalec postane hotelski gost, in kaj ga prepriča?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kdo je zahtevnejši gost: tisti, ki plača vstopnico za en dan, ali tisti, ki plača tri noči?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Dnevni gost pride za nekaj ur. Kje v teh urah se zgodi trenutek, ko se odloči, ali se vrne?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ali dnevni kopalec in hotelski gost prideta k vam po isto stvar?</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 3. EN RESORT, TRIJE SVETOVI -->
+  <div class="section" data-section="3">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">3</div>
+      <div class="section-info"><div class="section-title">En resort, trije svetovi<span class="section-flag">segmentacija in njena cena</span></div></div>
+      <div class="section-countdown" data-minutes="7" onclick="event.stopPropagation(); toggleCountdown(this)">7'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Segmentacija kot desetletni načrt: Vilinia za družine, Sotelia za odrasle, Breza za športnike. Kaj so pridobili in izgubili.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(3)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Segmentacijo ste načrtovali več kot deset let. Kaj vas je v to prepričalo?</div><div class="q-hint">Vasle: »načrt, ki smo ga zastavili pred več kot desetimi leti«; bazeni ostajajo skupni, Orhidelia in Savna svet 15+.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj ste s segmentacijo pridobili in kaj izgubili?</div><div class="q-hint">Štajerski val 7. 8. 2026: Sotelia poleti manj zasedena kot lani, prej polovica poletnih gostov družin.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ali so gostje v Vilinii drugačni od družin, ki so prej hodile v Sotelio?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj se je za par v Soteliji spremenilo, odkar tam ni otrok?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ali je z Vilinio segmentacija končana?</div><div class="q-hint">Čretnik 10. 9. 2026: ponudba »dokončno razvita«; Vasle: v Podčetrtku novih hotelov ne bo.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 4. ČUSTVENO INTELIGENTEN HOTEL: KAJ BI REKLA PIKA? -->
+  <div class="section" data-section="4">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">4</div>
+      <div class="section-info"><div class="section-title">Čustveno inteligenten hotel: kaj bi rekla Pika?<span class="section-flag">otrok kot gost &middot; osebni lok</span></div></div>
+      <div class="section-countdown" data-minutes="9" onclick="event.stopPropagation(); toggleCountdown(this)">9'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Njegov izraz »čustveno inteligenten hotel«, kako se sprejme otroka kot gosta (nikjer pokrito), Pikin festival kot osebni lok.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(4)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Pred tednom dni si Vilinio opisal kot čustveno inteligenten hotel. Kaj to pomeni?</div><div class="q-hint">Novi tednik / Svet24, 10. 9. 2026; nikjer pojasnjeno.</div></div>
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Kako se sprejme otroka kot gosta? Ne starša, otroka.</div><div class="q-hint">Jedro poglavja; išči konkretno: kdo otroka pozdravi prvi, kaj mu reče, na kateri višini.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ste pri načrtovanju hotela vprašali tudi otroke?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj je otroke v Vilinii najbolj presenetilo, česar niste načrtovali?</div><div class="q-hint">Poganjalčki, več kot 50 (Čretnik 7. 8. 2026).</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Tvoja mama je bila med tistimi, ki so v Velenju ustvarjali Pikin festival. Ti je to kaj pomagalo pri Vilinii?</div><div class="q-hint">Štajerski val 2016; festival od 1990, 37. festival 5. do 11. 9. 2026.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Na Pikinem festivalu otrok en teden vodi mesto. Bi otrok lahko en dan vodil Vilinio?</div><div class="q-hint">Uradna Pika prevzame župansko lento; Pika: »Veliki ljudje nimajo nikoli nič prijetnega ...«</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 5. SELFNESS IN HOSTFULNESS -->
+  <div class="section" data-section="5">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">5</div>
+      <div class="section-info"><div class="section-title">Selfness in hostfulness<span class="section-flag">leča gostoljubja</span></div></div>
+      <div class="section-countdown" data-minutes="6" onclick="event.stopPropagation(); toggleCountdown(this)">6'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Selfness je pogled vase, hostfulness pogled k drugemu. Je gostitelj, ki je pri sebi, boljši gostitelj? Filozofija ali marketing; do koga je najtežje biti fer.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(5)">Namen poglavja</div>
+      <div class="stance-block"><span class="stance-label">Stališče voditelja (ob vprašanju 2)</span>Hostfulness je mindfulness, obrnjen navzven. Gostoljubje je razmerje, ne storitev. Kdor ni v ravnovesju, v odnos vstopa iz strahu ali potrebe, in gostoljubje zdrsne v transakcijo. Najprej ravnovesje, šele nato gostitelj.</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Terme Olimia se imenujejo prva selfness destinacija v Sloveniji. Kaj je selfness?</div><div class="q-hint">olimia-group.com: pot do kakovostnejšega in srečnejšega življenja; tretji petek v Orhideliji, hišni ritual (3 min, gostje in zaposleni), revija.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Selfness je pogled vase. Ta podcast se imenuje Hostfulness, pogled k drugemu. Je gostitelj, ki je pri sebi, boljši gostitelj?</div><div class="q-hint">Tu stališče voditelja.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Leta 2018 si rekel, da gosta ustavite, da se zazre vase, še preden to potrebuje. Kako to naredite?</div><div class="q-hint">Ustavi se!, 2018, njegov citat.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Je selfness filozofija hiše ali marketing?</div><div class="q-hint">Njegov citat 2018: »namen selfnessa ni sprememba strukture gostov, temveč da prepoznajo Terme Olimia kot destinacijo, ki ponuja nekaj več«.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Tvoja formula je: bodi fer do gostov, zaposlenih in partnerjev. Do katerih je najtežje biti fer, potrpežljiv in korekten?</div><div class="q-hint">Poslovni turizam 2023.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 6. TRINAJST LET ENE PLATFORME -->
+  <div class="section" data-section="6">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">6</div>
+      <div class="section-info"><div class="section-title">Trinajst let ene platforme<span class="section-flag">kaj so naredili &middot; kaj bi še &middot; prva stvar</span></div></div>
+      <div class="section-countdown" data-minutes="8" onclick="event.stopPropagation(); toggleCountdown(this)">8'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Ena digitalna platforma za obe destinaciji od 2013: kaj so hoteli rešiti, kaj sistem ve o gostu, kaj pogrešajo in kaj bodo naredili naslednje.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(6)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Trinajst let z istim partnerjem gradite eno digitalno platformo za obe destinaciji. Kaj ste hoteli rešiti na začetku?</div><div class="q-hint">Humanfrog študija primera: 2013 spletna mesta + PHOBS API, 2018 CRM in GDPR, 2019 trgovina in check-in, 2022 QR vstopnice, 2023 zvestoba, 2025 kode za lokalne nastanitve, 2026 Azure z osmimi aplikacijami.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ali sistem kaj ve o gostu, preden pride?</div><div class="q-hint">Spletni check-in ~80 %; FAQ: prehranske omejitve se najavijo ob prihodu.</div></div>
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Kaj trenutno najbolj pogrešaš oziroma že veš, da bi vam najbolj koristilo?</div></div>
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Katere stvari že veste, da boste še implementirali?</div><div class="q-hint">Jedro poglavja.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj se pri vas ne bo nikoli digitaliziralo?</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 7. TEHNOLOGIJA, KI JO GOST VIDI -->
+  <div class="section" data-section="7">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">7</div>
+      <div class="section-info"><div class="section-title">Tehnologija, ki jo gost vidi<span class="section-flag">kaj gost občuti</span></div></div>
+      <div class="section-countdown" data-minutes="6" onclick="event.stopPropagation(); toggleCountdown(this)">6'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Katere digitalne točke ima gost na voljo, kje tehnologija ljudem vrne čas, umetna inteligenca, kaj gostje o tem povedo.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(7)">Namen poglavja</div>
+      <div class="stance-block"><span class="stance-label">Stališče voditelja (ob vprašanju 2)</span>Tehnologija je smiselna, ko gostitelja razbremeni administrativnega, da mu ostane več časa za človeka. Več tehnologije za več človečnosti, ne obratno.</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Katere digitalne točke so poleg spletne strani s check-inom še na voljo gostom?</div><div class="q-hint">Wellcard aplikacija, TV v sobi in aplikacija med bivanjem ter info zasloni (od 2016), zapestnica na bazenih, koledar zasedenosti.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kje tehnologija tvojim ljudem vrne čas za gosta, in kje jim ga vzame?</div><div class="q-hint">Tu stališče voditelja.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Bi pustil, da umetna inteligenca odgovarja gostom na povpraševanja?</div><div class="q-hint">O AI javno še ni govoril.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj ti gostje o tehnologiji v hotelu najpogosteje povedo?</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 8. DVE DRŽAVI, DVE RESNICI -->
+  <div class="section" data-section="8">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">8</div>
+      <div class="section-info"><div class="section-title">Dve državi, dve resnici<span class="section-flag">Tuhelj</span></div></div>
+      <div class="section-countdown" data-minutes="5" onclick="event.stopPropagation(); toggleCountdown(this)">5'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Tuhelj: prvih deset let preživetje, danes rekordi. Ena destinacija ali dve, evropski denar, naslednji cikel do 2029.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(8)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Prvih deset let Tuhlja je bil po tvojih besedah boj za preživetje. Kaj si se v tistih letih naučil?</div><div class="q-hint">Poslovni turizam 2023.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Sta Olimia in Tuhelj ena destinacija ali dve?</div><div class="q-hint">Wellcard velja v obeh, darilni bon iz Olimie v Tuhlju ne (FAQ).</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj se Olimia uči od Tuhlja?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Na Hrvaškem ste za prenovo dobili evropski denar, v Sloveniji ga niste mogli zaprositi. Kako to vpliva na odločanje?</div><div class="q-hint">Delo 20. 2. 2025 (6,6 mio iz NPOO).</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Naslednji veliki cikel gre v Tuhelj. Kaj boste tam naredili drugače kot v Vilinii?</div><div class="q-hint">Vasle, Finance 14. 5. 2026: rušenje 150 sob, nov del in bazen do 2029.</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 9. TERME ČEZ 10 LET -->
+  <div class="section" data-section="9">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">9</div>
+      <div class="section-info"><div class="section-title">Terme čez 10 let<span class="section-flag">širša slika</span></div></div>
+      <div class="section-countdown" data-minutes="4" onclick="event.stopPropagation(); toggleCountdown(this)">4'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Kraj, lastništvo, gost prihodnosti: kaj dolgujejo Podčetrtku, ali državno lastništvo vpliva na gostoljubje, gost 2036.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(9)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Podjetje ima skoraj več zaposlenih, kot ima Podčetrtek prebivalcev. Kaj dolgujete kraju?</div><div class="q-hint">Vasle, Finance 14. 5. 2026; dan odprtja Atomskih toplic je občinski praznik.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Ali državno lastništvo vpliva na to, kako gostite?</div><div class="q-hint">OdSUND-1, Uradni list 28. 3. 2025: portfeljska naložba.</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kakšen bo gost Term Olimia čez deset let?</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Če se čez deset let spet usedeva za ta mikrofon: po čem bova vedela, da ti je uspelo?</div></div>
+      </div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- 10. ZAKLJUČEK -->
+  <div class="section" data-section="10">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">10</div>
+      <div class="section-info"><div class="section-title">Zaključek</div></div>
+      <div class="section-countdown" data-minutes="3" onclick="event.stopPropagation(); toggleCountdown(this)">3'</div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Osebna gostova izkušnja; kaj se je o gostoljubju naučil pri delu in prenesel domov, ali obratno; refleksija voditelja.</div>
+    <div class="section-body">
+      <div class="opis-link" onclick="showOpis(10)">Namen poglavja</div>
+      <div class="questions">
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Kaj je tebe kot gosta kje na svetu tako prevzelo, da si rekel: to hočem dati svojim gostom?</div></div>
+        <div class="question key" onclick="toggleAsked(this)"><div class="q-badge">Ključno</div><div class="question-text">Kaj si se o gostoljubju naučil pri delu in prenesel v osebno življenje? Ali je bilo bolj obratno?</div><div class="q-hint">Pusti tišino.</div></div>
+      </div>
+      <div class="note-block"><strong>Refleksija voditelja:</strong> hotel, zgrajen okoli otroka, je najbolj iskren test gostoljubja, ker otrok ne pozna storitve, pozna samo odnos.</div>
+    </div>
+  </div>
+  <hr class="section-divider">
+
+  <!-- OPCIJSKE TEME -->
+  <div class="section" data-section="opt">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-dot">OPT</div>
+      <div class="section-info"><div class="section-title">Opcijske teme<span class="section-flag">vpleti kadarkoli</span></div></div>
+      <div class="section-chevron">›</div>
+    </div>
+    <div class="section-preview">Opombe (statistika), park za pse, dinamične cene, energija, arhitekturne nagrade, Tuhelj dve oceni.</div>
+    <div class="section-body">
+      <div class="questions">
+        <div class="question stats-open-item" onclick="event.stopPropagation(); toggleStats()"><div class="q-badge">Opombe</div><div class="question-text">📊 Statistični podatki: klik odpre panel z vsemi ključnimi številkami (levo)</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Park za pse Canisia (2025)</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Dinamične cene od 2018, tri četrtine gostov prek lastne prodaje (Finance 2022)</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Energija: sonce in biomasa sta za stroške, ne za gosta (njegova iskrenost iz 2023)</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Arhitekturne nagrade: Sotelia Plečnikova 2006, Vodian mednarodna 2026 (Enota); Vilinio je projektiral Protim Ržišnik Perc</div></div>
+        <div class="question" onclick="toggleAsked(this)"><div class="question-text">Tuhelj: Booking 9,1 proti Tripadvisor 3,9</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Statistični panel (levo) -->
+<div class="stats-panel" id="statsPanel">
+  <div class="stats-head">
+    <span class="stats-title">📊 Opombe &middot; ključne številke</span>
+    <button class="stats-close" onclick="toggleStats()" aria-label="Zapri">✕</button>
+  </div>
+  <div class="stats-body">
+
+    <div class="stat-group"><h4>Terme Olimia (Podčetrtek)</h4>
+      <div class="stat-row"><span class="sv">60 let</span><span class="sl">1966 leseni bazen (Atomske toplice), ~20.000 kopalcev prvo leto; 2025: <em>625.000 kopalcev, 396.000 nočitev</em></span></div>
+      <div class="stat-row"><span class="sv">55 mio €</span><span class="sl">prihodki skupine 2025; čisti dobiček 6,6 mio €; nad 600.000 nočitev <em>(400.000 Olimia, 200.000 Tuhelj)</em>; načrt 2026: 61,5 mio €</span></div>
+      <div class="stat-row"><span class="sv">15,4 mio €</span><span class="sl">Q1 2026 (+30 %), dobiček 3 mio € (podvojen)</span></div>
+      <div class="stat-row"><span class="sv">38 mio €</span><span class="sl">Terme Olimia d.d. 2025, dobrih 5 mio € dobička</span></div>
+      <div class="stat-row"><span class="sv">70 mio €</span><span class="sl">naložbe v treh letih: Vodian 5 mio (2025), Tuhelj 27 mio (2025), Vilinia ~30 mio (2026)</span></div>
+      <div class="stat-row"><span class="sv">420 / 230</span><span class="sl">zaposleni Podčetrtek / Tuhelj; Vilinia 70 <em>(10 animatorjev)</em></span></div>
+      <div class="stat-row"><span class="sv">55-60 %</span><span class="sl">tujih gostov (HR, SRB, AT, IT); radij 500 km: Milano, München, Dunaj, Budimpešta, Beograd</span></div>
+      <div class="stat-row"><span class="sv">~98 %</span><span class="sl">država (RS, KAD, SDH); OdSUND-1 (28. 3. 2025): portfeljska naložba</span></div>
+      <div class="stat-row"><span class="sv">od 2018</span><span class="sl">dinamične cene; 75 % gostov prek lastne prodaje (2022); 40 % prihodkov 2021 iz bonov</span></div>
+      <div class="stat-row"><span class="sv">1. 7. 2026</span><span class="sl">Sotelia adults only 15+ <em>(Rimske Terme od 1. 1. 2025, družine 2 % gostov)</em></span></div>
+    </div>
+
+    <div class="stat-group"><h4>Vilinia</h4>
+      <div class="stat-row"><span class="sv">22. 5. 2026</span><span class="sl">odprta (slovesnost 21. 5.), 146 sob, 450-600 gostov, ~30 mio € <em>(gradnja 23,7 + oprema 3)</em>, 15 mesecev od pogodbe</span></div>
+      <div class="stat-row"><span class="sv">7 igralnic</span><span class="sl">nad 1.000 m² igralnih površin, 9 m plezalna mreža, 150 m stekleni hodnik, brez stopnic, 74 garažnih mest</span></div>
+      <div class="stat-row"><span class="sv">&gt;90 %</span><span class="sl">zasedenost poleti; 5.000 gostov in 15.000 nočitev do 7. 8.; nad 50 poganjalčkov</span></div>
+      <div class="stat-row"><span class="sv">4,8 / 9,3 / 4,6</span><span class="sl">Google (164) / Booking (12) / Tripadvisor (5), 17. 9. 2026</span></div>
+      <div class="stat-row"><span class="sv">178,37 €</span><span class="sl">soft all inclusive 2026 na osebo na noč, dva otroka brezplačno</span></div>
+      <div class="stat-row"><span class="sv">Protim</span><span class="sl">Protim Ržišnik Perc, arhitektka Petra Šimnovec</span></div>
+    </div>
+
+    <div class="stat-group"><h4>Digitalno</h4>
+      <div class="stat-row"><span class="sv">od 2013</span><span class="sl">Humanfrog: PHOBS API, CRM, Umbraco, Azure (2026, 8 aplikacij); spletni check-in od 2019, ~80 % gostov; registracije +87 %, boni in vstopnice +20 %</span></div>
+      <div class="stat-row"><span class="sv">42 točk/€</span><span class="sl">Wellcard: 1.000 točk = 1 € (4,2 %), obe destinaciji, App Store samo angleško</span></div>
+      <div class="stat-row"><span class="sv">od 2016</span><span class="sl">TV v sobi, gostova aplikacija in info zasloni; Vilinia 2026 spletna aplikacija (QR)</span></div>
+    </div>
+
+    <div class="stat-group"><h4>Selfness</h4>
+      <div class="stat-row"><span class="sv">prva v SLO</span><span class="sl">selfness destinacija; tretji petek v mesecu v Orhideliji brezplačno; hišni ritual 3 min (gostje in zaposleni); revija Selfness (2025)</span></div>
+      <div class="stat-row"><span class="sv">2018</span><span class="sl">Čretnik: »namen selfnessa ni sprememba strukture gostov«</span></div>
+    </div>
+
+    <div class="stat-group"><h4>Pikin festival</h4>
+      <div class="stat-row"><span class="sv">od 1990</span><span class="sl">Marinšek, Zelenik, Kovač, Filipančič; Festival Velenje od 2008; 37. festival 5.-11. 9. 2026; nad 50.000 obiskovalcev; Pika prevzame župansko lento</span></div>
+    </div>
+
+    <div class="stat-group"><h4>Trg (SURS 2025)</h4>
+      <div class="stat-row"><span class="sv">19 %</span><span class="sl">zdraviliške občine: 3,38 mio nočitev, +2,5 % <em>(Slovenija +5,9 %)</em>, 40 % domačih nočitev, doba bivanja 3,36 noči</span></div>
+      <div class="stat-row"><span class="sv">17,8 mio</span><span class="sl">nočitev v Sloveniji 2025, 75 % tujih</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Popup z namenom poglavja -->
+<div class="opis-popup" id="opisPopup">
+  <div class="opis-popup-head">
+    <div class="opis-popup-title"><span class="opis-popup-label">Namen poglavja</span><span id="opisTitle"></span></div>
+    <button class="opis-popup-close" onclick="hideOpis()" aria-label="Zapri">✕</button>
+  </div>
+  <div class="opis-popup-body" id="opisBody"></div>
+</div>
+
+<!-- Fiksni panel za zapiske -->
+<div class="notes-panel collapsed">
+  <div class="notes-head">
+    <span class="notes-title">Zapiski</span>
+    <span class="notes-actions">
+      <button class="notes-clear" onclick="clearNotes()">počisti</button>
+      <button class="notes-toggle" onclick="toggleNotes()" id="notesToggle">▲</button>
+    </span>
+  </div>
+  <textarea id="notesArea" placeholder="Zapiski med pogovorom… (samodejno shranjeni v brskalniku)"></textarea>
+  <div class="notes-saved" id="notesSaved">shranjeno</div>
+</div>
+
+<script>
+  // Nameni poglavij (popup vsebina)
+  const OPISI = {
+    1: { title: 'Od didžeja do Aqualune', body: '<p><strong>Namen:</strong> Gost se predstavi sam, skozi pot iz dogodkov v turizem; prostor za predstavitev Term Olimia.</p><p><strong>Cilj:</strong> Poslušalec spozna človeka, ki ni iz hotelirske šole, in razume, da je zrasel z destinacijo.</p>' },
+    2: { title: 'Dnevni kopalec in hotelski gost', body: '<p><strong>Namen:</strong> Četrti svet, o katerem se ne govori: dnevni gost je največji po številu.</p><p><strong>Cilj:</strong> Jasno, kako se dnevni gost razlikuje od hotelskega in kaj mu destinacija dolguje.</p>' },
+    3: { title: 'En resort, trije svetovi', body: '<p><strong>Namen:</strong> Segmentacija kot desetletni načrt in njena cena.</p><p><strong>Cilj:</strong> Poslušalec razume, zakaj so goste ločili in kaj so s tem pridobili in izgubili.</p>' },
+    4: { title: 'Čustveno inteligenten hotel: kaj bi rekla Pika?', body: '<p><strong>Namen:</strong> Njegov izraz, sprejem otroka kot gosta (nikjer pokrito), Pikin festival kot osebni lok.</p><p><strong>Cilj:</strong> Konkretno, kako se otroka sprejme kot gosta, in kaj je Vilinia vzela od Pike.</p>' },
+    5: { title: 'Selfness in hostfulness', body: '<p><strong>Namen:</strong> Leča gostoljubja skozi njihov lasten jezik. Selfness = pogled vase, hostfulness = pogled k drugemu.</p><p><strong>Cilj:</strong> Gost pove, ali je gostitelj, ki je pri sebi, boljši gostitelj.</p>' },
+    6: { title: 'Trinajst let ene platforme', body: '<p><strong>Namen:</strong> Samostojno poglavje: kaj so naredili, kaj bi še, katera je prva stvar.</p><p><strong>Cilj:</strong> Ena konkretna naslednja stvar, ki jo bodo naredili.</p>' },
+    7: { title: 'Tehnologija, ki jo gost vidi', body: '<p><strong>Namen:</strong> Kaj gost občuti.</p><p><strong>Cilj:</strong> Tehnologija kot podpora gostitelju, ne nadomestek.</p>' },
+    8: { title: 'Dve državi, dve resnici', body: '<p><strong>Namen:</strong> Tuhelj kot druga polovica njegove kariere; kaj se destinaciji učita druga od druge.</p><p><strong>Cilj:</strong> Kaj je preživetje Tuhlja naučilo Olimio.</p>' },
+    9: { title: 'Terme čez 10 let', body: '<p><strong>Namen:</strong> Širša slika: kraj, lastništvo, gost prihodnosti.</p><p><strong>Cilj:</strong> Jasna slika, kaj Terme Olimia hočejo biti leta 2036.</p>' },
+    10: { title: 'Zaključek', body: '<p>Osebna gostova izkušnja; kaj se je o gostoljubju naučil pri delu in prenesel domov, ali obratno (pusti tišino).</p><p><strong>Refleksija voditelja:</strong> hotel, zgrajen okoli otroka, je najbolj iskren test gostoljubja, ker otrok ne pozna storitve, pozna samo odnos.</p>' }
+  };
+
+  let opisOpenId = null;
+  function showOpis(id){
+    const o = OPISI[id];
+    if(!o) return;
+    const popup = document.getElementById('opisPopup');
+    if(opisOpenId === id && popup.classList.contains('show')){ hideOpis(); return; }
+    document.getElementById('opisTitle').textContent = o.title;
+    document.getElementById('opisBody').innerHTML = o.body;
+    popup.classList.add('show');
+    opisOpenId = id;
+  }
+  function hideOpis(){
+    document.getElementById('opisPopup').classList.remove('show');
+    opisOpenId = null;
+  }
+
+  // Premikanje popupa (drag za glavo popupa)
+  (function(){
+    const popup = document.getElementById('opisPopup');
+    const head = popup.querySelector('.opis-popup-head');
+    let dragging = false, offsetX = 0, offsetY = 0;
+    head.addEventListener('pointerdown', function(e){
+      if (e.target.closest('.opis-popup-close')) return;
+      dragging = true;
+      const rect = popup.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
+      popup.classList.add('dragging');
+      head.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    head.addEventListener('pointermove', function(e){
+      if (!dragging) return;
+      const rect = popup.getBoundingClientRect();
+      let x = e.clientX - offsetX;
+      let y = e.clientY - offsetY;
+      x = Math.max(0, Math.min(x, window.innerWidth - rect.width));
+      y = Math.max(0, Math.min(y, window.innerHeight - 48));
+      popup.style.left = x + 'px';
+      popup.style.top = y + 'px';
+      popup.style.right = 'auto';
+    });
+    head.addEventListener('pointerup', function(e){
+      dragging = false;
+      popup.classList.remove('dragging');
+      head.releasePointerCapture(e.pointerId);
+    });
+  })();
+
+  // Timer (štoparica)
+  let timerInterval = null, elapsed = 0, running = false;
+  function fmt(s){ const m = Math.floor(s/60), sec = s%60; return String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'); }
+  function toggleTimer(){
+    const btn = document.getElementById('timerBtn'), disp = document.getElementById('timerDisplay');
+    if(running){
+      clearInterval(timerInterval); running = false;
+      btn.textContent = 'RESUME'; disp.classList.remove('running'); disp.classList.add('paused');
+    } else {
+      running = true; btn.textContent = 'PAUSE'; disp.classList.add('running'); disp.classList.remove('paused');
+      timerInterval = setInterval(() => { elapsed++; disp.textContent = fmt(elapsed); }, 1000);
+    }
+  }
+  function resetTimer(){
+    clearInterval(timerInterval); running = false; elapsed = 0;
+    const btn = document.getElementById('timerBtn'), disp = document.getElementById('timerDisplay');
+    btn.textContent = 'START'; disp.textContent = '00:00'; disp.classList.remove('running','paused');
+  }
+
+  // Ura
+  function updateClock(){
+    const d = new Date();
+    const h = String(d.getHours()).padStart(2,'0'), m = String(d.getMinutes()).padStart(2,'0');
+    document.getElementById('clockDisplay').textContent = h+':'+m;
+  }
+  updateClock(); setInterval(updateClock, 10000);
+
+  // Sekcije
+  function toggleSection(header){
+    const sec = header.closest('.section');
+    sec.classList.toggle('open'); sec.classList.toggle('active');
+  }
+  function toggleAsked(el){ el.classList.toggle('asked'); }
+
+  // Odštevanje na sekcijo
+  function toggleCountdown(el){
+    if(el._int){
+      clearInterval(el._int); el._int = null;
+      el.classList.remove('counting','overtime');
+      el.textContent = el.dataset.minutes + "'";
+      return;
+    }
+    el._remaining = parseInt(el.dataset.minutes,10) * 60;
+    el.classList.add('counting');
+    const render = () => {
+      const sign = el._remaining < 0 ? '-' : '';
+      const abs = Math.abs(el._remaining);
+      el.textContent = sign + Math.floor(abs/60) + ':' + String(abs%60).padStart(2,'0');
+    };
+    render();
+    el._int = setInterval(() => {
+      el._remaining--;
+      if(el._remaining < 0){ el.classList.remove('counting'); el.classList.add('overtime'); }
+      render();
+    }, 1000);
+  }
+
+  // Zapiski s samodejnim shranjevanjem
+  const notes = document.getElementById('notesArea');
+  const savedTag = document.getElementById('notesSaved');
+  let savedTimer = null;
+  try { const s = localStorage.getItem('ep15-notes'); if(s) notes.value = s; } catch(e){}
+  notes.addEventListener('input', () => {
+    try {
+      localStorage.setItem('ep15-notes', notes.value);
+      savedTag.classList.add('show');
+      clearTimeout(savedTimer);
+      savedTimer = setTimeout(() => savedTag.classList.remove('show'), 1200);
+    } catch(e){}
+  });
+  function clearNotes(){
+    if(confirm('Počistim vse zapiske?')){
+      notes.value = '';
+      try { localStorage.removeItem('ep15-notes'); } catch(e){}
+    }
+  }
+
+  // Stranska navigacija: klik skoči na poglavje, scroll-spy označi aktivno
+  (function(){
+    const rail = document.getElementById('chapterRail');
+    if(!rail) return;
+    const items = Array.from(rail.querySelectorAll('.rail-item'));
+    const sections = {};
+    document.querySelectorAll('.section[data-section]').forEach(s => { sections[s.dataset.section] = s; });
+    items.forEach(it => {
+      it.addEventListener('click', () => {
+        const sec = sections[it.dataset.target];
+        if(sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    const setActive = id => {
+      items.forEach(it => it.classList.toggle('active', it.dataset.target === id));
+      const act = items.find(it => it.dataset.target === id);
+      if(act && rail.scrollWidth > rail.clientWidth + 4){
+        rail.scrollTo({ left: act.offsetLeft - rail.clientWidth/2 + act.offsetWidth/2, behavior: 'smooth' });
+      }
+    };
+    const spy = () => {
+      let current = '0';
+      const mark = window.innerHeight * 0.30;
+      Object.entries(sections).forEach(([id, sec]) => {
+        if(sec.getBoundingClientRect().top <= mark) current = id;
+      });
+      setActive(current);
+    };
+    document.addEventListener('scroll', spy, { passive: true });
+    spy();
+  })();
+
+  // Statistični panel (levo)
+  function toggleStats(){
+    document.getElementById('statsPanel').classList.toggle('show');
+  }
+
+  // Zložljiv panel zapiskov na mobilcu
+  function toggleNotes(){
+    const p = document.querySelector('.notes-panel');
+    p.classList.toggle('collapsed');
+    document.getElementById('notesToggle').textContent = p.classList.contains('collapsed') ? '▲' : '▼';
+  }
+</script>
+
+</body>
+</html>
