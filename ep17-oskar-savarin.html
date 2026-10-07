@@ -36,13 +36,6 @@
   .timer-btn.start:hover { background: rgba(176,137,96,0.1); }
   .clock-display { font-size: 14px; color: var(--gold-muted); font-variant-numeric: tabular-nums; }
   .timer-right { display: flex; align-items: center; gap: 18px; }
-  .mantra { font-size: 12px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold-light); border: 1px solid rgba(222,186,146,0.5); background: rgba(176,137,96,0.12); padding: 6px 14px; border-radius: 999px; white-space: nowrap; }
-  @media (max-width: 900px) {
-    .mantra { position: fixed; left: 0; right: 0; top: 0; z-index: 101; border-radius: 0; border: none; border-bottom: 1px solid rgba(222,186,146,0.35); text-align: center; font-size: 11px; letter-spacing: 2px; padding: 5px 8px; background: rgba(130,90,58,0.35); white-space: normal; }
-    .timer-bar { top: 27px; }
-    .chapter-rail { top: 88px; }
-    .header { padding-top: 130px; }
-  }
 
   .header { padding: 100px 32px 40px; max-width: 720px; margin: 0 auto; text-align: center; }
   .header .ep-label { font-size: 11px; text-transform: uppercase; letter-spacing: 4px; color: var(--gold-muted); margin-bottom: 12px; }
@@ -338,7 +331,6 @@
     <button class="timer-btn" onclick="resetTimer()">RESET</button>
   </div>
   <div class="timer-right">
-    <div class="mantra">Misli v tišini. Zadnja beseda najmočnejša.</div>
     <div class="clock-display" id="clockDisplay">--:--</div>
   </div>
 </div>
